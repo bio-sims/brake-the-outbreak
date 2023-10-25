@@ -1,5 +1,5 @@
 // Anna Muller and Rena Ahn
-// Epidemiology Simulatoin
+// Epidemiology Simulation
 
 // Dependency: npm install seedrandom
 // Source: https://youtu.be/TM8X64R9MIc?si=8ZS42Z39J0qaRKoj&t=199
@@ -187,4 +187,3 @@ grid.build();
 grid.hardCodePatientZero(totalPopulation);
 grid.setPopulation(totalPopulation);
 console.log(grid.display());
-
