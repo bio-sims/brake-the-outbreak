@@ -1,3 +1,5 @@
+import file from "./config.json" with { type: "json"};
+
 //function: creating and appending grid of 'canvas' elements
 var container = document.getElementById("grid");
 container.style.height = (simulation.gridHeight * 52) + 'px';
