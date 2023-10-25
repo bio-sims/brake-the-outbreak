@@ -1,3 +1,6 @@
+//File with setup and initialization code
+//To be merged with Epidemiology.js
+
 import file from "./config.json" with { type: "json"};
 
 //function: creating and appending grid of 'canvas' elements
