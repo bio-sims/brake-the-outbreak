@@ -1,0 +1,35 @@
+html {
+  height: 100%;
+  width: 100%;
+}
+
+h1 {
+  text-align: center;
+}
+
+#sim {
+  display: flex;
+  justify-content: center;
+}
+
+#grid {
+  display: flex;
+  flex-flow: row wrap;
+  margin-right: 30px;
+}
+
+canvas {
+  border: 1px solid #000000;
+  margin: 0;
+}
+
+#form {
+  border: 3px solid #000000;
+  border-radius: 5px;
+  border-style: dotted;
+  padding: 10px;
+}
+
+label {
+  display: block;
+}
