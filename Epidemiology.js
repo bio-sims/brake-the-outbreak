@@ -37,10 +37,10 @@ class Person {
 
 class Disease {
     constructor(rNot, vaccEff, daysToSx, daysToImmune) {
-        this.rNot = rNot; //the rate of spread with no protection
-        this.vaccEff = vaccEff; // the vaccine effectiveness (adds to protection)
-        this.daysToSx = daysToSx; // number of days an infected person waits before showing symptoms
-        this.daysToImmune = daysToImmune; // number of days an infected person waits before becoming immune
+        this.rNot = rNot;
+        this.vaccEff = vaccEff;
+        this.daysToSx = daysToSx;
+        this.daysToImmune = daysToImmune;
     }
 }
 const diseaseDictionary = {
@@ -156,6 +156,7 @@ class Grid {
 }
 
 const simulation = {
+    "simulationLength": 31,
     "gridHeight": 15,
     "gridWidth": 15,
     "seed": "15x15",
@@ -228,42 +229,110 @@ town.setPopulation(totalPopulation);
 console.log(town.display());
 setPopulationStats();
 
-// While loop start
-const attackerList = [];
-for (var i = 0; i < totalPopulation.length; i++) {
-    if (totalPopulation[i].infectStatus == true) {
-        attackerList.push(totalPopulation[i]);
+var day = 1;
+while (day < simulation.simulationLength) {
+    const attackerList = [];
+    for (var i = 0; i < totalPopulation.length; i++) {
+        if (totalPopulation[i].infectStatus == true) {
+            attackerList.push(totalPopulation[i]);
+        }
     }
-}
-console.log(attackerList);
-const defenderList = [];
-for (var i = 0; i < attackerList.length; i++) {
-    var attackerX = attackerList[i].xCoordinate;
-    var attackerY = attackerList[i].yCoordinate;
+    console.log(attackerList);
+    const defenderList = [];
+    for (var i = 0; i < attackerList.length; i++) {
+        var attackerX = attackerList[i].xCoordinate;
+        var attackerY = attackerList[i].yCoordinate;
 
-    if (town.grid[attackerX - 1][attackerY - 1] != "_" && town.grid[attackerX - 1][attackerY - 1].infectStatus == false) {
-        defenderList.push(town.grid[attackerX - 1][attackerY - 1]);
+        if (town.grid[attackerX - 1][attackerY - 1] != "_" && town.grid[attackerX - 1][attackerY - 1].infectStatus == false) {
+            defenderList.push(town.grid[attackerX - 1][attackerY - 1]);
+            infect(attackerList[i], defenderList[defenderList.length - 1]);
+        }
+        if (town.grid[attackerX - 1][attackerY] != "_" && town.grid[attackerX - 1][attackerY].infectStatus == false) {
+            defenderList.push(town.grid[attackerX - 1][attackerY]);
+            infect(attackerList[i], defenderList[defenderList.length - 1]);
+        }
+        if (town.grid[attackerX - 1][attackerY + 1] != "_" && town.grid[attackerX - 1][attackerY + 1].infectStatus == false) {
+            defenderList.push(town.grid[attackerX - 1][attackerY + 1]);
+            infect(attackerList[i], defenderList[defenderList.length - 1]);
+        }
+        if (town.grid[attackerX][attackerY - 1] != "_" && town.grid[attackerX][attackerY - 1].infectStatus == false) {
+            defenderList.push(town.grid[attackerX][attackerY - 1]);
+            infect(attackerList[i], defenderList[defenderList.length - 1]);
+        }
+        if (town.grid[attackerX][attackerY + 1] != "_" && town.grid[attackerX][attackerY + 1].infectStatus == false) {
+            defenderList.push(town.grid[attackerX][attackerY + 1]);
+            infect(attackerList[i], defenderList[defenderList.length - 1]);
+        }
+        if (town.grid[attackerX + 1][attackerY - 1] != "_" && town.grid[attackerX + 1][attackerY - 1].infectStatus == false) {
+            defenderList.push(town.grid[attackerX + 1][attackerY - 1]);
+            infect(attackerList[i], defenderList[defenderList.length - 1]);
+        }
+        if (town.grid[attackerX + 1][attackerY] != "_" && town.grid[attackerX + 1][attackerY].infectStatus == false) {
+            defenderList.push(town.grid[attackerX + 1][attackerY]);
+            infect(attackerList[i], defenderList[defenderList.length - 1]);
+        }
+        if (town.grid[attackerX + 1][attackerY + 1] != "_" && town.grid[attackerX + 1][attackerY + 1].infectStatus == false) {
+            defenderList.push(town.grid[attackerX + 1][attackerY + 1]);
+            infect(attackerList[i], defenderList[defenderList.length - 1]);
+        }
     }
-    if (town.grid[attackerX - 1][attackerY] != "_" && town.grid[attackerX - 1][attackerY].infectStatus == false) {
-        defenderList.push(town.grid[attackerX - 1][attackerY]);
+    console.log(town.display());
+}
+// ! while loop end
+
+function transmitDisease(totalPopulation, grid) {
+    const attackerList = [];
+    for (var i = 0; i < totalPopulation.length; i++) {
+        if (totalPopulation[i].infectStatus == true) {
+            attackerList.push(totalPopulation[i]);
+        }
     }
-    if (town.grid[attackerX - 1][attackerY + 1] != "_" && town.grid[attackerX - 1][attackerY + 1].infectStatus == false) {
-        defenderList.push(town.grid[attackerX - 1][attackerY + 1]);
-    }
-    if (town.grid[attackerX][attackerY - 1] != "_" && town.grid[attackerX][attackerY - 1].infectStatus == false) {
-        defenderList.push(town.grid[attackerX][attackerY - 1]);
-    }
-    if (town.grid[attackerX][attackerY + 1] != "_" && town.grid[attackerX][attackerY + 1].infectStatus == false) {
-        defenderList.push(town.grid[attackerX][attackerY + 1]);
-    }
-    if (town.grid[attackerX + 1][attackerY - 1] != "_" && town.grid[attackerX + 1][attackerY - 1].infectStatus == false) {
-        defenderList.push(town.grid[attackerX + 1][attackerY - 1]);
-    }
-    if (town.grid[attackerX + 1][attackerY] != "_" && town.grid[attackerX + 1][attackerY].infectStatus == false) {
-        defenderList.push(town.grid[attackerX + 1][attackerY]);
-    }
-    if (town.grid[attackerX + 1][attackerY + 1] != "_" && town.grid[attackerX + 1][attackerY + 1].infectStatus == false) {
-        defenderList.push(town.grid[attackerX + 1][attackerY + 1]);
+    const defenderList = [];
+    for (var i = 0; i < attackerList.length; i++) {
+        var attackerX = attackerList[i].xCoordinate;
+        var attackerY = attackerList[i].yCoordinate;
+    
+        if (grid[attackerX - 1][attackerY - 1] != "_" && grid[attackerX - 1][attackerY - 1].infectStatus == false) {
+            defenderList.push(grid[attackerX - 1][attackerY - 1]);
+            infect(attackerList[i], defenderList[defenderList.length - 1]);
+        }
+        if (grid[attackerX - 1][attackerY] != "_" && grid[attackerX - 1][attackerY].infectStatus == false) {
+            defenderList.push(grid[attackerX - 1][attackerY]);
+            infect(attackerList[i], defenderList[defenderList.length - 1]);
+        }
+        if (grid[attackerX - 1][attackerY + 1] != "_" && grid[attackerX - 1][attackerY + 1].infectStatus == false) {
+            defenderList.push(grid[attackerX - 1][attackerY + 1]);
+            infect(attackerList[i], defenderList[defenderList.length - 1]);
+        }
+        if (grid[attackerX][attackerY - 1] != "_" && grid[attackerX][attackerY - 1].infectStatus == false) {
+            defenderList.push(grid[attackerX][attackerY - 1]);
+            infect(attackerList[i], defenderList[defenderList.length - 1]);
+        }
+        if (grid[attackerX][attackerY + 1] != "_" && grid[attackerX][attackerY + 1].infectStatus == false) {
+            defenderList.push(grid[attackerX][attackerY + 1]);
+            infect(attackerList[i], defenderList[defenderList.length - 1]);
+        }
+        if (grid[attackerX + 1][attackerY - 1] != "_" && grid[attackerX + 1][attackerY - 1].infectStatus == false) {
+            defenderList.push(grid[attackerX + 1][attackerY - 1]);
+            infect(attackerList[i], defenderList[defenderList.length - 1]);
+        }
+        if (grid[attackerX + 1][attackerY] != "_" && grid[attackerX + 1][attackerY].infectStatus == false) {
+            defenderList.push(grid[attackerX + 1][attackerY]);
+            infect(attackerList[i], defenderList[defenderList.length - 1]);
+        }
+        if (grid[attackerX + 1][attackerY + 1] != "_" && grid[attackerX + 1][attackerY + 1].infectStatus == false) {
+            defenderList.push(grid[attackerX + 1][attackerY + 1]);
+            infect(attackerList[i], defenderList[defenderList.length - 1]);
+        }
+    }    
+}
+
+function infect(attacker, defender) {
+    var infect = getRNG(attacker.transmission + defender.protection);
+    //console.log(infect);
+    if (infect <= attacker.transmission) {
+        //console.log('infected');
+        defender.infectPerson();
     }
 }
-console.log(defenderList);
+//console.log(defenderList);
