@@ -37,10 +37,10 @@ class Person {
 
 class Disease {
     constructor(rNot, vaccEff, daysToSx, daysToImmune) {
-        this.rNot = rNot;
-        this.vaccEff = vaccEff;
-        this.daysToSx = daysToSx;
-        this.daysToImmune = daysToImmune;
+        this.rNot = rNot; //the rate of spread with no protection
+        this.vaccEff = vaccEff; // the vaccine effectiveness (adds to protection)
+        this.daysToSx = daysToSx; // number of days an infected person waits before showing symptoms
+        this.daysToImmune = daysToImmune; // number of days an infected person waits before becoming immune
     }
 }
 const diseaseDictionary = {
