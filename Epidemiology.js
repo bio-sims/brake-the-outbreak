@@ -240,31 +240,30 @@ const defenderList = [];
 for (var i = 0; i < attackerList.length; i++) {
     var attackerX = attackerList[i].xCoordinate;
     var attackerY = attackerList[i].yCoordinate;
-    if (totalPopulation[attackerX - 1][attackerY - 1] != "_" && totalPopulation[attackerX - 1][attackerY - 1].infectStatus == false) {
-        defenderList.push(totalPopulation[attackerX - 1][attackerY - 1]);
+
+    if (town.grid[attackerX - 1][attackerY - 1] != "_" && town.grid[attackerX - 1][attackerY - 1].infectStatus == false) {
+        defenderList.push(town.grid[attackerX - 1][attackerY - 1]);
     }
-    if (totalPopulation[attackerX - 1][attackerY] != "_" && totalPopulation[attackerX - 1][attackerY].infectStatus == false) {
-        defenderList.push(totalPopulation[attackerX - 1][attackerY]);
+    if (town.grid[attackerX - 1][attackerY] != "_" && town.grid[attackerX - 1][attackerY].infectStatus == false) {
+        defenderList.push(town.grid[attackerX - 1][attackerY]);
     }
-    if (totalPopulation[attackerX - 1][attackerY + 1] != "_" && totalPopulation[attackerX - 1][attackerY + 1].infectStatus == false) {
-        defenderList.push(totalPopulation[attackerX - 1][attackerY + 1]);
+    if (town.grid[attackerX - 1][attackerY + 1] != "_" && town.grid[attackerX - 1][attackerY + 1].infectStatus == false) {
+        defenderList.push(town.grid[attackerX - 1][attackerY + 1]);
     }
-    if (totalPopulation[attackerX][attackerY - 1] != "_" && totalPopulation[attackerX][attackerY - 1].infectStatus == false) {
-        defenderList.push(totalPopulation[attackerX][attackerY - 1]);
+    if (town.grid[attackerX][attackerY - 1] != "_" && town.grid[attackerX][attackerY - 1].infectStatus == false) {
+        defenderList.push(town.grid[attackerX][attackerY - 1]);
     }
-    if (totalPopulation[attackerX][attackerY + 1] != "_" && totalPopulation[attackerX][attackerY + 1].infectStatus == false) {
-        defenderList.push(totalPopulation[attackerX][attackerY + 1]);
+    if (town.grid[attackerX][attackerY + 1] != "_" && town.grid[attackerX][attackerY + 1].infectStatus == false) {
+        defenderList.push(town.grid[attackerX][attackerY + 1]);
     }
-    if (totalPopulation[attackerX + 1][attackerY - 1] != "_" && totalPopulation[attackerX + 1][attackerY - 1].infectStatus == false) {
-        defenderList.push(totalPopulation[attackerX + 1][attackerY - 1]);
+    if (town.grid[attackerX + 1][attackerY - 1] != "_" && town.grid[attackerX + 1][attackerY - 1].infectStatus == false) {
+        defenderList.push(town.grid[attackerX + 1][attackerY - 1]);
     }
-    if (totalPopulation[attackerX + 1][attackerY] != "_" && totalPopulation[attackerX + 1][attackerY].infectStatus == false) {
-        defenderList.push(totalPopulation[attackerX + 1][attackerY]);
+    if (town.grid[attackerX + 1][attackerY] != "_" && town.grid[attackerX + 1][attackerY].infectStatus == false) {
+        defenderList.push(town.grid[attackerX + 1][attackerY]);
     }
-    if (totalPopulation[attackerX + 1][attackerY + 1] != "_" && totalPopulation[attackerX + 1][attackerY + 1].infectStatus == false) {
-        defenderList.push(totalPopulation[attackerX + 1][attackerY + 1]);
+    if (town.grid[attackerX + 1][attackerY + 1] != "_" && town.grid[attackerX + 1][attackerY + 1].infectStatus == false) {
+        defenderList.push(town.grid[attackerX + 1][attackerY + 1]);
     }
 }
-// this throws 'TypeError: Cannot read properties of undefined (reading of 'infectStatus') at line 237 and the rest of the if statements. How come this doesn't read it as a person class?
-// This is the first time it's thrown this error, so I'm not sure what's going on.
 console.log(defenderList);
