@@ -1,8 +1,0 @@
-var simulation = {
-  gridHeight: 10,
-  gridWidth: 10,
-  disease: "Rubella",
-  maskRate: 50,
-  vaccRate: 50,
-  patientZero: (7, 7)
-}
