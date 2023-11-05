@@ -1,5 +1,6 @@
 //Epidemiology Simulation Project: Rena Ahn and Anna Muller
 //Merged with Epidemiology.js [last update: 11/4/2023]
+//     Implemented using Math.floor(Math.random()) not npm install seedrandom
 
 //Person class
 class Person {
