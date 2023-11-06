@@ -1,46 +1,58 @@
 // Anna Muller and Rena Ahn
 // Epidemiology Simulation
 
-// Dependency: npm install seedrandom
+// Dependencies: install Node.js (https://nodejs.org/en/download/current)
+//             npm install seedrandom (in terminal)
 // Source: https://youtu.be/TM8X64R9MIc?si=8ZS42Z39J0qaRKoj&t=199
 //         https://www.npmjs.com/package/seedrandom
 
 class Person {
     constructor(num) {
-        this.num = num;
-        this.transmission = 50;
-        this.protection = 50;
-        this.mask = false;
-        this.vaccine = false;
-        this.infectStatus = false;
-        this.timeInfect = 0;
-        this.immuneStatus = false;
-        this.xCoordinate = 0;
-        this.yCoordinate = 0;
-        this.display = "O";
+        this.num = num; // to keep track of people during testing/debugging, can delete
+        this.transmission = 50; // the number for which the personcan transmit the disease when infected
+        this.protection = 50; // the number depending on whether the person is wearing a mask or vaccinated
+        this.mask = false; // shows if the person does have a mask, can delete
+        this.vaccine = false; // shows ifthe person got vaccinated, can delete
+        this.infectStatus = false; // shows if the person has been infected 
+        this.timeInfect = 0; // shows how long the person has been infected, incubated and sick added up
+        this.immuneStatus = false; // shows if the person has gone through being infected and are now immune to the disease
+        this.xCoordinate = 0; // row position
+        this.yCoordinate = 0; // column position
+        this.display = "O"; // display command line only: O = not infected/not immune, i = incubated/asymptomatic, X = symptomatic, I = immune
     }
 
-    // Setter method
+    // Desc : Setter method once the person is assigned a grid position
     setGridPosition(xCoordinate, yCoordinate) {
         this.xCoordinate = xCoordinate;
         this.yCoordinate = yCoordinate;
     }
 
-    // updates stats that have to do with being infected
+    // Desc : updates stats that have to do with being infected
     infectPerson() {
         this.infectStatus = true;
         this.transmission += simulation.disease.rNot;
         this.display = "i";
-        this.timeInfect = 1;
+    }
+
+    // Desc : increments how long the person has been infected
+    sickDay() {
+        this.timeInfect++;
+    }
+
+    // Desc : updates stats to show immunity
+    immune() {
+        this.display = "I";
+        this.immuneStatus = true;
+        this.infectStatus = false;
     }
 }
 
 class Disease {
     constructor(rNot, vaccEff, daysToSx, daysToImmune) {
-        this.rNot = rNot;
-        this.vaccEff = vaccEff;
-        this.daysToSx = daysToSx;
-        this.daysToImmune = daysToImmune;
+        this.rNot = rNot; // the rate people get infected with no protection
+        this.vaccEff = vaccEff; // the effectiveness of the vaccine
+        this.daysToSx = daysToSx; // how long it takes for the person to show symptoms
+        this.daysToImmune = daysToImmune; // how long it takes for the person to be immune to the disease
     }
 }
 const diseaseDictionary = {
@@ -68,10 +80,11 @@ const vaccineDictionary = {
 };
 
 class Grid {
-    constructor(gridHeight, gridWidth) {
-        this.grid = [];
-        this.gridHeight = gridHeight;
-        this.gridWidth = gridWidth;
+    constructor(/*gridHeight, gridWidth*/) {
+        this.grid = []; 
+        this.gridHeight = simulation.gridHeight;
+        this.gridWidth = simulation.gridWidth;
+        this.build();
     }
 
     // Desc : builds the 2D grid based on its given height and width from Simulation
@@ -84,42 +97,44 @@ class Grid {
         }
     }
     // Desc : hardcodes Patient Zero and its surrouding 8 contacts according to the given patient zero position in Simulation
-    setPatientZero(totalPopulation, disease){
+    setPatientZero(totalPopulation){
         var patientZero = totalPopulation[0];
-        patientZero.setGridPosition(simulation.patientZeroPosition[0], simulation.patientZeroPosition[1]);
-        patientZero.infectPerson(disease);
+        var pZeroX = simulation.patientZeroPosition[0];
+        var pZeroY = simulation.patientZeroPosition[1];;
+        patientZero.setGridPosition(pZeroX, pZeroY);
+        patientZero.infectPerson(simulation.disease);
         this.grid[patientZero.xCoordinate][patientZero.yCoordinate] = patientZero;
 
         var adjPerson1 = totalPopulation[1];
-        adjPerson1.setGridPosition(simulation.patientZeroPosition[0] - 1, simulation.patientZeroPosition[1] - 1);
+        adjPerson1.setGridPosition(pZeroX - 1, pZeroY - 1);
         this.grid[adjPerson1.xCoordinate][adjPerson1.yCoordinate] = adjPerson1;
         
         var adjPerson2 = totalPopulation[2];
-        adjPerson2.setGridPosition(simulation.patientZeroPosition[0] - 1, simulation.patientZeroPosition[1]);
+        adjPerson2.setGridPosition(pZeroX - 1, pZeroY);
         this.grid[adjPerson2.xCoordinate][adjPerson2.yCoordinate] = adjPerson2;
         
         var adjPerson3 = totalPopulation[3];
-        adjPerson3.setGridPosition(simulation.patientZeroPosition[0] - 1, simulation.patientZeroPosition[1] + 1);
+        adjPerson3.setGridPosition(pZeroX - 1, pZeroY + 1);
         this.grid[adjPerson3.xCoordinate][adjPerson3.yCoordinate] = adjPerson3;
         
         var adjPerson4 = totalPopulation[4];
-        adjPerson4.setGridPosition(simulation.patientZeroPosition[0], simulation.patientZeroPosition[1] - 1);
+        adjPerson4.setGridPosition(pZeroX, pZeroY - 1);
         this.grid[adjPerson4.xCoordinate][adjPerson4.yCoordinate] = adjPerson4;
         
         var adjPerson5 = totalPopulation[5];
-        adjPerson5.setGridPosition(simulation.patientZeroPosition[0], simulation.patientZeroPosition[1] + 1);
+        adjPerson5.setGridPosition(pZeroX, pZeroY + 1);
         this.grid[adjPerson5.xCoordinate][adjPerson5.yCoordinate] = adjPerson5;
         
         var adjPerson6 = totalPopulation[6];
-        adjPerson6.setGridPosition(simulation.patientZeroPosition[0] + 1, simulation.patientZeroPosition[1] - 1);
+        adjPerson6.setGridPosition(pZeroX + 1, pZeroY - 1);
         this.grid[adjPerson6.xCoordinate][adjPerson6.yCoordinate] = adjPerson6;
         
         var adjPerson7 = totalPopulation[7];
-        adjPerson7.setGridPosition(simulation.patientZeroPosition[0] + 1, simulation.patientZeroPosition[1]);
+        adjPerson7.setGridPosition(pZeroX + 1, pZeroY);
         this.grid[adjPerson7.xCoordinate][adjPerson7.yCoordinate] = adjPerson7;
         
         var adjPerson8 = totalPopulation[8];
-        adjPerson8.setGridPosition(simulation.patientZeroPosition[0] + 1, simulation.patientZeroPosition[1] + 1);
+        adjPerson8.setGridPosition(pZeroX + 1, pZeroY + 1);
         this.grid[adjPerson8.xCoordinate][adjPerson8.yCoordinate] = adjPerson8;         
     }
 
@@ -156,16 +171,17 @@ class Grid {
 }
 
 const simulation = {
-    "simulationLength": 31,
-    "gridHeight": 15,
-    "gridWidth": 15,
-    "seed": "15x15",
-    "patientZeroPosition": [7, 5],
-    "populationSize": 100,
-    "disease": diseaseDictionary.leastInfectious,
-    "maskLevel": maskDictionary.mediumMask,
-    "maskProtection": 10,
-    "vaccLevel": vaccineDictionary.mediumVacc
+    "days": [], // to save each individual day, for if we had a way to manually scroll through each day
+    "simulationLength": 31, // how many days the simulation will run
+    "gridHeight": 12, // number of rows in the 2D array
+    "gridWidth": 12, // number of columns in the 2D array
+    "seed": "12x12", // the seed depends on the height x width
+    "patientZeroPosition": [7, 5], // x- and y-coordinates for patient zero and the surrounding contacts
+    "populationSize": 100, // the number of people in the simulation
+    "disease": diseaseDictionary.mediumInfectious, // the chosen disease
+    "maskLevel": maskDictionary.extremeMask, // the number of people wearing a mask
+    "maskProtection": 10, // the protection rate a mask adds to the person
+    "vaccLevel": vaccineDictionary.extremeVacc // the number of people getting vaccinated
 }
 
 // Desc : This implements the seeded random value
@@ -215,6 +231,77 @@ function setPopulationStats() {
     assignVacc(vaccPeople);
 }
 
+// Desc : finds everyone who is currently infected, updates their sick/immune state, returns a list of everyone still currently infected
+function updateInfected(totalPopulation) {
+    const attackerList = [];
+    for (var i = 0; i < totalPopulation.length; i++) {
+        if (totalPopulation[i].infectStatus) {
+            if (totalPopulation[i].timeInfect >= simulation.disease.daysToImmune) {
+                totalPopulation[i].immune();
+            } else {
+                attackerList.push(totalPopulation[i]);
+                if (totalPopulation[i].timeInfect == simulation.disease.daysToSx) {
+                    totalPopulation[i].display = "X";
+                }
+                totalPopulation[i].sickDay();
+            }
+        }
+    }
+    return attackerList;
+}
+
+// Desc : for everyone in the attacker list, it checks every surrounding contact and tries to infect them
+function transmitDisease(attackerList, grid) {
+    for (var i = 0; i < attackerList.length; i++) {
+        var attackerX = attackerList[i].xCoordinate;
+        var attackerY = attackerList[i].yCoordinate;
+    
+        if (checkDefender(attackerX - 1, attackerY - 1)) {
+            infect(attackerList[i], grid[attackerX - 1][attackerY - 1]);
+        }
+        if (checkDefender(attackerX - 1, attackerY)) {
+            infect(attackerList[i], grid[attackerX - 1][attackerY]);
+        }
+        if (checkDefender(attackerX - 1, attackerY + 1)) {
+            infect(attackerList[i], grid[attackerX - 1][attackerY + 1]);
+        }
+        if (checkDefender(attackerX, attackerY - 1)) {
+            infect(attackerList[i], grid[attackerX][attackerY + 1]);
+        }
+        if (checkDefender(attackerX, attackerY + 1)) {
+            infect(attackerList[i], grid[attackerX][attackerY + 1]);
+        }
+        if (checkDefender(attackerX + 1, attackerY - 1)) {
+            infect(attackerList[i], grid[attackerX + 1][attackerY - 1]);
+        }
+        if (checkDefender(attackerX + 1, attackerY)) {
+            infect(attackerList[i], grid[attackerX + 1][attackerY]);
+        }
+        if (checkDefender(attackerX + 1, attackerY + 1)) {
+            infect(attackerList[i], grid[attackerX + 1][attackerY + 1]);
+        }
+    }    
+}
+
+// Desc : Checks to see if the given defender is in the bounds of the 2D array and if they fit the criteria of a defender
+function checkDefender(x, y) {
+    if ((x >= 0 && x < simulation.gridHeight) && (y >= 0 && y < simulation.gridWidth)) {
+        if (town.grid[x][y] != "_" && town.grid[x][y].infectStatus == false  && town.grid[x][y].immuneStatus == false) {
+            return true;
+        }
+    } else {
+        return false;
+    }
+}
+
+// Desc : uses a random number to see if the given attacker infects the given defender
+function infect(attacker, defender) {
+    var infect = getRNG(attacker.transmission + defender.protection);
+    if (infect <= attacker.transmission) {
+        defender.infectPerson();
+    }
+}
+
 // Desc : makes the list of people 
 const totalPopulation = [];
 for (var i = 0; i < simulation.populationSize; i++) {
@@ -223,116 +310,43 @@ for (var i = 0; i < simulation.populationSize; i++) {
 
 // Desc : builds the board before the simulation begins
 const town = new Grid(simulation.gridHeight, simulation.gridWidth);
-town.build();
 town.setPatientZero(totalPopulation, simulation.disease);
 town.setPopulation(totalPopulation);
 console.log(town.display());
 setPopulationStats();
+simulation.days.push(town.display());
 
 var day = 1;
-while (day < simulation.simulationLength) {
-    const attackerList = [];
+// ! while loop start
+while (day <= simulation.simulationLength) {
+    console.log("Day " + day);
+    const attackerList = updateInfected(totalPopulation);
+    transmitDisease(attackerList, town.grid);
+    console.log(town.display()); 
+    
+    // calculates the total infected and total immune people, checks to see if the disease can move anywhere the next day
+    var totalInfected = 0;
+    var totalImmune = 0;
     for (var i = 0; i < totalPopulation.length; i++) {
-        if (totalPopulation[i].infectStatus == true) {
-            attackerList.push(totalPopulation[i]);
+        if (totalPopulation[i].infectStatus) {
+            totalInfected++;
+        } else if (totalPopulation[i].immuneStatus) {
+            totalImmune++;
         }
     }
-    console.log(attackerList);
-    const defenderList = [];
-    for (var i = 0; i < attackerList.length; i++) {
-        var attackerX = attackerList[i].xCoordinate;
-        var attackerY = attackerList[i].yCoordinate;
+    simulation.days.push(town.display());
+    console.log("Infected: " + totalInfected);
+    console.log("Immune: " + totalImmune);
+    console.log();
+    if (totalInfected == 0) {
+        console.log("No one is infected. Break");
+        break;
+    } else if ((totalInfected + totalImmune) == totalPopulation.length) {
+        console.log("Everyone is or has been infected. Break");
+        break;
+    }
 
-        if (town.grid[attackerX - 1][attackerY - 1] != "_" && town.grid[attackerX - 1][attackerY - 1].infectStatus == false) {
-            defenderList.push(town.grid[attackerX - 1][attackerY - 1]);
-            infect(attackerList[i], defenderList[defenderList.length - 1]);
-        }
-        if (town.grid[attackerX - 1][attackerY] != "_" && town.grid[attackerX - 1][attackerY].infectStatus == false) {
-            defenderList.push(town.grid[attackerX - 1][attackerY]);
-            infect(attackerList[i], defenderList[defenderList.length - 1]);
-        }
-        if (town.grid[attackerX - 1][attackerY + 1] != "_" && town.grid[attackerX - 1][attackerY + 1].infectStatus == false) {
-            defenderList.push(town.grid[attackerX - 1][attackerY + 1]);
-            infect(attackerList[i], defenderList[defenderList.length - 1]);
-        }
-        if (town.grid[attackerX][attackerY - 1] != "_" && town.grid[attackerX][attackerY - 1].infectStatus == false) {
-            defenderList.push(town.grid[attackerX][attackerY - 1]);
-            infect(attackerList[i], defenderList[defenderList.length - 1]);
-        }
-        if (town.grid[attackerX][attackerY + 1] != "_" && town.grid[attackerX][attackerY + 1].infectStatus == false) {
-            defenderList.push(town.grid[attackerX][attackerY + 1]);
-            infect(attackerList[i], defenderList[defenderList.length - 1]);
-        }
-        if (town.grid[attackerX + 1][attackerY - 1] != "_" && town.grid[attackerX + 1][attackerY - 1].infectStatus == false) {
-            defenderList.push(town.grid[attackerX + 1][attackerY - 1]);
-            infect(attackerList[i], defenderList[defenderList.length - 1]);
-        }
-        if (town.grid[attackerX + 1][attackerY] != "_" && town.grid[attackerX + 1][attackerY].infectStatus == false) {
-            defenderList.push(town.grid[attackerX + 1][attackerY]);
-            infect(attackerList[i], defenderList[defenderList.length - 1]);
-        }
-        if (town.grid[attackerX + 1][attackerY + 1] != "_" && town.grid[attackerX + 1][attackerY + 1].infectStatus == false) {
-            defenderList.push(town.grid[attackerX + 1][attackerY + 1]);
-            infect(attackerList[i], defenderList[defenderList.length - 1]);
-        }
-    }
-    console.log(town.display());
+    day++;
+
 }
 // ! while loop end
-
-function transmitDisease(totalPopulation, grid) {
-    const attackerList = [];
-    for (var i = 0; i < totalPopulation.length; i++) {
-        if (totalPopulation[i].infectStatus == true) {
-            attackerList.push(totalPopulation[i]);
-        }
-    }
-    const defenderList = [];
-    for (var i = 0; i < attackerList.length; i++) {
-        var attackerX = attackerList[i].xCoordinate;
-        var attackerY = attackerList[i].yCoordinate;
-    
-        if (grid[attackerX - 1][attackerY - 1] != "_" && grid[attackerX - 1][attackerY - 1].infectStatus == false) {
-            defenderList.push(grid[attackerX - 1][attackerY - 1]);
-            infect(attackerList[i], defenderList[defenderList.length - 1]);
-        }
-        if (grid[attackerX - 1][attackerY] != "_" && grid[attackerX - 1][attackerY].infectStatus == false) {
-            defenderList.push(grid[attackerX - 1][attackerY]);
-            infect(attackerList[i], defenderList[defenderList.length - 1]);
-        }
-        if (grid[attackerX - 1][attackerY + 1] != "_" && grid[attackerX - 1][attackerY + 1].infectStatus == false) {
-            defenderList.push(grid[attackerX - 1][attackerY + 1]);
-            infect(attackerList[i], defenderList[defenderList.length - 1]);
-        }
-        if (grid[attackerX][attackerY - 1] != "_" && grid[attackerX][attackerY - 1].infectStatus == false) {
-            defenderList.push(grid[attackerX][attackerY - 1]);
-            infect(attackerList[i], defenderList[defenderList.length - 1]);
-        }
-        if (grid[attackerX][attackerY + 1] != "_" && grid[attackerX][attackerY + 1].infectStatus == false) {
-            defenderList.push(grid[attackerX][attackerY + 1]);
-            infect(attackerList[i], defenderList[defenderList.length - 1]);
-        }
-        if (grid[attackerX + 1][attackerY - 1] != "_" && grid[attackerX + 1][attackerY - 1].infectStatus == false) {
-            defenderList.push(grid[attackerX + 1][attackerY - 1]);
-            infect(attackerList[i], defenderList[defenderList.length - 1]);
-        }
-        if (grid[attackerX + 1][attackerY] != "_" && grid[attackerX + 1][attackerY].infectStatus == false) {
-            defenderList.push(grid[attackerX + 1][attackerY]);
-            infect(attackerList[i], defenderList[defenderList.length - 1]);
-        }
-        if (grid[attackerX + 1][attackerY + 1] != "_" && grid[attackerX + 1][attackerY + 1].infectStatus == false) {
-            defenderList.push(grid[attackerX + 1][attackerY + 1]);
-            infect(attackerList[i], defenderList[defenderList.length - 1]);
-        }
-    }    
-}
-
-function infect(attacker, defender) {
-    var infect = getRNG(attacker.transmission + defender.protection);
-    //console.log(infect);
-    if (infect <= attacker.transmission) {
-        //console.log('infected');
-        defender.infectPerson();
-    }
-}
-//console.log(defenderList);
