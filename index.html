@@ -5,8 +5,10 @@
 Epidemiology Simulation Project: Rena Ahn and Anna Muller
 
 Section "sim" refers to the container where the grid and user input form is located
-Div "grid" refers to the container where the canvas elements used to draw people (each person represented by a circle) are added
-Div "form" refers to the container where the sliders and text boxes for user input are located
+  Div "grid" refers to the container where the canvas elements used to draw people (each person represented by a circle) are added
+  Div "ui" refers to the container where user input and simulation output is located
+    Div "form" refers to the container where the sliders and text boxes for user input are located
+    Div "simInfo" refers to the container where the simulation information, or output, is located
 -->
 
 <head>
@@ -22,25 +24,38 @@ Div "form" refers to the container where the sliders and text boxes for user inp
     <div id="grid">
 
     </div>
-    <div id="form">
-      <label id="gridLabel" for="gridSlider">Grid Size
-        <input id="gridSlider" type="range" min="12" max="15" value="15"></input>
-      </label>
-      <br><br>
-      <label id="maskLabel" for="maskText">Mask Rate
-        <input id="maskText" type="text" placeholder="50"></input>
-      </label>
-      <br><br>
-      <label id="diseaseLabel" for="diseaseText">Disease Name
-        <input id="diseaseText" type="text" placeholder="Rubella"></input>
-      </label>
-      <br><br>
-      <label id="vaccLabel" for="vaccText">Vaccine Rate
-        <input id="vaccText" type="text" placeholder="50"></input>
-      </label>
-      <br><br>
-      <input id="submitBtn" type="submit" onclick="resetGrid()">
+    <div id="ui">
+      <div class="box" id="form">
+        <label id="diseaseLabel" for="diseaseText">Disease Name (Covid, Rubella, Measles)
+          <input id="diseaseText" type="text" value="Rubella"></input>
+        </label>
+        <br><br>
+        <label id="maskLabel" for="maskText">Mask Rate (0-100)
+          <input id="maskText" type="text" value="60"></input>
+        </label>
+        <br><br>
+        <label id="vaccLabel" for="vaccText">Vaccine Rate (0-100)
+          <input id="vaccText" type="text" value="60"></input>
+        </label>
+        <br><br>
+        <label id="gridLabel" for="gridSlider">Social Distancing
+          <input id="gridSlider" type="range" min="12" max="15" value="15"></input>
+        </label>
+        <br><br>
+        <label class="buttonLabel" id="submitLabel" for id="submitBtn">
+          <button id="submitBtn" type="submit" onclick="redrawGrid()">Run Simulation</button>
+        </label>
+      </div>
+      <div class="box" id="simInfo">
+        <div id="infoDisplay">
+          <p id="dayInfo"></p>
+          <p id="infectedInfo"></p>
+          <p id="immuneInfo"></p>
+        </div>
+        <label class="buttonLabel" id="nextLabel" for id="nextBtn">
+          <button id="nextBtn" onclick="updateGraph()">Next Day</button>
+        </label>
+      </div>
     </div>
   </section>
-
   <script src="script.js"></script>
