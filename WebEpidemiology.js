@@ -1,6 +1,9 @@
 //Epidemiology Simulation Project: Rena Ahn and Anna Muller
-//Merged with Epidemiology.js [last update: 11/4/2023]
-//     Implemented using Math.floor(Math.random()) not npm install seedrandom
+//Merged with Epidemiology.js [last update: 11/6/2023]
+//   Improvement Goals...
+//   (1) Implement using seedrandom (currently implemented using Math library)
+//       getRNG function using seedrandom is commented
+//   (2) Design/Choose then implement a commenting style
 
 //Person class
 class Person {
@@ -27,7 +30,17 @@ class Person {
   infectPerson() {
     this.infectStatus = true;
     this.transmission += simulation.disease.rNot;
-    this.timeInfect = 1;
+  }
+
+  // Desc : increments how long the person has been infected
+  sickDay() {
+    this.timeInfect++;
+  }
+
+  // Desc : updates stats to show immunity
+  immune() {
+    this.immuneStatus = true;
+    this.infectStatus = false;
   }
 }
 
@@ -164,10 +177,12 @@ class Grid {
           continue;
         }
 
-        if (this.grid[i][j].immune) {
+        if (this.grid[i][j].immuneStatus) {
           context.fillStyle = "green";
-        } else if (this.grid[i][j].infected) {
+        } else if (this.grid[i][j].infectStatus && totalPopulation[i].timeInfect >= simulation.disease.daysToSx) {
           context.fillStyle = "red";
+        } else if (this.grid[i][j].infectStatus) {
+          context.fillStyle = "orange"; 
         } else {
           context.fillStyle = "blue";
         }
@@ -187,6 +202,7 @@ class Grid {
 }
 
 const simulation = {
+  "days": [],
   "simulationLength": 31,
   "gridHeight": 15,
   "gridWidth": 15,
@@ -198,6 +214,13 @@ const simulation = {
   "maskProtection": 10,
   "vaccLevel": vaccineDictionary.mediumVacc
 }
+
+/*/ Desc : This implements the seeded random value
+const seedrandom = require('seedrandom');
+const rng = seedrandom(simulation.seed);
+function getRNG(range) {
+    return Math.floor(rng() * range);
+}*/
 
 // Desc : returns a list of randomly chosen people
 function getRandomList(totalPopulation, length) {
@@ -237,46 +260,200 @@ function setPopulationStats() {
   assignMasks(maskedPeople);
   const vaccPeople = getRandomList(totalPopulation, simulation.vaccLevel);
   assignVacc(vaccPeople);
-  return totalPopulation;
+}
+
+// Desc : finds everyone who is currently infected, updates their sick/immune state, returns a list of everyone still currently infected
+function updateInfected(totalPopulation) {
+  const attackerList = [];
+  for (var i = 0; i < totalPopulation.length; i++) {
+    if (totalPopulation[i].infectStatus) {
+      if (totalPopulation[i].timeInfect >= simulation.disease.daysToImmune) {
+        totalPopulation[i].immune();
+      } else {
+        attackerList.push(totalPopulation[i]);
+        totalPopulation[i].sickDay();
+      }
+    }
+  }
+  return attackerList;
+}
+
+// Desc : for everyone in the attacker list, it checks every surrounding contact and tries to infect them
+function transmitDisease(attackerList, grid) {
+  for (var i = 0; i < attackerList.length; i++) {
+      var attackerX = attackerList[i].xCoordinate;
+      var attackerY = attackerList[i].yCoordinate;
+  
+      if (checkDefender(attackerX - 1, attackerY - 1)) {
+          infect(attackerList[i], grid[attackerX - 1][attackerY - 1]);
+      }
+      if (checkDefender(attackerX - 1, attackerY)) {
+          infect(attackerList[i], grid[attackerX - 1][attackerY]);
+      }
+      if (checkDefender(attackerX - 1, attackerY + 1)) {
+          infect(attackerList[i], grid[attackerX - 1][attackerY + 1]);
+      }
+      if (checkDefender(attackerX, attackerY - 1)) {
+          infect(attackerList[i], grid[attackerX][attackerY + 1]);
+      }
+      if (checkDefender(attackerX, attackerY + 1)) {
+          infect(attackerList[i], grid[attackerX][attackerY + 1]);
+      }
+      if (checkDefender(attackerX + 1, attackerY - 1)) {
+          infect(attackerList[i], grid[attackerX + 1][attackerY - 1]);
+      }
+      if (checkDefender(attackerX + 1, attackerY)) {
+          infect(attackerList[i], grid[attackerX + 1][attackerY]);
+      }
+      if (checkDefender(attackerX + 1, attackerY + 1)) {
+          infect(attackerList[i], grid[attackerX + 1][attackerY + 1]);
+      }
+  }    
+}
+
+// Desc : Checks to see if the given defender is in the bounds of the 2D array and if they fit the criteria of a defender
+function checkDefender(x, y) {
+  if ((x >= 0 && x < simulation.gridHeight) && (y >= 0 && y < simulation.gridWidth)) {
+      if (town.grid[x][y] != 0 && town.grid[x][y].infectStatus == false  && town.grid[x][y].immuneStatus == false) {
+          return true;
+      }
+  } else {
+      return false;
+  }
+}
+
+// Desc : uses a random number to see if the given attacker infects the given defender
+function infect(attacker, defender) {
+  var infect = Math.floor(Math.random() * (attacker.transmission + defender.protection));
+  if (infect <= attacker.transmission) {
+      defender.infectPerson();
+  }
 }
 
 //declaring and initializing user input variables
-var gridInput = document.getElementById("gridSlider");
+var diseaseInput = document.getElementById("diseaseText");
 var maskInput = document.getElementById("maskText");
 var vaccInput = document.getElementById("vaccText");
+var gridInput = document.getElementById("gridSlider");
 var submitButton = document.getElementById("submitBtn");
+var dayDisplay = document.getElementById("dayInfo");
+var infectedDisplay = document.getElementById("infectedInfo");
+var immuneDisplay = document.getElementById("immuneInfo");
 //refer to index.html, input element with id="sumbitBtn"
 
-//Event Listener: when the submit button is clicked on, the redrawGrid function is called
-submitButton.addEventListener("click", redrawGrid);
+//Returns the mask level (refer to maskDictionary) according to maskRate
+//Pre-condition: maskRate is the number inputed by the user
+function getMaskLevel(maskRate) {
+  if(maskRate == 0) {
+    return maskDictionary.noMask;
+  } else if(maskRate <= 25) {
+    return maskDictionary.lowMask;
+  } else if(maskRate <= 50) {
+    return maskDictionary.mediumMask;
+  } else if(maskRate <= 75) {
+    return maskDictionary.highMask;
+  } else {
+    return maskDictionary.extremeMask;
+  }
+}
+
+//Returns the mask level (refer to vaccineDictionary) according to maskRate
+//Pre-condition: maskRate is the number inputed by the user
+function getVaccLevel(vaccRate) {
+  if(vaccRate == 0) {
+    return vaccineDictionary.noMask;
+  } else if(vaccRate <= 25) {
+    return vaccineDictionary.lowMask;
+  } else if(vaccRate <= 50) {
+    return vaccineDictionary.mediumMask;
+  } else if(vaccRate <= 75) {
+    return vaccineDictionary.highMask;
+  } else {
+    return vaccineDictionary.extremeMask;
+  }
+}
+
+//Returns the infectiousness of the disease (refer to diseaseDictionary) according to disease
+//Pre-condition: disease is the name of a disease inputed by the user
+function getDiseaseLevel(disease) {
+  if(disease == "Covid" || disease == "covid") {
+    return diseaseDictionary.leastInfectious;
+  } else if(disease == "Rubella" || disease == "rubella") {
+    return diseaseDictionary.mediumInfectious;
+  } else if(disease == "Measles" || disease == "measles") {
+    return diseaseDictionary.mostInfectious;
+  }
+}
 
 //Deletes the current canvas elements in the grid
 //Then calls the drawGrid function to redraw the grid to the size determined by user input
 function redrawGrid() {
   var container = document.getElementById("grid");
-  //refer to index.html, div element with id="grid"
+    //refer to index.html, div element with id="grid"
   //empties out the grid of canvas element cells
   while (container.hasChildNodes()) {
     container.removeChild(container.firstChild);
   }
 
+  simulation.disease = getDiseaseLevel(diseaseInput.value);
+  simulation.maskLevel = getMaskLevel(maskInput.value);
+  simulation.vaccLevel = getVaccLevel(vaccInput.value);
   simulation.gridHeight = gridInput.value;
   simulation.gridWidth = gridInput.value;
-  simulation.maskProtection = maskInput.value;
-  //how to do vaccine levels...?
 
-  //buildGrid(simulation.gridHeight, simulation.gridWidth)
+  for (var i = 0; i < simulation.populationSize; i++) {
+    totalPopulation[i].transmission = 50;
+    totalPopulation[i].protection = 50;
+    totalPopulation[i].mask = false;
+    totalPopulation[i].vaccine = false;
+    totalPopulation[i].infectStatus = false;
+    totalPopulation[i].timeInfect = 0;
+    totalPopulation[i].immuneStatus = false;
+  }
   town.reset(simulation.gridHeight, simulation.gridWidth);
   town.build();
   town.setPatientZero(totalPopulation, simulation.disease);
   town.setPopulation(totalPopulation);
   setPopulationStats();
   town.drawGrid(simulation.gridHeight, simulation.gridWidth);
+  
+  day = 1;
+  dayDisplay.innerHTML = `Day ${day}`;
+  infectedDisplay.innerHTML = "Infected: 1";
+  immuneDisplay.innerHTML = "Immune: 1";
+}
+
+function updateGraph() {
+  const attackerList = updateInfected(totalPopulation);
+  transmitDisease(attackerList, town.grid);
+  town.drawGrid(simulation.gridHeight, simulation.gridWidth);
+
+  // calculates the total infected and total immune people, checks to see if the disease can move anywhere the next day
+  var totalInfected = 0;
+  var totalImmune = 0;
+  for (var i = 0; i < totalPopulation.length; i++) {
+    if (totalPopulation[i].infectStatus) {
+      totalInfected++;
+    } else if (totalPopulation[i].immuneStatus) {
+      totalImmune++;
+    }
+  }
+
+  if (totalInfected == 0) {
+    return;
+  } else if ((totalInfected + totalImmune) == totalPopulation.length) {
+    return;
+  }
+
+  dayDisplay.innerHTML = `Day ${day}`;
+  infectedDisplay.innerHTML = `Infected: ${totalInfected}`;
+  immuneDisplay.innerHTML = `Immune: ${totalImmune}`;
+  day++;
 }
 
 
 // Desc : makes the list of people 
-const totalPopulation = [];
+var totalPopulation = [];
 for (var i = 0; i < simulation.populationSize; i++) {
   totalPopulation.push(new Person(i));
 }
@@ -290,105 +467,6 @@ setPopulationStats();
 town.drawGrid(simulation.gridHeight, simulation.gridWidth);
 
 var day = 1;
-while (day < simulation.simulationLength) {
-  const attackerList = [];
-  for (var i = 0; i < totalPopulation.length; i++) {
-    if (totalPopulation[i].infectStatus == true) {
-      attackerList.push(totalPopulation[i]);
-    }
-  }
-  const defenderList = [];
-  for (var i = 0; i < attackerList.length; i++) {
-    var attackerX = attackerList[i].xCoordinate;
-    var attackerY = attackerList[i].yCoordinate;
-
-    if (town.grid[attackerX - 1][attackerY - 1] != 0 && town.grid[attackerX - 1][attackerY - 1].infectStatus == false) {
-      defenderList.push(town.grid[attackerX - 1][attackerY - 1]);
-      infect(attackerList[i], defenderList[defenderList.length - 1]);
-    }
-    if (town.grid[attackerX - 1][attackerY] != 0 && town.grid[attackerX - 1][attackerY].infectStatus == false) {
-      defenderList.push(town.grid[attackerX - 1][attackerY]);
-      infect(attackerList[i], defenderList[defenderList.length - 1]);
-    }
-    if (town.grid[attackerX - 1][attackerY + 1] != 0 && town.grid[attackerX - 1][attackerY + 1].infectStatus == false) {
-      defenderList.push(town.grid[attackerX - 1][attackerY + 1]);
-      infect(attackerList[i], defenderList[defenderList.length - 1]);
-    }
-    if (town.grid[attackerX][attackerY - 1] != 0 && town.grid[attackerX][attackerY - 1].infectStatus == false) {
-      defenderList.push(town.grid[attackerX][attackerY - 1]);
-      infect(attackerList[i], defenderList[defenderList.length - 1]);
-    }
-    if (town.grid[attackerX][attackerY + 1] != 0 && town.grid[attackerX][attackerY + 1].infectStatus == false) {
-      defenderList.push(town.grid[attackerX][attackerY + 1]);
-      infect(attackerList[i], defenderList[defenderList.length - 1]);
-    }
-    if (town.grid[attackerX + 1][attackerY - 1] != 0 && town.grid[attackerX + 1][attackerY - 1].infectStatus == false) {
-      defenderList.push(town.grid[attackerX + 1][attackerY - 1]);
-      infect(attackerList[i], defenderList[defenderList.length - 1]);
-    }
-    if (town.grid[attackerX + 1][attackerY] != 0 && town.grid[attackerX + 1][attackerY].infectStatus == false) {
-      defenderList.push(town.grid[attackerX + 1][attackerY]);
-      infect(attackerList[i], defenderList[defenderList.length - 1]);
-    }
-    if (town.grid[attackerX + 1][attackerY + 1] != 0 && town.grid[attackerX + 1][attackerY + 1].infectStatus == false) {
-      defenderList.push(town.grid[attackerX + 1][attackerY + 1]);
-      infect(attackerList[i], defenderList[defenderList.length - 1]);
-    }
-  }
-  drawGrid(simulation.gridHeight, simulation.gridWidth);
-}
-// ! while loop end
-
-function transmitDisease(totalPopulation, grid) {
-  const attackerList = [];
-  for (var i = 0; i < totalPopulation.length; i++) {
-    if (totalPopulation[i].infectStatus == true) {
-      attackerList.push(totalPopulation[i]);
-    }
-  }
-  const defenderList = [];
-  for (var i = 0; i < attackerList.length; i++) {
-    var attackerX = attackerList[i].xCoordinate;
-    var attackerY = attackerList[i].yCoordinate;
-
-    if (grid[attackerX - 1][attackerY - 1] != 0 && grid[attackerX - 1][attackerY - 1].infectStatus == false) {
-      defenderList.push(grid[attackerX - 1][attackerY - 1]);
-      infect(attackerList[i], defenderList[defenderList.length - 1]);
-    }
-    if (grid[attackerX - 1][attackerY] != 0 && grid[attackerX - 1][attackerY].infectStatus == false) {
-      defenderList.push(grid[attackerX - 1][attackerY]);
-      infect(attackerList[i], defenderList[defenderList.length - 1]);
-    }
-    if (grid[attackerX - 1][attackerY + 1] != 0 && grid[attackerX - 1][attackerY + 1].infectStatus == false) {
-      defenderList.push(grid[attackerX - 1][attackerY + 1]);
-      infect(attackerList[i], defenderList[defenderList.length - 1]);
-    }
-    if (grid[attackerX][attackerY - 1] != 0 && grid[attackerX][attackerY - 1].infectStatus == false) {
-      defenderList.push(grid[attackerX][attackerY - 1]);
-      infect(attackerList[i], defenderList[defenderList.length - 1]);
-    }
-    if (grid[attackerX][attackerY + 1] != 0 && grid[attackerX][attackerY + 1].infectStatus == false) {
-      defenderList.push(grid[attackerX][attackerY + 1]);
-      infect(attackerList[i], defenderList[defenderList.length - 1]);
-    }
-    if (grid[attackerX + 1][attackerY - 1] != 0 && grid[attackerX + 1][attackerY - 1].infectStatus == false) {
-      defenderList.push(grid[attackerX + 1][attackerY - 1]);
-      infect(attackerList[i], defenderList[defenderList.length - 1]);
-    }
-    if (grid[attackerX + 1][attackerY] != 0 && grid[attackerX + 1][attackerY].infectStatus == false) {
-      defenderList.push(grid[attackerX + 1][attackerY]);
-      infect(attackerList[i], defenderList[defenderList.length - 1]);
-    }
-    if (grid[attackerX + 1][attackerY + 1] != 0 && grid[attackerX + 1][attackerY + 1].infectStatus == false) {
-      defenderList.push(grid[attackerX + 1][attackerY + 1]);
-      infect(attackerList[i], defenderList[defenderList.length - 1]);
-    }
-  }
-}
-
-function infect(attacker, defender) {
-  var infect = Math.floor(Math.random() * attacker.transmission + defender.protection);
-  if (infect <= attacker.transmission) {
-    defender.infectPerson();
-  }
-}
+dayDisplay.innerHTML = `Day ${day}`;
+infectedDisplay.innerHTML = "Infected: 1";
+immuneDisplay.innerHTML = "Immune: 1";
