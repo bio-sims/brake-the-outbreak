@@ -3,7 +3,9 @@
 //   Improvement Goals...
 //   (1) Implement using seedrandom (currently implemented using Math library)
 //       getRNG function using seedrandom is commented
-//   (2) Design/Choose then implement a commenting style
+//   (2) Proceeding through the simulation automatically (then being able to look back at desired days)
+//       Suspecting a method of storing data for each day is required
+//   (3) Design/Choose then implement a commenting style
 
 //Person class
 class Person {
