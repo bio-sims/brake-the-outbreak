@@ -15,7 +15,7 @@ h1 {
 #grid {
   display: flex;
   flex-flow: row wrap;
-  margin-right: 30px;
+  margin-right: 10px;
 }
 
 canvas {
@@ -23,13 +23,30 @@ canvas {
   margin: 0;
 }
 
-#form {
+.box {
   border: 3px solid #000000;
   border-radius: 5px;
   border-style: dotted;
   padding: 10px;
+  margin-bottom: 20px;
 }
 
 label {
   display: block;
+}
+
+button {
+  background-color: #FFFFFF;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  padding: 3px;
+}
+
+.buttonLabel {
+  text-align: center;
+}
+
+#infoDisplay {
+  display: flex;
+  justify-content: space-between;
 }
