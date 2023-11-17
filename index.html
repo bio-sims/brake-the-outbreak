@@ -48,20 +48,33 @@ Improvement Goals...
           <input id="gridSlider" type="range" min="12" max="15" value="15"></input>
         </label>
         <br><br>
-        <label class="buttonLabel" id="submitLabel" for id="submitBtn">
-          <button id="submitBtn" type="submit" onclick="redrawGrid()">Run Simulation</button>
+        <label class="buttonLabel" id="submitLabel" for="submitBtn">
+          <button id="submitBtn" type="submit" onclick="redoGrid()">Run Simulation</button>
         </label>
       </div>
       <div class="box" id="simInfo">
-        <div id="infoDisplay">
+        <div class="evenDisplay" id="statusDisplay">
           <p id="dayInfo"></p>
           <p id="infectedInfo"></p>
           <p id="immuneInfo"></p>
         </div>
-        <label class="buttonLabel" id="nextLabel" for id="nextBtn">
-          <button id="nextBtn" onclick="updateGraph()">Next Day</button>
-        </label>
+        <div class="evenDisplay" id="dayDisplay">
+          <label class="buttonLabel" id="prevLabel" for="prevBtn">
+            <button id="prevBtn" onclick="subtractDay()">Previous Day</button>
+          </label>
+          <label class="buttonLabel" id="nextLabel" for="nextBtn">
+              <button id="nextBtn" onclick="addDay()">Next Day</button>
+          </label>
+        </div>
+        <p id="maxDayInfo" style="text-align: center"></p>
       </div>
     </div>
+    <div id="graph">
+      
+    </div>
   </section>
-  <script src="script.js"></script>
+
+</body>
+</html>
+
+<script src="script.js"></script>
