@@ -1,5 +1,5 @@
 //Epidemiology Simulation Project: Rena Ahn and Anna Muller
-//Merged with Epidemiology.js [last update: 11/6/2023]
+//Merged with Epidemiology.js [last update: 11/20/2023]
 //   Improvement Goals...
 //   (1) Proceeding through the simulation automatically (then being able to look back at desired days)
 //   (2) Design/Choose then implement a commenting style
