@@ -1,5 +1,5 @@
 //Epidemiology Simulation Project: Rena Ahn and Anna Muller
-//Merged with Epidemiology.js [last update: 11/20/2023]
+//Merged with Epidemiology.js [last update: 11/6/2023]
 //   Improvement Goals...
 //   (1) Proceeding through the simulation automatically (then being able to look back at desired days)
 //   (2) Design/Choose then implement a commenting style
@@ -154,6 +154,8 @@ class Grid {
   setPopulation(totalPopulation) {
     var i = 9;
     while (i < totalPopulation.length) {
+      //var randomX = Math.floor(Math.random() * this.gridHeight);
+      //var randomY = Math.floor(Math.random() * this.gridWidth);
       var randomX = getRNG(this.gridHeight);
       var randomY = getRNG(this.gridWidth);
       if (this.grid[randomX][randomY] == 0) {
@@ -186,18 +188,14 @@ const simulation = {
   "vaccLevel": vaccineDictionary.mediumVacc
 }
 
-// Desc : This implements the seeded random value
-const rng = new Math.seedrandom("15x15");
-function getRNG(range) {
-    return Math.floor(rng() * range);
-}
-
 // Desc : returns a list of randomly chosen people
 function getRandomList(totalPopulation, length) {
   const listPeople = [];
   var i = 0;
   while (i < length) {
+    //const person = totalPopulation[Math.floor(Math.random() * totalPopulation.length)];
     const person = totalPopulation[getRNG(totalPopulation.length)];
+
     if (!listPeople.includes(person)) {
       listPeople.push(person);
       i++;
@@ -294,7 +292,9 @@ function checkDefender(x, y) {
 
 // Desc : uses a random number to see if the given attacker infects the given defender
 function infect(attacker, defender) {
+  //var infect = Math.floor(Math.random() * (attacker.transmission + defender.protection));
   var infect = getRNG(attacker.transmission + defender.protection);
+
   if (infect <= attacker.transmission) {
       defender.infectPerson();
   }
@@ -327,8 +327,8 @@ function getMaskLevel(maskRate) {
   }
 }
 
-//Returns the mask level (refer to vaccineDictionary) according to maskRate
-//Pre-condition: maskRate is the number inputed by the user
+// Returns the mask level (refer to vaccineDictionary) according to maskRate
+// Pre-condition: maskRate is the number inputed by the user
 function getVaccLevel(vaccRate) {
   if(vaccRate == 0) {
     return vaccineDictionary.noMask;
@@ -343,8 +343,8 @@ function getVaccLevel(vaccRate) {
   }
 }
 
-//Returns the infectiousness of the disease (refer to diseaseDictionary) according to disease
-//Pre-condition: disease is the name of a disease inputed by the user
+// Returns the infectiousness of the disease (refer to diseaseDictionary) according to disease
+// Pre-condition: disease is the name of a disease inputed by the user
 function getDiseaseLevel(disease) {
   if(disease == "Covid" || disease == "covid") {
     return diseaseDictionary.leastInfectious;
@@ -355,8 +355,8 @@ function getDiseaseLevel(disease) {
   }
 }
 
-//Draws the grid according to dayGrid
-//Pre-condition: dayInfo is the information of the simulation for a certain day
+// Draws the grid according to dayGrid
+// Pre-condition: dayInfo is the information of the simulation for a certain day
 function display(dayInfo) {
   var dayGrid = dayInfo.grid;
   for (var i = 0; i < dayGrid.length; i++) {
@@ -389,8 +389,8 @@ function display(dayInfo) {
   immuneDisplay.innerHTML = `Immune: ${dayInfo.immuneNum}`;
 }
 
-//Deletes the current canvas elements in the grid, updates json (simulation) variables,
-//resets attributes of the people in totalPopulation, and rebuilds a grid according to the new values
+// Deletes the current canvas elements in the grid, updates json (simulation) variables,
+// Resets attributes of the people in totalPopulation, and rebuilds a grid according to the new values
 function redoGrid() {
   var container = document.getElementById("grid");
     //refer to index.html, div element with id="grid"
@@ -441,7 +441,6 @@ function redoGrid() {
     }
   
     simulation.days[day] = {
-      day: day+1,
       grid: JSON.parse(JSON.stringify(town.grid)),
       infectNum: totalInfected,
       immuneNum: totalImmune
@@ -477,18 +476,61 @@ function addDay() {
   display(simulation.days[day-1]);
 }
 
+// Desc : This implements the seeded random value
+const rng = new Math.seedrandom("15x15");
+function getRNG(range) {
+    return Math.floor(rng() * range);
+}
+
 // Desc : makes the list of people 
 var totalPopulation = [];
 for (var i = 0; i < simulation.populationSize; i++) {
   totalPopulation.push(new Person(i));
 }
 
-// Desc : declaring variables needed for the simulation
+// Desc : builds the board before the simulation begins
 const town = new Grid(simulation.gridHeight, simulation.gridWidth);
+town.build();
+town.setPatientZero(totalPopulation, simulation.disease);
+town.setPopulation(totalPopulation);
+setPopulationStats();
 var day = 1;
 var day1Data = {
-  day: day,
   grid: JSON.parse(JSON.stringify(town.grid)),
   infectNum: 1,
   immuneNum: 0
 };
+display(day1Data);
+simulation.days[0] = day1Data;
+
+while (day < simulation.simulationLength) {
+  const attackerList = updateInfected(totalPopulation);
+  transmitDisease(attackerList, town.grid);
+  
+  // calculates the total infected and total immune people, checks to see if the disease can move anywhere the next day
+  var totalInfected = 0;
+  var totalImmune = 0;
+  for (var i = 0; i < totalPopulation.length; i++) {
+      if (totalPopulation[i].infectStatus) {
+          totalInfected++;
+      } else if (totalPopulation[i].immuneStatus) {
+          totalImmune++;
+      }
+  }
+
+  simulation.days[day] = {
+    grid: JSON.parse(JSON.stringify(town.grid)),
+    infectNum: totalInfected,
+    immuneNum: totalImmune
+  };
+
+  day++;
+  if (totalInfected == 0) {
+    break;
+  } else if ((totalInfected + totalImmune) == totalPopulation.length) {
+    break;
+  }
+}
+var maxDay = simulation.days.length;
+maxDayDisplay.innerHTML = `The simulation continues until Day ${maxDay}.`;
+day = 1;
