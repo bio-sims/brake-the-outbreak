@@ -12,8 +12,7 @@ Section "sim" refers to the container where the grid and user input form is loca
 
 Improvement Goals...
 (1) Line graph displaying desired information
-(2) A configuration textbox (json conversion needed)
-    Allows the user to change all initial configurations through the website
+(2) Validation of UI JSON configuration
 (3) A more interactive design (color, layout, ...)
 -->
 
@@ -24,7 +23,7 @@ Improvement Goals...
 </head>
 
 <body>
-  <h1>Disease Simulation</h1>
+  <h1>Disease Simulation v0.2</h1>
 
   <section id="sim">
     <div id="grid">
@@ -48,8 +47,8 @@ Improvement Goals...
           <input id="gridSlider" type="range" min="12" max="15" value="15"></input>
         </label>
         <br><br>
-        <label class="buttonLabel" id="submitLabel" for="submitBtn">
-          <button id="submitBtn" type="submit" onclick="redoGrid()">Run Simulation</button>
+        <label class="buttonLabel" id="runUserLabel" for="runUserBtn">
+          <button id="runUserBtn" type="submit" onclick="runUserSim()">Run Simulation</button>
         </label>
       </div>
       <div class="box" id="simInfo">
@@ -68,9 +67,16 @@ Improvement Goals...
         </div>
         <p id="maxDayInfo" style="text-align: center"></p>
       </div>
-    </div>
-    <div id="graph">
-      
+      <div class="box" id="config">
+        <label id="jsonLabel" for="jsonText">Simulation Configuration
+          <br>
+          <textarea id="jsonText" rows="10" cols="50"></textarea>
+        </label>
+        <br>
+        <label class="buttonLabel" id="runConfigLabel" for="runConfigBtn">
+          <button id="runCongigBtn" type="submit" onclick="runConfigSim()">Run Configurated Simulation</button>
+        </label>
+      </div>
     </div>
   </section>
 
@@ -78,4 +84,4 @@ Improvement Goals...
 </html>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
-<script src="script.js"></script>
+<script src="project.js"></script>
