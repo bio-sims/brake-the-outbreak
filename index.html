@@ -3,6 +3,7 @@
 
 <!--
 Epidemiology Simulation Project: Rena Ahn and Anna Muller
+Updated On: 11/27/23
 
 Section "sim" refers to the container where the grid and user input form is located
   Div "grid" refers to the container where the canvas elements used to draw people (each person represented by a circle) are added
@@ -26,10 +27,15 @@ Improvement Goals...
   <h1>Disease Simulation v0.2</h1>
 
   <section id="sim">
-    <div id="grid">
+    <div id="output">
+      <div id="grid">
 
+      </div>
+      <div id="graph">
+        
+      </div>
     </div>
-    <div id="ui">
+    <div id="input">
       <div class="box" id="form">
         <label id="diseaseLabel" for="diseaseText">Disease Name (Covid, Rubella, Measles)
           <input id="diseaseText" type="text" value="Rubella"></input>
@@ -70,7 +76,7 @@ Improvement Goals...
       <div class="box" id="config">
         <label id="jsonLabel" for="jsonText">Simulation Configuration
           <br>
-          <textarea id="jsonText" rows="10" cols="50"></textarea>
+          <textarea id="jsonText" rows="20" cols="50"></textarea>
         </label>
         <br>
         <label class="buttonLabel" id="runConfigLabel" for="runConfigBtn">
@@ -83,5 +89,6 @@ Improvement Goals...
 </body>
 </html>
 
+<script src="https://d3js.org/d3.v4.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
 <script src="project.js"></script>
