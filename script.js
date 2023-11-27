@@ -53,9 +53,9 @@ class Disease {
   }
 }
 const diseaseDictionary = {
-  "leastInfectious": new Disease(20, 25, 2, 12), // covid inspired
-  "mediumInfectious": new Disease(30, 30, 7, 14), // rubella inspired
-  "mostInfectious": new Disease(40, 35, 4, 8) // measles inspired    
+  "leastInfectious": new Disease(20, 40, 2, 12), // covid inspired
+  "mediumInfectious": new Disease(30, 60, 7, 14), // rubella inspired
+  "mostInfectious": new Disease(40, 80, 4, 8) // measles inspired    
 }
 
 // Desc : Depending on the setting, number of people who wear masks
