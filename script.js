@@ -426,12 +426,16 @@ function simulate() {
             totalImmune++;
         }
     }
+    var difference = totalInfected - simulation.days[day-1].prevalence;
+    if(difference < 0) {
+      difference = 0;
+    }
   
     simulation.days[day] = {
       day: day+1,
       grid: JSON.parse(JSON.stringify(town.grid)),
       prevalence: totalInfected,
-      incidence: totalInfected - simulation.days[day-1].prevalence,
+      incidence: difference,
       resistant: totalImmune,
       r: 0
     };
@@ -444,6 +448,7 @@ function simulate() {
     }
   }
   day = 1;
+  dayReached = day;
   maxDay = simulation.days.length;
   maxDayDisplay.innerHTML = `The simulation continues until Day ${maxDay}.`;
 }
@@ -451,88 +456,79 @@ function simulate() {
 //Desc : creates a line graph according to data
 //Pre  : data is an array of objects
 function graph(data) {
-  data.forEach(function (d) {
-    d.infected = d.prevalence;
-    d.date = d.day;
+  var dataReady = allGroup.map( function(group) {   //Desc : formats data
+    return {
+      name: group,
+      values: data.map(function(d) {
+        return {date: d.day, value: d[group]};
+      })
+    }
   })
-  // append the svg object to the body of the page
-  var svg = d3.select("#graph")
+  //console.log(dataReady);
+  var svg = d3.select("#data")   //Desc : appending svg object to the #data div
     .append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-  // Add X axis
-  var x = d3.scaleLinear()
+  var x = d3.scaleLinear()   //Desc : adding the x axis
     .domain([ 0, maxDay ])
     .range([ 0, width ]);
   svg.append("g")
     .attr("transform", "translate(0," + height + ")")
     .call(d3.axisBottom(x));
-  // Add Y axis
-  var y = d3.scaleLinear()
+  var y = d3.scaleLinear()   //Desc : adding the y axis
     .domain( [ 0, 100 ])
     .range([ height, 0 ]);
   svg.append("g")
     .call(d3.axisLeft(y));
 
-  // Add the line
-  svg.append("path")
-    .datum(data)
-    .attr("fill", "none")
-    .attr("stroke", "#69b3a2")
-    .attr("stroke-width", 1.5)
-    .attr("d", d3.line()
-      .curve(d3.curveBasis)
-      .x(function (d) {
-        return x(d.date);
-      })
-      .y(function (d) {
-        return y(d.infected);
-      })
-  )
-
-  // create a tooltip
-  var Tooltip = d3.select("#my_dataviz")
-    .append("div")
-    .style("opacity", 0)
-    .attr("class", "tooltip")
-    .style("background-color", "white")
-    .style("border", "solid")
-    .style("border-width", "2px")
-    .style("border-radius", "5px")
-    .style("padding", "5px");
-
-  // Three function that change the tooltip when user hover / move / leave a cell
-  var mouseover = function(d) {
-    Tooltip
-      .style("opacity", 1);
-  }
-  var mousemove = function(d) {
-    Tooltip
-      .html("Exact value: " + d.infected)
-      .style("left", (d3.mouse(this)[0]+70) + "px")
-      .style("top", (d3.mouse(this)[1]) + "px");
-  }
-  var mouseleave = function(d) {
-    Tooltip
-      .style("opacity", 0);
-  }
-
-  // Add the points
-  svg
-    .append("g")
-    .selectAll("dot")
-    .data(data)
+  var line = d3.line()   //Desc : adding the lines
+    .x(function(d) { return x(d.date) })
+    .y(function(d) { return y(d.value) })
+    .curve(d3.curveBasis);
+  svg.selectAll("myLines")
+    .data(dataReady)
+    .enter()
+    .append("path")
+      .attr("d", function(d) { return line(d.values) })
+      .attr("stroke", function(d) { return myColor(d.name) })
+      .style("stroke-width", 2)
+      .style("fill", "none");
+  svg   //Desc: adding the points
+    .selectAll("myDots")   //(1) enter in a group
+    .data(dataReady)
+    .enter()
+      .append("g")
+      .style("fill", function(d) { return myColor(d.name) })
+    .selectAll("myPoints")   //(2) Enter in the 'values' part of the group
+    .data(function(d) { return d.values })
     .enter()
     .append("circle")
-    .attr("cx", function(d) { return x(d.date) } )
-    .attr("cy", function(d) { return y(d.infected) } )
-    .attr("r", 5)
-    .attr("fill", "#69b3a2")
-    .on("mouseover", mouseover)
-    .on("mousemove", mousemove)
-    .on("mouseleave", mouseleave);
+      .attr("class", "myCircle")
+      .attr("cx", function(d) { return x(d.date) } )
+      .attr("cy", function(d) { return y(d.value) } )
+      .attr("r", 4)
+      .attr("stroke", "white")
+      .attr("stroke-width", 1)
+      .on("mouseover", mouseover)
+      .on("mousemove", mousemove)
+      .on("mouseleave", mouseleave);
+  svg.selectAll("myLegend")   //Desc : adding an interactive legend
+    .data(dataReady)
+    .enter()
+      .append("g")
+      .append("text")
+        .attr("x", function(d, i) { return 30 + (i * 80) })
+        .attr("y", 30)
+        .text(function(d) { return d.name; })
+        .style("fill", function(d) { return myColor(d.name) })
+        .style("font-size", 15)
+      .on("click", function(d) {
+        var currentOpacity = d3.selectAll("." + d.name).style("opacity");
+          //visibilty of the element
+        d3.selectAll("." + d.name).transition().style("opacity", currentOpacity == 1 ? 0:1);
+      });
 }
 
 //Deletes the current canvas elements in the grid, updates json (simulation) variables according to user input,
@@ -643,7 +639,39 @@ var day1Data = {
   r: 0
 };
 
-// set the dimensions and margins of the graph
-var margin = {top: 60, right: 90, bottom: 30, left: 30},
-width = 560 - margin.left - margin.right,
-height = 400 - margin.top - margin.bottom;
+//Desc : declaring variables needed for the graph
+var margin = {top: 10, right: 90, bottom: 30, left: 30},
+  width = 600 - margin.left - margin.right,
+  height = 350 - margin.top - margin.bottom;
+  //dimensions and margins of the graph
+
+var allGroup = ["prevalence", "incidence", "resistant"];
+var myColor = d3.scaleOrdinal()
+  .domain(allGroup)
+  .range(d3.schemeSet2);
+
+var Tooltip = d3.select("#value")
+  .style("opacity", 0)
+  .attr("class", "tooltip")
+  .style("background-color", "white")
+  .style("border", "solid")
+  .style("border-width", "1px")
+  .style("border-radius", "5px")
+  .style("padding", "5px");
+  //creating a tooltip
+
+//Desc : 3 functions that change Tooltip when the user hovers/moves/leave a cell
+var mouseover = function(d) {
+Tooltip
+  .style("opacity", 1);
+}
+var mousemove = function(d) {
+Tooltip
+  .html("Exact value: " + d.value)
+  .style("left", (d3.mouse(this)[0]+70) + "px")
+  .style("bottom", (d3.mouse(this)[1]) - "px");
+}
+var mouseleave = function(d) {
+Tooltip
+  .style("opacity", 0);
+}
