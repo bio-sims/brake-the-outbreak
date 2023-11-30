@@ -2,10 +2,11 @@
 //Merged with Epidemiology.js [last update: 11/29/2023 22:09]
 //   Improvement Goals...
 //   (1) Automatic progression of the simulation
-//   (2) Implement a commenting style
+//   (2) Favorable hardcoded values (vaccineEfficicacy, maskProtection, ...) for desired simulation data
 
-//Person class
+// Desc : Person class
 class Person {
+  // Desc : constructor
   constructor(num) {
     this.num = num;
     this.transmission = 50;
@@ -19,13 +20,13 @@ class Person {
     this.yCoordinate = 0;
   }
 
-  // Setter method
+  // Desc : setter method updating this.xCoordinate and this.yCoordinate
   setGridPosition(xCoordinate, yCoordinate) {
     this.xCoordinate = xCoordinate;
     this.yCoordinate = yCoordinate;
   }
 
-  // updates stats that have to do with being infected
+  // Desc : updates stats that have to do with being infected
   infectPerson() {
     this.infectStatus = true;
     this.transmission += simulation.disease.transmissionFactor;
@@ -43,8 +44,9 @@ class Person {
   }
 }
 
-//Disease class
+// Desc : Disease class
 class Disease {
+  // Desc : constructor
   constructor(transmissionFactor, vaccineEfficacy, daysToSymptoms, daysToImmune) {
     this.transmissionFactor = transmissionFactor;
     this.vaccineEfficacy = vaccineEfficacy;
@@ -53,9 +55,12 @@ class Disease {
   }
 }
 const diseaseDictionary = {
-  "leastInfectious": new Disease(20, 40, 2, 12), // covid inspired
-  "mediumInfectious": new Disease(30, 30, 7, 14), // rubella inspired
-  "mostInfectious": new Disease(40, 35, 4, 8) // measles inspired    
+  "leastInfectious": new Disease(20, 40, 2, 12),
+    // Desc : covid inspired
+  "mediumInfectious": new Disease(30, 30, 7, 14),
+    // Desc : rubella inspired
+  "mostInfectious": new Disease(40, 35, 4, 8)
+    // Desc : measles inspired    
 }
 
 // Desc : Depending on the setting, number of people who wear masks
@@ -76,7 +81,9 @@ const vaccineDictionary = {
   "extremeVacc": 90
 };
 
+// Desc : Grid class
 class Grid {
+  // Desc : constructor
   constructor(gridHeight, gridWidth) {
     this.grid = [];
     this.gridHeight = gridHeight;
@@ -93,20 +100,20 @@ class Grid {
     }
 
     var container = document.getElementById("grid");
-    //refer to index.html, div element with id="grid"
+      // Reference : index.html, div element with id="grid"
     container.style.height = (this.gridHeight * 32) + 'px';
     container.style.width = (this.gridWidth * 32) + 'px';
 
     for (var x = 0; x < this.gridHeight; x++) for (var y = 0; y < this.gridWidth; y++) {
       var div = document.createElement("canvas");
-      //creates a canvas element which represents a cell of the grid
+        // Desc : created canvas element representing a cell of the grid
       var tempStr = `${x} + ${y}`;
-      //creates the id for the canvas element
+        // Desc : id for the canvas element
       div.id = tempStr;
       div.height = 30;
       div.width = 30;
       container.appendChild(div);
-      //the canvas element (div) is added to the grid (container)
+        // Desc : the canvas element (div) is added to the grid (container)
     }
   }
 
@@ -164,7 +171,7 @@ class Grid {
     }
   }
 
-  //Desc : clears the board and updates gridHeight and gridWidth
+  // Desc : clears the board and updates gridHeight and gridWidth
   reset(height, width) {
     this.grid = [];
     this.gridHeight = height;
@@ -172,6 +179,7 @@ class Grid {
   }
 }
 
+// Desc : JSON of simulation variables
 const simulation = {
   "days": [],
   "simulationLength": 31,
@@ -186,7 +194,7 @@ const simulation = {
   "vaccLevel": vaccineDictionary.mediumVacc
 }
 
-// Desc : This implements the seeded random value
+// Desc : implements the seeded random value
 const rng = new Math.seedrandom("15x15");
 function getRNG(range) {
     return Math.floor(rng() * range);
@@ -281,7 +289,7 @@ function transmitDisease(attackerList, grid) {
   }    
 }
 
-// Desc : Checks to see if the given defender is in the bounds of the 2D array and if they fit the criteria of a defender
+// Desc : checks to see if the given defender is in the bounds of the 2D array and if they fit the criteria of a defender
 function checkDefender(x, y) {
   if ((x >= 0 && x < simulation.gridHeight) && (y >= 0 && y < simulation.gridWidth)) {
       if (town.grid[x][y] != 0 && town.grid[x][y].infectStatus == false  && town.grid[x][y].immuneStatus == false) {
@@ -300,7 +308,7 @@ function infect(attacker, defender) {
   }
 }
 
-//declaring and initializing user input variables
+// Desc : declaring and initializing user input variables
 var diseaseInput = document.getElementById("diseaseText");
 var maskInput = document.getElementById("maskText");
 var vaccInput = document.getElementById("vaccText");
@@ -312,8 +320,8 @@ var maxDayDisplay = document.getElementById("maxDayInfo");
 var jsonInput = document.getElementById("jsonText");
 jsonInput.value = JSON.stringify(simulation, null, " ");
 
-//Returns the mask level (refer to maskDictionary) according to maskRate
-//Pre-condition: maskRate is the number inputed by the user
+// Desc : returns the mask level (refer to maskDictionary) according to maskRate
+// Pre  : maskRate is the number inputed by the user
 function getMaskLevel(maskRate) {
   if(maskRate == 0) {
     return maskDictionary.noMask;
@@ -328,8 +336,8 @@ function getMaskLevel(maskRate) {
   }
 }
 
-//Returns the mask level (refer to vaccineDictionary) according to maskRate
-//Pre-condition: maskRate is the number inputed by the user
+// Desc : returns the mask level (refer to vaccineDictionary) according to maskRate
+// Pre  : maskRate is the number inputed by the user
 function getVaccLevel(vaccRate) {
   if(vaccRate == 0) {
     return vaccineDictionary.noMask;
@@ -344,8 +352,8 @@ function getVaccLevel(vaccRate) {
   }
 }
 
-//Returns the infectiousness of the disease (refer to diseaseDictionary) according to disease
-//Pre-condition: disease is the name of a disease inputed by the user
+// Desc : returns the infectiousness of the disease (refer to diseaseDictionary) according to disease
+// Pre  : disease is the name of a disease inputed by the user
 function getDiseaseLevel(disease) {
   if(disease == "Covid") {
     return diseaseDictionary.leastInfectious;
@@ -356,20 +364,22 @@ function getDiseaseLevel(disease) {
   }
 }
 
-//Draws the grid according to dayGrid
-//Pre-condition: dayInfo is the information of the simulation for a certain day
+// Desc : draws the grid according to dayGrid
+// Pre  : dayInfo is the information of the simulation for a certain day
 function display(dayInfo) {
   var dayGrid = dayInfo.grid;
   for (var i = 0; i < dayGrid.length; i++) {
     for (var j = 0; j < dayGrid[i].length; j++) {
+      // Desc : accessing canvas element
       var tempStr = `${i} + ${j}`;
       var canvas = document.getElementById(tempStr);
       var context = canvas.getContext("2d");
-      if (dayGrid[i][j] === 0) {
+      if (dayGrid[i][j] === 0) {   // Desc : clearing canvas element
         context.clearRect(0, 0, context.height, context.width)
         continue;
       }
 
+      // Desc : determining color of circle
       if (dayGrid[i][j].immuneStatus) {
         context.fillStyle = "green";
       } else if (dayGrid[i][j].infectStatus && dayGrid[i][j].timeInfect >= simulation.disease.daysToSymptoms) {
@@ -379,6 +389,7 @@ function display(dayInfo) {
       } else {
         context.fillStyle = "blue";
       }
+      // Desc : drawing circle
       context.beginPath();
       context.arc(15, 15, 12, 0, 2 * Math.PI);
       context.fill();
@@ -390,18 +401,18 @@ function display(dayInfo) {
   immuneDisplay.innerHTML = `Immune: ${dayInfo.resistant}`;
 }
 
-//Deletes the current cavas elements in the grid
+// Desc : deletes the current cavas elements in the grid
 function emptyGrid() {
   var container = document.getElementById("grid");
-    //refer to index.html, div element with id="grid"
-  //empties out the grid of canvas element cells
-  while (container.hasChildNodes()) {
+    //Reference : index.html, div element with id="grid"
+  while (container.hasChildNodes()) {   // Desc : while loop that empties out the grid of canvas element cells
     container.removeChild(container.firstChild);
   }
 }
 
-//Runs the simulation
+// Desc : runs the simulation
 function simulate() {
+  // Desc : resetting town (instance of grid) and other simulation variables
   town.reset(simulation.gridHeight, simulation.gridWidth);
   town.build();
   town.setPatientZero(totalPopulation, simulation.disease);
@@ -412,11 +423,12 @@ function simulate() {
   display(day1Data);
   simulation.days[0] = day1Data;
 
+  // Desc : while loop to update and store simulation data
   while (day < simulation.simulationLength) {
     const attackerList = updateInfected(totalPopulation);
     transmitDisease(attackerList, town.grid);
     
-    // calculates the total infected and total immune people, checks to see if the disease can move anywhere the next day
+    // Desc : calculates simulation data (total infected, total immune
     var totalInfected = 0;
     var totalImmune = 0;
     for (var i = 0; i < totalPopulation.length; i++) {
@@ -430,7 +442,8 @@ function simulate() {
     if(difference < 0) {
       difference = 0;
     }
-  
+    
+    // Desc : stores simulation data
     simulation.days[day] = {
       day: day+1,
       grid: JSON.parse(JSON.stringify(town.grid)),
@@ -439,14 +452,17 @@ function simulate() {
       resistant: totalImmune,
       r: 0
     };
-  
     day++;
+
+    // Desc : while loop break condition
     if (totalInfected == 0) {
       break;
     } else if ((totalInfected + totalImmune) == totalPopulation.length) {
       break;
     }
   }
+
+  // Desc : updating variables to prepare for user interaction
   day = 1;
   dayReached = day;
   maxDay = simulation.days.length;
@@ -528,16 +544,17 @@ function graph(data) {
         .style("font-size", 15)
       .on("click", function(d) {
         var currentOpacity = d3.selectAll("." + d.name).style("opacity");
-          //visibilty of the element
+          // Desc : visibilty of the element
         d3.selectAll("." + d.name).transition().style("opacity", currentOpacity == 1 ? 0:1);
       });
 }
 
-//Deletes the current canvas elements in the grid, updates json (simulation) variables according to user input,
-//resets attributes of the people in totalPopulation, and rebuilds a grid according to the new values
+// Desc : deletes the current canvas elements in the grid, updates json (simulation) variables according to user input,
+//        resets attributes of the people in totalPopulation, and rebuilds a grid according to the new values
 function runUserSim() {
   emptyGrid();
 
+  // Desc : reflecting form input (index.html, div element with id="form") into simulation JSON and resetting unlisted variables
   simulation.days = [];
   simulation.simulationLength = 31;
   simulation.gridHeight = gridInput.value;
@@ -550,6 +567,7 @@ function runUserSim() {
   simulation.vaccLevel = getVaccLevel(vaccInput.value);
   jsonInput.value = JSON.stringify(simulation, null, " ");
 
+  // Desc : resetting attribute values of people in totalPopulation
   for (var i = 0; i < simulation.populationSize; i++) {
     totalPopulation[i].transmission = 50;
     totalPopulation[i].protection = 50;
@@ -559,17 +577,18 @@ function runUserSim() {
     totalPopulation[i].timeInfect = 0;
     totalPopulation[i].immuneStatus = false;
   }
-  simulate();
 
-  d3.select("svg").remove(); //clearing previous graph
+  simulate();
+  d3.select("svg").remove(); // Desc : clearing previous graph
   graph(simulation.days.slice(0, day));
 }
 
-//Deletes the current canvas elements in the grid, updates json (simulation) variables according to the json
-//configuration, resets attributes of the people in totalPopulation, and rebuilds a grid according to the new values
+// Desc : deletes the current canvas elements in the grid, updates json (simulation) variables according to the json
+//        configuration, resets attributes of the people in totalPopulation, and rebuilds a grid according to the new values
 function runConfigSim() {
   emptyGrid();
 
+  // Desc : reflecting configuration values onto simulation JSON
   simulation.days = [];
   var tempSim = JSON.parse(jsonInput.value);
   simulation.simulationLength = tempSim.simulationLength;
@@ -583,6 +602,7 @@ function runConfigSim() {
   simulation.vaccLevel = tempSim.vaccLevel;
   jsonInput.value = JSON.stringify(simulation, null, " ");
 
+  // Desc : resetting attribute values of people in totalPopulation
   for (var i = 0; i < simulation.populationSize; i++) {
     totalPopulation[i].transmission = 50;
     totalPopulation[i].protection = 50;
@@ -592,43 +612,44 @@ function runConfigSim() {
     totalPopulation[i].timeInfect = 0;
     totalPopulation[i].immuneStatus = false;
   }
+  
   simulate();
-
-  d3.select("svg").remove(); //clearing previous graph
+  d3.select("svg").remove(); // Desc : clearing previous graph
   graph(simulation.days.slice(0, day));
 }
 
-//Decrements day and draws the grid of the corresponding day
+// Desc : decrements day and draws the grid of the corresponding day
 function subtractDay() {
-  if(day <= 1) {
+  if(day <= 1) {   // Desc : validating day
     return;
   }
   day--;
   display(simulation.days[day-1]);
 }
 
-//Increments day and draws the grid of the corresponding day
+// Desc : increments day and draws the grid of the corresponding day
 function addDay() {
-  if(day >= maxDay) {
+  if(day >= maxDay) {   // Desc : validating day
     return;
   }
   day++;
   display(simulation.days[day-1]);
 
-  d3.select("svg").remove(); //clearing previous graph
-  if(dayReached < day) {
+  d3.select("svg").remove();   // Desc : clearing previous graph
+  
+  if(dayReached < day) {   // Desc : updating dayReached
     dayReached = day;
   }
   graph(simulation.days.slice(0, dayReached));
 }
 
-// Desc : makes the list of people 
+// Desc : declares and initializes the list of people 
 var totalPopulation = [];
 for (var i = 0; i < simulation.populationSize; i++) {
   totalPopulation.push(new Person(i));
 }
 
-// Desc : declaring variables needed for the simulation
+// Desc : declaring and initializing variables needed for the simulation
 const town = new Grid(simulation.gridHeight, simulation.gridWidth);
 var day = 1;
 var dayReached = day;
@@ -642,17 +663,16 @@ var day1Data = {
 };
 
 //Desc : declaring variables needed for the graph
-var margin = {top: 10, right: 90, bottom: 30, left: 30},
+var margin = {top: 10, right: 90, bottom: 30, left: 30},   // Desc : style (height, width, margin) variables
   width = 600 - margin.left - margin.right,
   height = 350 - margin.top - margin.bottom;
-  //dimensions and margins of the graph
 
-var allGroup = ["prevalence", "incidence", "resistant"];
+var allGroup = ["prevalence", "incidence", "resistant"];   // Desc : multilinear names and colors
 var myColor = d3.scaleOrdinal()
   .domain(allGroup)
   .range(d3.schemeSet2);
 
-var Tooltip = d3.select("#value")
+var Tooltip = d3.select("#value")   // Desc : creating a tooltip
   .style("opacity", 0)
   .attr("class", "tooltip")
   .style("background-color", "white")
@@ -660,20 +680,19 @@ var Tooltip = d3.select("#value")
   .style("border-width", "1px")
   .style("border-radius", "5px")
   .style("padding", "5px");
-  //creating a tooltip
 
-//Desc : 3 functions that change Tooltip when the user hovers/moves/leave a cell
-var mouseover = function(d) {
+//Desc : 3 functions that change Tooltip
+var mouseover = function(d) {   // Desc : when the user hovers over a cell
 Tooltip
   .style("opacity", 1);
 }
-var mousemove = function(d) {
+var mousemove = function(d) {   // Desc : when the user moves over a cell
 Tooltip
   .html("Exact value: " + d.value)
   .style("left", (d3.mouse(this)[0]+70) + "px")
   .style("bottom", (d3.mouse(this)[1]) - "px");
 }
-var mouseleave = function(d) {
+var mouseleave = function(d) {   // Desc : when the user leaves a cell
 Tooltip
   .style("opacity", 0);
 }
