@@ -491,6 +491,7 @@ function graph(data) {
     .data(dataReady)
     .enter()
     .append("path")
+      .attr("class", function(d){ return d.name })
       .attr("d", function(d) { return line(d.values) })
       .attr("stroke", function(d) { return myColor(d.name) })
       .style("stroke-width", 2)
@@ -501,6 +502,7 @@ function graph(data) {
     .enter()
       .append("g")
       .style("fill", function(d) { return myColor(d.name) })
+      .attr("class", function(d){ return d.name })
     .selectAll("myPoints")   //(2) Enter in the 'values' part of the group
     .data(function(d) { return d.values })
     .enter()
