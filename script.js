@@ -340,15 +340,15 @@ function getMaskLevel(maskRate) {
 // Pre  : maskRate is the number inputed by the user
 function getVaccLevel(vaccRate) {
   if(vaccRate == 0) {
-    return vaccineDictionary.noMask;
+    return vaccineDictionary.noVacc;
   } else if(vaccRate <= 25) {
-    return vaccineDictionary.lowMask;
+    return vaccineDictionary.lowVacc;
   } else if(vaccRate <= 50) {
-    return vaccineDictionary.mediumMask;
+    return vaccineDictionary.mediumVacc;
   } else if(vaccRate <= 75) {
-    return vaccineDictionary.highMask;
+    return vaccineDictionary.highVacc;
   } else {
-    return vaccineDictionary.extremeMask;
+    return vaccineDictionary.extremeVacc;
   }
 }
 
@@ -564,7 +564,7 @@ function runUserSim() {
   simulation.disease = getDiseaseLevel(diseaseInput.value);
   simulation.maskLevel = getMaskLevel(maskInput.value);
   simulation.maskProtection = 20;
-  simulation.vaccLevel = getVaccLevel(vaccInput.value);
+  simulation.vaccLevel = vaccInput.value;
   jsonInput.value = JSON.stringify(simulation, null, " ");
 
   // Desc : resetting attribute values of people in totalPopulation
@@ -663,7 +663,7 @@ var day1Data = {
 };
 
 //Desc : declaring variables needed for the graph
-var margin = {top: 10, right: 90, bottom: 30, left: 30},   // Desc : style (height, width, margin) variables
+var margin = {top: 10, right: 30, bottom: 30, left: 30},   // Desc : style (height, width, margin) variables
   width = 600 - margin.left - margin.right,
   height = 350 - margin.top - margin.bottom;
 
@@ -690,7 +690,7 @@ var mousemove = function(d) {   // Desc : when the user moves over a cell
 Tooltip
   .html("Exact value: " + d.value)
   .style("left", (d3.mouse(this)[0]+70) + "px")
-  .style("bottom", (d3.mouse(this)[1]) - "px");
+  .style("bottom", (d3.mouse(this)[1]) + "px");
 }
 var mouseleave = function(d) {   // Desc : when the user leaves a cell
 Tooltip
