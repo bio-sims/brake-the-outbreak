@@ -80,6 +80,16 @@ Improvement Goals...
               <button id="nextBtn" onclick="addDay()">Next Day</button>
           </label>
         </div>
+        <div id="colorLegend">
+          <div class="square blue" id="healthyKey"></div>
+          <p style="color: blue; margin-right: 10px">Healthy</p>
+          <div class="square orange" id="asymptomaticKey"></div>
+          <p style="color: orange; margin-right: 10px">Infected, asymptomatic</p>
+          <div class="square red" id="symptomaticKey"></div>
+          <p style="color: red; margin-right: 10px">Infected, symptomatic</p>
+          <div class="square green" id="immuneKey"></div>
+          <p style="color: green; margin-right: 10px">Immune</p>
+        </div>
         <p id="maxDayInfo" style="text-align: center"></p>
       </div>
       <div class="box" id="config">
@@ -94,7 +104,6 @@ Improvement Goals...
       </div>
     </div>
   </section>
-
 </body>
 </html>
 
