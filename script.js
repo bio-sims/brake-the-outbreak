@@ -467,6 +467,12 @@ function simulate() {
   dayReached = day;
   maxDay = simulation.days.length;
   maxDayDisplay.innerHTML = `The simulation continues until Day ${maxDay}.`;
+
+  // Desc : automatic progression
+  var autoRun = window.setInterval(addDay, 250);
+  if(day >= maxDay) {
+    clearInterval(autoRun);
+  }
 }
 
 //Desc : creates a line graph according to data
@@ -670,7 +676,7 @@ var margin = {top: 10, right: 30, bottom: 30, left: 30},   // Desc : style (heig
 var allGroup = ["prevalence", "incidence", "resistant"];   // Desc : multilinear names and colors
 var myColor = d3.scaleOrdinal()
   .domain(allGroup)
-  .range(d3.schemeSet2);
+  .range(["orange", "red", "green"]);
 
 var Tooltip = d3.select("#value")   // Desc : creating a tooltip
   .style("opacity", 0)
