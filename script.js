@@ -1,8 +1,8 @@
 //Epidemiology Simulation Project: Rena Ahn and Anna Muller
-//Merged with Epidemiology.js [last update: 2/1/2024]
+//Merged with Epidemiology.js [last update: 2/13/2024]
 //   Improvement Goals...
-//   (1) Automatic progression of the simulation
-//   (2) Favorable hardcoded values (vaccineEfficicacy, maskProtection, ...) for desired simulation data
+//   (1) Favorable hardcoded values (vaccineEfficicacy, maskProtection, ...) for desired simulation data
+//   (2) R0, Incidence, and Prevalence Graphing
 
 // Desc : Person class
 class Person {
@@ -543,7 +543,7 @@ function graph(data) {
     .enter()
       .append("g")
       .append("text")
-        .attr("x", function(d, i) { return 30 + (i * 80) })
+        .attr("x", function(d, i) { return 30 + (i * 100) })
         .attr("y", 30)
         .text(function(d) { return d.name; })
         .style("fill", function(d) { return myColor(d.name) })
