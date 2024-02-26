@@ -1,5 +1,5 @@
 //Epidemiology Simulation Project: Rena Ahn and Anna Muller
-//Merged with Epidemiology.js [last update: 2/13/2024]
+//Merged with Epidemiology.js [last update: 2/26/2024]
 //   Improvement Goals...
 //   (1) Favorable hardcoded values (vaccineEfficicacy, maskProtection, ...) for desired simulation data
 //   (2) R0, Incidence, and Prevalence Graphing
@@ -635,18 +635,41 @@ function subtractDay() {
 
 // Desc : increments day and draws the grid of the corresponding day
 function addDay() {
-  if(day >= maxDay) {   // Desc : validating day
+  if(day == (maxDay-1)) {   // Desc : validating day
+    playSim();
+  } else if (day >= maxDay) {
     return;
   }
   day++;
   display(simulation.days[day-1]);
 
-  d3.select("svg").remove();   // Desc : clearing previous graph
-  
   if(dayReached < day) {   // Desc : updating dayReached
     dayReached = day;
   }
-  graph(simulation.days.slice(0, dayReached));
+  if(dayReached < simulation.days.length) {
+    d3.select("svg").remove();   // Desc : clearing previous graph
+    graph(simulation.days.slice(0, dayReached));
+  }
+}
+
+// Desc : adds a play/pause feature to the simulation
+function playSim() {
+  if(!run) {
+    runUserSim();
+    run = true;
+  }
+  if(play) {
+    play = false;
+    clearInterval(autoRun); // stops automatic progression
+    simButton.innerHTML = `Play Simulation`;
+  } else {
+    play = true;
+    if(day >= simulation.days.length) {
+      day = 0;
+    }
+    autoRun = window.setInterval(addDay, 250); // starts automatic progression
+    simButton.innerHTML = `Pause Simulation`;
+  }
 }
 
 // Desc : declares and initializes the list of people 
@@ -667,6 +690,9 @@ var day1Data = {
   resistant: 0,
   r: 0
 };
+var run = false;
+var play = false;
+var autoRun;   // Desc : automatic progression method holder
 
 //Desc : declaring variables needed for the graph
 var margin = {top: 10, right: 30, bottom: 30, left: 30},   // Desc : style (height, width, margin) variables
