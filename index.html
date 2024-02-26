@@ -41,7 +41,38 @@ Improvement Goals...
       </div>
     </div>
     <div id="input">
-      <div class="box" id="form">
+      <div class="box" id="simInfo">
+        <div class="evenDisplay" id="statusDisplay">
+          <p id="dayInfo"></p>
+          <p id="infectedInfo"></p>
+          <p id="immuneInfo"></p>
+        </div>
+        <div class="evenDisplay" id="dayDisplay">
+          <label class="buttonLabel" id="prevLabel" for="prevBtn">
+            <button id="prevBtn" onclick="subtractDay()">Previous Day</button>
+          </label>
+          <label class="buttonLabel" id="runUserLabel" for="runUserBtn">
+            <button id="runUserBtn" type="submit" onclick="playSim()">Play Simulation</button>
+          </label>
+          <label class="buttonLabel" id="nextLabel" for="nextBtn">
+              <button id="nextBtn" onclick="addDay()">Next Day</button>
+          </label>
+        </div>
+        <div id="colorLegend">
+          <div class="square blue" id="healthyKey"></div>
+          <p style="color: blue; margin-right: 10px">Healthy</p>
+          <div class="square orange" id="asymptomaticKey"></div>
+          <p style="color: orange; margin-right: 10px">Infected, asymptomatic</p>
+          <div class="square red" id="symptomaticKey"></div>
+          <p style="color: red; margin-right: 10px">Infected, symptomatic</p>
+          <div class="square green" id="immuneKey"></div>
+          <p style="color: green; margin-right: 10px">Immune</p>
+        </div>
+        <p id="maxDayInfo" style="text-align: center"></p>
+      </div>
+      <div class="box" id="form" style="text-align: center">
+        <label>Options</label>
+        <br>
         <label id="diseaseLabel" for="diseaseText">Disease
           <select id="diseaseText">
             <option value="Covid">Covid</option>
@@ -61,39 +92,9 @@ Improvement Goals...
         <label id="gridLabel" for="gridSlider">Social Distancing
           <input id="gridSlider" type="range" min="12" max="15" value="15"></input>
         </label>
-        <br><br>
-        <label class="buttonLabel" id="runUserLabel" for="runUserBtn">
-          <button id="runUserBtn" type="submit" onclick="runUserSim()">Run Simulation</button>
-        </label>
-      </div>
-      <div class="box" id="simInfo">
-        <div class="evenDisplay" id="statusDisplay">
-          <p id="dayInfo"></p>
-          <p id="infectedInfo"></p>
-          <p id="immuneInfo"></p>
-        </div>
-        <div class="evenDisplay" id="dayDisplay">
-          <label class="buttonLabel" id="prevLabel" for="prevBtn">
-            <button id="prevBtn" onclick="subtractDay()">Previous Day</button>
-          </label>
-          <label class="buttonLabel" id="nextLabel" for="nextBtn">
-              <button id="nextBtn" onclick="addDay()">Next Day</button>
-          </label>
-        </div>
-        <div id="colorLegend">
-          <div class="square blue" id="healthyKey"></div>
-          <p style="color: blue; margin-right: 10px">Healthy</p>
-          <div class="square orange" id="asymptomaticKey"></div>
-          <p style="color: orange; margin-right: 10px">Infected, asymptomatic</p>
-          <div class="square red" id="symptomaticKey"></div>
-          <p style="color: red; margin-right: 10px">Infected, symptomatic</p>
-          <div class="square green" id="immuneKey"></div>
-          <p style="color: green; margin-right: 10px">Immune</p>
-        </div>
-        <p id="maxDayInfo" style="text-align: center"></p>
       </div>
       <div class="box" id="config">
-        <label id="jsonLabel" for="jsonText">Simulation Configuration
+        <label id="jsonLabel" for="jsonText" style="text-align: center">Advanced Options
           <br>
           <textarea id="jsonText" rows="20" cols="50"></textarea>
         </label>
