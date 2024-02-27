@@ -655,14 +655,14 @@ function playSim() {
   if(play) {
     play = false;
     clearInterval(autoRun); // stops automatic progression
-    simButton.innerHTML = `Play Simulation`;
+    simButton.innerHTML = `Start Outbreak`;
   } else {
     play = true;
     if(day >= simulation.days.length) {
       day = 0;
     }
     autoRun = window.setInterval(addDay, 250); // starts automatic progression
-    simButton.innerHTML = `Pause Simulation`;
+    simButton.innerHTML = `Pause Outbreak`;
   }
 }
 
