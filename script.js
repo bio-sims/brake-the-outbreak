@@ -467,12 +467,6 @@ function simulate() {
   dayReached = day;
   maxDay = simulation.days.length;
   maxDayDisplay.innerHTML = `The simulation continues until Day ${maxDay}.`;
-
-  // Desc : automatic progression
-  var autoRun = window.setInterval(addDay, 250);
-  if(day >= maxDay) {
-    clearInterval(autoRun);
-  }
 }
 
 //Desc : creates a line graph according to data
@@ -524,7 +518,7 @@ function graph(data) {
     .enter()
       .append("g")
       .style("fill", function(d) { return myColor(d.name) })
-      .attr("class", function(d){ return d.name })
+      .attr("class", function(d) { return d.name })
     .selectAll("myPoints")   //(2) Enter in the 'values' part of the group
     .data(function(d) { return d.values })
     .enter()
