@@ -629,9 +629,9 @@ function subtractDay() {
 
 // Desc : increments day and draws the grid of the corresponding day
 function addDay() {
-  if(day >= maxDay) {   // Desc : validating day
+  if(day == (maxDay-1)) {   // Desc : validating day
     playSim();
-  } else if (dayReached >= maxDay) {
+  } else if (day >= maxDay) {
     return;
   }
   day++;
