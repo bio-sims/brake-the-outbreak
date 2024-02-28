@@ -445,10 +445,10 @@ function simulate() {
   while (day < simulation.simulationLength) {
     const attackerList = updateInfected(totalPopulation);
     var r = transmitDisease(attackerList, town.grid);
-    if (r < 0 || isNaN(r)) {
+    if(r < 0 || isNaN(r)) {
       r = 0;
     }
-    
+
     // Desc : calculates simulation data (total infected, total immune
     var totalInfected = 0;
     var totalImmune = 0;
@@ -472,7 +472,7 @@ function simulate() {
       prevalence: totalInfected,
       incidence: difference,
       resistant: totalImmune,
-      r: 0
+      r: r
     };
     day++;
 
@@ -701,6 +701,8 @@ function reRun() {
   if (runButton.style.display == "block") {
     runButton.style.display = "none";
     run = false;
+    clearInterval(autoRun);
+    play = false;
     playSim();
   }
 }
