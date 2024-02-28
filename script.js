@@ -435,7 +435,7 @@ function emptyGrid() {
 
 // Desc : runs the simulation
 function simulate() {
-  rng = new Math.seedrandom(simulation.seed);
+  rng = new Math.seedrandom("15x15");
 
   // Desc : resetting town (instance of grid) and other simulation data variables
   town.reset(simulation.gridHeight, simulation.gridWidth);
