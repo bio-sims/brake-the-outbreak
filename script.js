@@ -1,4 +1,8 @@
-// Temporary File to address issue with Original script.js (now script1.js) file
+//Epidemiology Simulation Project: Rena Ahn and Anna Muller
+//Merged with Epidemiology.js [last update: 2/28/2024]
+//   Improvement Goals...
+//   (1) Favorable hardcoded values (vaccineEfficicacy, maskProtection, ...) for desired simulation data
+//   (2) R0, Incidence, and Prevalence Graphing
 
 // Desc : Person class
 class Person {
