@@ -1,4 +1,4 @@
-// temporary file
+// Temporary File to address issue with Original script.js (now script1.js) file
 
 // Desc : Person class
 class Person {
