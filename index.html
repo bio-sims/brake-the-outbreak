@@ -2,7 +2,7 @@
 <html>
 
 <!--
-Epidemiology Simulation Project: Rena Ahn and Anna Muller [last update: 12/26/23]
+Epidemiology Simulation Project: Rena Ahn and Anna Muller [last update: 12/28/23]
 
 Section "sim" refers to the container where the grid and user input form are located
   Div "output" refers to the container where the grid and graph are displayed
@@ -15,9 +15,8 @@ Section "sim" refers to the container where the grid and user input form are loc
     Div "config" refers to the container where the json with the simulation variables can be configurated
 
 Improvement Goals...
-(1) Legend/Key explaining the color of the circles in the grid
-(2) Validation of UI JSON configuration
-(3) A more interactive design (color, layout, ...)
+(1) Validation of UI JSON configuration
+(2) A more interactive design (color, layout, ...)
 -->
 
 <head>
@@ -49,50 +48,68 @@ Improvement Goals...
         </div>
         <div class="evenDisplay" id="dayDisplay">
           <label class="buttonLabel" id="prevLabel" for="prevBtn">
-            <button id="prevBtn" onclick="subtractDay()">Previous Day</button>
+            <button id="prevBtn" style="width: 90px" onclick="subtractDay()">Previous Day</button>
           </label>
           <label class="buttonLabel" id="runUserLabel" for="runUserBtn">
-            <button id="runUserBtn" type="submit" onclick="playSim()">Start Outbreak</button>
+            <button id="runUserBtn" type="submit" style="font-size: medium" onclick="playSim()">Start Outbreak</button>
           </label>
           <label class="buttonLabel" id="nextLabel" for="nextBtn">
-              <button id="nextBtn" onclick="addDay()">Next Day</button>
+              <button id="nextBtn" style="width: 90px" onclick="addDay()">Next Day</button>
           </label>
         </div>
-        <div id="colorLegend">
-          <div class="square blue" id="healthyKey"></div>
-          <p style="color: blue; margin-right: 10px">Healthy</p>
-          <div class="square orange" id="asymptomaticKey"></div>
-          <p style="color: orange; margin-right: 10px">Infected, asymptomatic</p>
-          <div class="square red" id="symptomaticKey"></div>
-          <p style="color: red; margin-right: 10px">Infected, symptomatic</p>
-          <div class="square green" id="immuneKey"></div>
-          <p style="color: green; margin-right: 10px">Immune</p>
+        <div class="evenDisplay" id="colorLegend">
+          <div class="evenDisplay" style="margin-bottom: 0px">
+            <div class="square blue" id="healthyKey"></div>
+            <p style="color: blue; margin-right: 10px; margin-bottom: 0px">Uninfected</p>
+          </div>
+          <div class="evenDisplay" style="margin-bottom: 0px">
+            <div class="square red" id="asymptomaticKey"></div>
+            <p style="color: red; margin-right: 10px; margin-bottom: 0px">New/Asymptomatic Infected</p>
+          </div>
+          <div class="evenDisplay" style="margin-bottom: 0px">
+            <div class="square yellow" id="symptomaticKey"></div>
+            <p style="color: #f0f000; margin-right: 10px; margin-bottom: 0px">Symptomatic Infected</p>
+          </div>
+          <div class="evenDisplay" style="margin-bottom: 0px">
+            <div class="square green" id="immuneKey"></div>
+            <p style="color: green; margin-right: 10px; margin-bottom: 0px">Immune Post Infection</p>
+          </div>
         </div>
         <p id="maxDayInfo" style="text-align: center"></p>
+        <label class="buttonLabel" id="rerunLabel" for="rerunBtn">
+          <button id="rerunBtn" onclick="reRun()">Restart Outbreak</button>
+        </label>
       </div>
       <div class="box" id="form" style="text-align: center">
         <label>Options</label>
         <br>
         <label id="diseaseLabel" for="diseaseText">Disease
           <select id="diseaseText">
-            <option value="Covid">Covid</option>
-            <option value="Rubella">Rubella</option>
             <option value="Measles">Measles</option>
+            <option value="Rubella">Rubella</option>
+            <option value="Covid">Covid</option>
           </select>
         </label>
         <br><br>
         <label id="maskLabel" for="maskText">Mask Rate (0-100)
-          <input id="maskText" type="text" value="60"></input>
+          <input id="maskText" type="text" value="0"></input>
         </label>
         <br><br>
         <label id="vaccLabel" for="vaccText">Vaccine Rate (0-100)
-          <input id="vaccText" type="text" value="60"></input>
+          <input id="vaccText" type="text" value="0"></input>
         </label>
         <br><br>
-        <label id="gridLabel" for="gridSlider">Social Distancing
-          <input id="gridSlider" type="range" min="12" max="15" value="15"></input>
+        <label id="gridLabel" for="gridText">Social Distancing
+          <select id="gridText">
+            <option value="13">Low</option>
+            <option value="14">Medium</option>
+            <option value="15">High</option>
+          </select>
         </label>
       </div>
+      <label class="buttonLabel" id="toggleLabel" for="toggle" style="margin-bottom: 10px">
+        <button id="toggle" onclick="showOptions()">Show Advanced Options</button>
+      </label>
       <div class="box" id="config">
         <label id="jsonLabel" for="jsonText" style="text-align: center">Advanced Options
           <br>
@@ -100,7 +117,7 @@ Improvement Goals...
         </label>
         <br>
         <label class="buttonLabel" id="runConfigLabel" for="runConfigBtn">
-          <button id="runCongigBtn" type="submit" onclick="runConfigSim()">Run Configurated Simulation</button>
+          <button id="runCongigBtn" type="submit" onclick="runConfigSim()">Reconfigure and Run</button>
         </label>
       </div>
     </div>
