@@ -1,8 +1,8 @@
-//Epidemiology Simulation Project: Rena Ahn and Anna Muller
-//Merged with Epidemiology.js [last update: 2/28/2024]
-//   Improvement Goals...
-//   (1) Favorable hardcoded values (vaccineEfficicacy, maskProtection, ...) for desired simulation data
-//   (2) R0, Incidence, and Prevalence Graphing
+// Original script.js file
+// Caused an error when desiring to run 'Start Outbreak' for an unknown reason
+// Merged changes to calculate R (Anna's work) and my changes (Rena's work) to create a new script.js file
+//    Checked by outputting R on local computer
+// Kept in case I have inaccurately reflected changes
 
 // Desc : Person class
 class Person {
