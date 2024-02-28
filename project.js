@@ -1,5 +1,4 @@
-// Original script.js was not running, leading to the use of this temporary file until
-// the issue is discovered and solved
+// temporary file
 
 // Desc : Person class
 class Person {
