@@ -195,7 +195,6 @@ const simulation = {
 }
 
 // Desc : implements the seeded random value
-const rng = new Math.seedrandom("15x15");
 function getRNG(range) {
     return Math.floor(rng() * range);
 }
@@ -412,6 +411,8 @@ function emptyGrid() {
 
 // Desc : runs the simulation
 function simulate() {
+  const rng = new Math.seedrandom("15x15");
+
   // Desc : resetting town (instance of grid) and other simulation variables
   town.reset(simulation.gridHeight, simulation.gridWidth);
   town.build();
