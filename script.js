@@ -340,7 +340,7 @@ var simButton = document.getElementById("runUserBtn");
 var runButton = document.getElementById("rerunLabel");
 runButton.style.display = "none";
 var toggle = document.getElementById("toggle");
-var configBox = document.getElementById("config");
+var config = document.getElementById("config");
 config.style.display = "none";
 
 // Desc : returns the mask level (refer to maskDictionary) according to maskRate
