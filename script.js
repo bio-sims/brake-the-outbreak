@@ -336,6 +336,12 @@ var immuneDisplay = document.getElementById("immuneInfo");
 var maxDayDisplay = document.getElementById("maxDayInfo");
 var jsonInput = document.getElementById("jsonText");
 jsonInput.value = JSON.stringify(simulation, null, " ");
+var simButton = document.getElementById("runUserBtn");
+var runButton = document.getElementById("rerunLabel");
+runButton.style.display = "none";
+var toggle = document.getElementById("toggle");
+var configBox = document.getElementById("config");
+config.style.display = "none";
 
 // Desc : returns the mask level (refer to maskDictionary) according to maskRate
 // Pre  : maskRate is the number inputed by the user
@@ -400,9 +406,9 @@ function display(dayInfo) {
       if (dayGrid[i][j].immuneStatus) {
         context.fillStyle = "green";
       } else if (dayGrid[i][j].infectStatus && dayGrid[i][j].timeInfect >= simulation.disease.daysToSymptoms) {
-        context.fillStyle = "red";
+        context.fillStyle = "#f0f000";
       } else if (dayGrid[i][j].infectStatus) {
-        context.fillStyle = "orange"; 
+        context.fillStyle = "red"; 
       } else {
         context.fillStyle = "blue";
       }
@@ -468,6 +474,7 @@ function simulate() {
     simulation.days[day] = {
       day: day+1,
       grid: JSON.parse(JSON.stringify(town.grid)),
+      uninfected: (100 - totalInfected - totalImmune),
       prevalence: totalInfected,
       incidence: difference,
       resistant: totalImmune,
@@ -509,16 +516,30 @@ function graph(data) {
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
   var x = d3.scaleLinear()   //Desc : adding the x axis
-    .domain([ 0, maxDay ])
+    .domain([ 0, 31 ])
     .range([ 0, width ]);
   svg.append("g")
     .attr("transform", "translate(0," + height + ")")
     .call(d3.axisBottom(x));
+  svg.append("text")
+    .attr("class", "x label")
+    .style("text-anchor", "middle")
+    .attr("x", width / 2 )
+    .attr("y",  height + margin.top + 15)
+    .text("Days");
   var y = d3.scaleLinear()   //Desc : adding the y axis
     .domain( [ 0, 100 ])
     .range([ height, 0 ]);
   svg.append("g")
     .call(d3.axisLeft(y));
+  svg.append("text")
+    .attr("class", "y label")
+    .style("text-anchor", "middle")
+    .attr("y", 0 - margin.left)
+    .attr("x",0 - (height / 2))
+    .attr("dy", "1em")
+    .attr("transform", "rotate(-90)")
+    .text("Percentage");
 
   var line = d3.line()   //Desc : adding the lines
     .x(function(d) { return x(d.date) })
@@ -543,23 +564,13 @@ function graph(data) {
     .selectAll("myPoints")   //(2) Enter in the 'values' part of the group
     .data(function(d) { return d.values })
     .enter()
-    .append("circle")
-      .attr("class", "myCircle")
-      .attr("cx", function(d) { return x(d.date) } )
-      .attr("cy", function(d) { return y(d.value) } )
-      .attr("r", 4)
-      .attr("stroke", "white")
-      .attr("stroke-width", 1)
-      .on("mouseover", mouseover)
-      .on("mousemove", mousemove)
-      .on("mouseleave", mouseleave);
   svg.selectAll("myLegend")   //Desc : adding an interactive legend
     .data(dataReady)
     .enter()
       .append("g")
       .append("text")
         .attr("x", function(d, i) { return 30 + (i * 100) })
-        .attr("y", 30)
+        .attr("y", -5)
         .text(function(d) { return d.name; })
         .style("fill", function(d) { return myColor(d.name) })
         .style("font-size", 15)
@@ -651,6 +662,9 @@ function subtractDay() {
 // Desc : increments day and draws the grid of the corresponding day
 function addDay() {
   if(day == (maxDay-1)) {   // Desc : validating day
+    if(!play) {
+      play = true;
+    }
     playSim();
   } else if (day >= maxDay) {
     return;
@@ -670,6 +684,7 @@ function addDay() {
 // Desc : adds a play/pause feature to the simulation
 function playSim() {
   if(!run) {
+    runButton.style.display = "block";
     runUserSim();
     run = true;
   }
@@ -687,6 +702,26 @@ function playSim() {
   }
 }
 
+// Desc : start another simulation
+function reRun() {
+  if (runButton.style.display == "block") {
+    runButton.style.display = "none";
+    run = false;
+    playSim();
+  }
+}
+
+// Desc : show/hide the advanced options box
+function showOptions() {
+  if(config.style.display == "none") {
+    toggle.innerHTML = `Hide Advanced Options`;
+    config.style.display = "block";
+  } else {
+    toggle.innerHTML = `Show Advanced Options`;
+    config.style.display = "none";
+  }
+}
+
 // Desc : declares and initializes the list of people 
 var totalPopulation = [];
 for (var i = 0; i < simulation.populationSize; i++) {
@@ -700,6 +735,7 @@ var dayReached = day;
 var day1Data = {
   day: 1,
   grid: JSON.parse(JSON.stringify(town.grid)),
+  uninfected: 100,
   prevalence: 1,
   incidence: 0, 
   resistant: 0,
@@ -710,7 +746,7 @@ var play = false;
 var autoRun;   // Desc : automatic progression method holder
 
 //Desc : declaring variables needed for the graph
-var margin = {top: 10, right: 30, bottom: 30, left: 30},   // Desc : style (height, width, margin) variables
+var margin = {top: 20, right: 30, bottom: 50, left: 50},   // Desc : style (height, width, margin) variables
   width = 600 - margin.left - margin.right,
   height = 350 - margin.top - margin.bottom;
 
@@ -718,28 +754,3 @@ var allGroup = ["prevalence", "incidence", "resistant"];   // Desc : multilinear
 var myColor = d3.scaleOrdinal()
   .domain(allGroup)
   .range(["orange", "red", "green"]);
-
-var Tooltip = d3.select("#value")   // Desc : creating a tooltip
-  .style("opacity", 0)
-  .attr("class", "tooltip")
-  .style("background-color", "white")
-  .style("border", "solid")
-  .style("border-width", "1px")
-  .style("border-radius", "5px")
-  .style("padding", "5px");
-
-//Desc : 3 functions that change Tooltip
-var mouseover = function(d) {   // Desc : when the user hovers over a cell
-Tooltip
-  .style("opacity", 1);
-}
-var mousemove = function(d) {   // Desc : when the user moves over a cell
-Tooltip
-  .html("Exact value: " + d.value)
-  .style("left", (d3.mouse(this)[0]+70) + "px")
-  .style("bottom", (d3.mouse(this)[1]) + "px");
-}
-var mouseleave = function(d) {   // Desc : when the user leaves a cell
-Tooltip
-  .style("opacity", 0);
-}
