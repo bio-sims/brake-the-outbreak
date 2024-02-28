@@ -194,7 +194,7 @@ const simulation = {
   "vaccLevel": vaccineDictionary.mediumVacc
 }
 
-var rng = new Math.seedrandom("15x15");
+let rng = new Math.seedrandom("15x15");
 // Desc : implements the seeded random value
 function getRNG(range) {
     return Math.floor(rng() * range);
@@ -258,35 +258,52 @@ function updateInfected(totalPopulation) {
 
 // Desc : for everyone in the attacker list, it checks every surrounding contact and tries to infect them
 function transmitDisease(attackerList, grid) {
+  var numAttackers = 0
+  var eachInfection = 0;
   for (var i = 0; i < attackerList.length; i++) {
       var attackerX = attackerList[i].xCoordinate;
       var attackerY = attackerList[i].yCoordinate;
-  
+
       if (checkDefender(attackerX - 1, attackerY - 1)) {
           infect(attackerList[i], grid[attackerX - 1][attackerY - 1]);
+          eachInfection++;
       }
       if (checkDefender(attackerX - 1, attackerY)) {
           infect(attackerList[i], grid[attackerX - 1][attackerY]);
+          eachInfection++;
       }
       if (checkDefender(attackerX - 1, attackerY + 1)) {
           infect(attackerList[i], grid[attackerX - 1][attackerY + 1]);
+        eachInfection++;
       }
       if (checkDefender(attackerX, attackerY - 1)) {
           infect(attackerList[i], grid[attackerX][attackerY + 1]);
+        eachInfection++;
       }
       if (checkDefender(attackerX, attackerY + 1)) {
           infect(attackerList[i], grid[attackerX][attackerY + 1]);
+        eachInfection++;
       }
       if (checkDefender(attackerX + 1, attackerY - 1)) {
           infect(attackerList[i], grid[attackerX + 1][attackerY - 1]);
+        eachInfection++;
+
       }
       if (checkDefender(attackerX + 1, attackerY)) {
           infect(attackerList[i], grid[attackerX + 1][attackerY]);
+        eachInfection++;
+
       }
       if (checkDefender(attackerX + 1, attackerY + 1)) {
           infect(attackerList[i], grid[attackerX + 1][attackerY + 1]);
+        eachInfection++;
       }
-  }    
+      if (eachInfection > 0) {
+        numAttackers++;
+      }
+  }
+  var r = eachInfection / numAttackers;
+  return r;
 }
 
 // Desc : checks to see if the given defender is in the bounds of the 2D array and if they fit the criteria of a defender
@@ -428,8 +445,11 @@ function simulate() {
   // Desc : while loop to update and store simulation data
   while (day < simulation.simulationLength) {
     const attackerList = updateInfected(totalPopulation);
-    transmitDisease(attackerList, town.grid);
-    
+    var r = transmitDisease(attackerList, town.grid);
+    if (r < 0 || isNaN(r)) {
+      r = 0;
+    }
+    console.log(r);
     // Desc : calculates simulation data (total infected, total immune
     var totalInfected = 0;
     var totalImmune = 0;
@@ -452,7 +472,7 @@ function simulate() {
       prevalence: totalInfected,
       incidence: difference,
       resistant: totalImmune,
-      r: 0
+      r: r
     };
     day++;
 
