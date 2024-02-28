@@ -59,7 +59,7 @@ const diseaseDictionary = {
     // Desc : covid inspired
   "mediumInfectious": new Disease(30, 30, 7, 14),
     // Desc : rubella inspired
-  "mostInfectious": new Disease(40, 35, 4, 8)
+  "mostInfectious": new Disease(40, 100, 4, 8)
     // Desc : measles inspired    
 }
 
