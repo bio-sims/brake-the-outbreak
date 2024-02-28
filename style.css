@@ -67,10 +67,6 @@ button:hover {
   justify-content: center;
 }
 
-.myCircle:hover {
-  stroke: black;
-}
-
 #colorLegend {
   display: flex;
   flex-flow: row wrap;
@@ -89,8 +85,8 @@ button:hover {
   background-color: blue;
 }
 
-.orange {
-  background-color: orange;
+.yellow {
+  background-color: #f0f000;
 }
 
 .red {
