@@ -449,7 +449,6 @@ function simulate() {
     if (r < 0 || isNaN(r)) {
       r = 0;
     }
-    console.log(r);
     // Desc : calculates simulation data (total infected, total immune
     var totalInfected = 0;
     var totalImmune = 0;
