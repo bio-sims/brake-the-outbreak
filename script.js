@@ -673,10 +673,10 @@ function addDay() {
   if(dayReached < day) {   // Desc : updating dayReached
     dayReached = day;
   }
-  if(dayReached < simulation.days.length) {
+  if(dayReached <= simulation.days.length) {
     d3.select("svg").remove();   // Desc : clearing previous graph
-    graph(simulation.days.slice(0, dayReached));
   }
+  graph(simulation.days.slice(0, dayReached));
 }
 
 // Desc : adds a play/pause feature to the simulation
