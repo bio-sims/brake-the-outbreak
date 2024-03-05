@@ -545,7 +545,6 @@ function graph(data) {
       })
     }
   })
-  //console.log(dataReady);
   var svg = d3.select("#data")   //Desc : appending svg object to the #data div
     .append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -559,7 +558,6 @@ function graph(data) {
     .attr("transform", "translate(0," + height + ")")
     .call(d3.axisBottom(x));
   svg.append("text")
-    .attr("class", "x label")
     .style("text-anchor", "middle")
     .attr("x", width / 2 )
     .attr("y",  height + margin.top + 15)
@@ -570,15 +568,13 @@ function graph(data) {
   svg.append("g")
     .call(d3.axisLeft(y));
   svg.append("text")
-    .attr("class", "y label")
     .style("text-anchor", "middle")
     .attr("y", 0 - margin.left)
-    .attr("x",0 - (height / 2))
+    .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .attr("transform", "rotate(-90)")
     .text("Percentage");
-
-  var line = d3.line()   //Desc : adding the lines
+  var line = d3.line()   // Desc : adding the lines
     .x(function(d) { return x(d.date) })
     .y(function(d) { return y(d.value) })
     .curve(d3.curveBasis);
@@ -587,7 +583,8 @@ function graph(data) {
     .enter()
     .append("path")
       .attr("class", function(d){ return d.name })
-      .attr("d", function(d) { return line(d.values) })
+      .attr("d", function(d) { if(d.name == "R") {return line2(d.values)}
+                               else { return line(d.values) } })
       .attr("stroke", function(d) { return myColor(d.name) })
       .style("stroke-width", 2)
       .style("fill", "none");
@@ -616,6 +613,75 @@ function graph(data) {
           // Desc : visibilty of the element
         d3.selectAll("." + d.name).transition().style("opacity", currentOpacity == 1 ? 0:1);
       });
+
+  var dataR = rGroup.map( function(group) {   //Desc : formats data
+    return {
+      name: group,
+      values: data.map(function(d) {
+        return {date: d.day, value: d[group]};
+      })
+    }
+  })
+  var svgR = d3.select("#rData")   //Desc : appending svg object to the #rData div
+    .append("svg")
+      .attr("width", widthR + marginR.left + marginR.right)
+      .attr("height", heightR + marginR.top + marginR.bottom)
+    .append("g")
+      .attr("transform", "translate(" + marginR.left + "," + marginR.top + ")");
+  var xR = d3.scaleLinear()   //Desc : adding the x axis
+    .domain([ 0, 31 ])
+    .range([ 0, widthR ]);
+  svgR.append("g")
+    .attr("transform", "translate(0," + heightR + ")")
+    .call(d3.axisBottom(xR));
+  svgR.append("text")
+    .style("text-anchor", "middle")
+    .attr("x", widthR / 2 )
+    .attr("y",  heightR + marginR.top + 25)
+    .text("Days");
+  var yR = d3.scaleLinear()   //Desc : adding the y axis
+    .domain( [ 0, 8 ])
+    .range([ heightR, 0 ]);
+  svgR.append("g")
+    .call(d3.axisLeft(yR));
+  svgR.append("text")
+    .style("text-anchor", "middle")
+    .attr("y", 0 - marginR.left + 5)
+    .attr("x", 0 - (heightR / 2))
+    .attr("dy", "1em")
+    .attr("transform", "rotate(-90)")
+    .text("R");
+  var lineR = d3.line()   // Desc : adding the lines
+    .x(function(d) { return xR(d.date) })
+    .y(function(d) { return yR(d.value) })
+    .curve(d3.curveBasis);
+  svgR.selectAll("myLines")
+    .data(dataR)
+    .enter()
+    .append("path")
+      .attr("d", function(d) { return lineR(d.values) })
+      .attr("stroke", "purple")
+      .style("stroke-width", 2)
+      .style("fill", "none");
+  svgR   //Desc: adding the points
+    .selectAll("myDots")   //(1) enter in a group
+    .data(dataR)
+    .enter()
+      .append("g")
+      .style("fill", function(d) { return rColor(d.name) })
+    .selectAll("myPoints")   //(2) Enter in the 'values' part of the group
+    .data(function(d) { return d.values })
+    .enter()
+    .append("circle")
+      .attr("class", "myCircle")
+      .attr("cx", function(d) { return xR(d.date) } )
+      .attr("cy", function(d) { return yR(d.value) } )
+      .attr("r", 4)
+      .attr("stroke", "white")
+      .attr("stroke-width", 1)
+      .on("mouseover", mouseover)
+      .on("mousemove", mousemove)
+      .on("mouseleave", mouseleave);
 }
 
 // Desc : deletes the current canvas elements in the grid, updates json (simulation) variables according to user input,
@@ -746,6 +812,7 @@ function playSim() {
 function reRun() {
   if (runButton.style.display == "block") {
     runButton.style.display = "none";
+    outSummary.style.display = "none";
     run = false;
     clearInterval(autoRun);
     play = false;
@@ -796,3 +863,37 @@ var allGroup = ["uninfected", "prevalence", "incidence", "resistant"];   // Desc
 var myColor = d3.scaleOrdinal()
   .domain(allGroup)
   .range(["blue", "orange", "red", "green"]);
+
+var marginR = {top: 10, right: 30, bottom: 50, left: 50},
+  widthR = 600 - marginR.left - marginR.right,
+  heightR = 300 - marginR.top - marginR.bottom;
+
+var rGroup = ["R"];
+var rColor = d3.scaleOrdinal()
+  .domain(rGroup)
+  .range(["purple"]);
+
+  var Tooltip = d3.select("#value")   // Desc : creating a tooltip
+  .style("opacity", 0)
+  .attr("class", "tooltip")
+  .style("background-color", "white")
+  .style("border", "solid")
+  .style("border-width", "1px")
+  .style("border-radius", "5px")
+  .style("padding", "5px");
+
+//Desc : 3 functions that change Tooltip
+var mouseover = function(d) {   // Desc : when the user hovers over a cell
+Tooltip
+  .style("opacity", 1);
+}
+var mousemove = function(d) {   // Desc : when the user moves over a cell
+Tooltip
+  .html("Exact R Value: " + d.value)
+  .style("left", (d3.mouse(this)[0]+70) + "px")
+  .style("bottom", (d3.mouse(this)[1]) + "px");
+}
+var mouseleave = function(d) {   // Desc : when the user leaves a cell
+Tooltip
+  .style("opacity", 0);
+}
