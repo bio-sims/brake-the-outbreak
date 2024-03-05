@@ -522,7 +522,7 @@ function simulate() {
     }
     calculateR += totalPopulation[i].r;
   }
-  calculateR /= allInfected;
+  calculateR = (calculateR / allInfected).toFixed(4);  
   finalR.innerHTML = `Final calculated R: ${calculateR}`;
   peakPrevalence.innerHTML = `Peak Prevalence: ${finalMaxPrevalence} on day ${finalMaxPrevalenceDay+1}`;
   lastDayIncidence.innerHTML = `Last day incidence: ${finalLastIncidenceDay + 1}`;
