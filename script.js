@@ -714,10 +714,11 @@ function addDay() {
   }
   if(dayReached <= simulation.days.length) {
     d3.select("svg").remove();   // Desc : clearing previous graph
-  } else if(dayReached == simulation.days.length) {
-    graph(simulation.days.slice(0, dayReached));
-    outSummary.style.display = "block";
+    if(dayReached == simulation.days.length) {
+      outSummary.style.display = "block";
+    }
   }
+  graph(simulation.days.slice(0, dayReached));
 }
 
 // Desc : adds a play/pause feature to the simulation
