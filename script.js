@@ -348,10 +348,12 @@ var runButton = document.getElementById("rerunLabel");
 runButton.style.display = "none";
 var toggle = document.getElementById("toggle");
 var config = document.getElementById("config");
+config.style.display = "none";
 var finalR = document.getElementById("totalR");
 var peakPrevalence = document.getElementById("peakPrevalence");
 var lastDayIncidence = document.getElementById("lastIncidenceDay")
-config.style.display = "none";
+var outSummary = document.getElementById("finalSummaryReport");
+outSummary.style.display = "none";
 
 // Desc : returns the mask level (refer to maskDictionary) according to maskRate
 // Pre  : maskRate is the number inputed by the user
@@ -712,8 +714,11 @@ function addDay() {
   }
   if(dayReached <= simulation.days.length) {
     d3.select("svg").remove();   // Desc : clearing previous graph
+  } else if(dayReached == simulation.days.length) {
+    graph(simulation.days.slice(0, dayReached));
+  } else {
+    outSummary.style.display = "block";
   }
-  graph(simulation.days.slice(0, dayReached));
 }
 
 // Desc : adds a play/pause feature to the simulation
