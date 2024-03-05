@@ -871,7 +871,7 @@ var marginR = {top: 10, right: 30, bottom: 50, left: 50},
   widthR = 600 - marginR.left - marginR.right,
   heightR = 300 - marginR.top - marginR.bottom;
 
-var rGroup = ["R"];
+var rGroup = ["r"];
 var rColor = d3.scaleOrdinal()
   .domain(rGroup)
   .range(["purple"]);
