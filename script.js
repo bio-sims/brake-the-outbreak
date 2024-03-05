@@ -716,7 +716,6 @@ function addDay() {
     d3.select("svg").remove();   // Desc : clearing previous graph
   } else if(dayReached == simulation.days.length) {
     graph(simulation.days.slice(0, dayReached));
-  } else {
     outSummary.style.display = "block";
   }
 }
