@@ -782,7 +782,7 @@ function addDay() {
   }
   if(dayReached <= simulation.days.length) {
     d3.select("#data svg").remove();   // Desc : clearing previous graph
-    d3.select("rData svg").remove();
+    d3.select("#rData svg").remove();
     if(dayReached == simulation.days.length) {
       outSummary.style.display = "block";
     }
