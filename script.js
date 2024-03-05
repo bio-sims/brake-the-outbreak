@@ -351,7 +351,7 @@ var config = document.getElementById("config");
 config.style.display = "none";
 var finalR = document.getElementById("totalR");
 var peakPrevalence = document.getElementById("peakPrevalence");
-var lastDayIncidence = document.getElementById("lastIncidenceDay")
+var lastDayIncidence = document.getElementById("lastIncidenceDay");
 var outSummary = document.getElementById("finalSummaryReport");
 outSummary.style.display = "none";
 
