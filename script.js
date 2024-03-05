@@ -18,6 +18,7 @@ class Person {
     this.immuneStatus = false;
     this.xCoordinate = 0;
     this.yCoordinate = 0;
+    this.r = 0;
   }
 
   // Desc : setter method updating this.xCoordinate and this.yCoordinate
@@ -267,34 +268,42 @@ function transmitDisease(attackerList, grid) {
     if (checkDefender(attackerX - 1, attackerY - 1)) {
       infect(attackerList[i], grid[attackerX - 1][attackerY - 1]);
       eachInfection++;
+      attackerList[i].r++;
     }
     if (checkDefender(attackerX - 1, attackerY)) {
       infect(attackerList[i], grid[attackerX - 1][attackerY]);
       eachInfection++;
+      attackerList[i].r++;
     }
     if (checkDefender(attackerX - 1, attackerY + 1)) {
       infect(attackerList[i], grid[attackerX - 1][attackerY + 1]);
       eachInfection++;
+      attackerList[i].r++;
     }
     if (checkDefender(attackerX, attackerY - 1)) {
       infect(attackerList[i], grid[attackerX][attackerY + 1]);
       eachInfection++;
+      attackerList[i].r++;
     }
     if (checkDefender(attackerX, attackerY + 1)) {
       infect(attackerList[i], grid[attackerX][attackerY + 1]);
       eachInfection++;
+      attackerList[i].r++;
     }
     if (checkDefender(attackerX + 1, attackerY - 1)) {
       infect(attackerList[i], grid[attackerX + 1][attackerY - 1]);
       eachInfection++;
+      attackerList[i].r++;
     }
     if (checkDefender(attackerX + 1, attackerY)) {
       infect(attackerList[i], grid[attackerX + 1][attackerY]);
       eachInfection++;
+      attackerList[i].r++;
     }
     if (checkDefender(attackerX + 1, attackerY + 1)) {
       infect(attackerList[i], grid[attackerX + 1][attackerY + 1]);
       eachInfection++;
+      attackerList[i].r++;
     }
     if (eachInfection > 0) {
       numAttackers++;
@@ -339,6 +348,9 @@ var runButton = document.getElementById("rerunLabel");
 runButton.style.display = "none";
 var toggle = document.getElementById("toggle");
 var config = document.getElementById("config");
+var finalR = document.getElementById("totalR");
+var peakPrevalence = document.getElementById("peakPrevalence");
+var lastDayIncidence = document.getElementById("lastIncidenceDay")
 config.style.display = "none";
 
 // Desc : returns the mask level (refer to maskDictionary) according to maskRate
@@ -445,6 +457,10 @@ function simulate() {
   display(day1Data);
   simulation.days[0] = day1Data;
 
+  let finalMaxPrevalence = 0;
+  let finalMaxPrevalenceDay = 0;
+  let finalLastIncidenceDay = 0;
+
   // Desc : while loop to update and store simulation data
   while (day < simulation.simulationLength) {
     const attackerList = updateInfected(totalPopulation);
@@ -468,6 +484,14 @@ function simulate() {
       difference = 0;
     }
     
+    if (difference > 0) {
+      finalLastIncidenceDay = day + 1;
+    }
+    if (totalInfected > finalMaxPrevalence) {
+      finalMaxPrevalence = totalInfected;
+      finalMaxPrevalenceDay = day;
+    }
+    
     // Desc : stores simulation data
     simulation.days[day] = {
       day: day+1,
@@ -487,6 +511,19 @@ function simulate() {
       break;
     }
   }
+  
+  var calculateR = 0;
+  var allInfected = 0;
+  for (var i = 0; i < simulation.populationSize; i++) {
+    if (totalPopulation[i].infectStatus == true || totalPopulation[i].immuneStatus == true) {
+      allInfected++;
+    }
+    calculateR += totalPopulation[i].r;
+  }
+  calculateR /= allInfected;
+  finalR.innerHTML = `Final calculated R: ${calculateR}`;
+  peakPrevalence.innerHTML = `Peak Prevalence: ${finalMaxPrevalence} on day ${finalMaxPrevalenceDay+1}`;
+  lastDayIncidence.innerHTML = `Last day incidence: ${finalLastIncidenceDay + 1}`;
 
   // Desc : updating variables to prepare for user interaction
   day = 1;
