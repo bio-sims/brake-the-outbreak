@@ -49,13 +49,13 @@ Improvement Goals...
         </div>
         <div class="evenDisplay" id="dayDisplay">
           <label class="buttonLabel" id="prevLabel" for="prevBtn">
-            <button id="prevBtn" style="width: 90px" onclick="subtractDay()">Previous Day</button>
+            <button id="prevBtn" style="width: 100px" onclick="subtractDay()">Previous Day</button>
           </label>
           <label class="buttonLabel" id="runUserLabel" for="runUserBtn">
-            <button id="runUserBtn" type="submit" style="font-size: medium" onclick="playSim()">Start Outbreak</button>
+            <button id="runUserBtn" type="submit" style="font-size: medium" onclick="playSim()">Create Outbreak</button>
           </label>
           <label class="buttonLabel" id="nextLabel" for="nextBtn">
-              <button id="nextBtn" style="width: 90px" onclick="addDay()">Next Day</button>
+              <button id="nextBtn" style="width: 100px" onclick="addDay()">Next Day</button>
           </label>
         </div>
         <div class="evenDisplay" id="colorLegend">
@@ -69,7 +69,7 @@ Improvement Goals...
           </div>
           <div class="evenDisplay" style="margin-bottom: 0px">
             <div class="square yellow" id="symptomaticKey"></div>
-            <p style="color: #f0f000; margin-right: 10px; margin-bottom: 0px">Symptomatic Infected</p>
+            <p style="color: #F9F07A; margin-right: 10px; margin-bottom: 0px">Symptomatic Infected</p>
           </div>
           <div class="evenDisplay" style="margin-bottom: 0px">
             <div class="square green" id="immuneKey"></div>
@@ -78,12 +78,11 @@ Improvement Goals...
         </div>
         <p id="maxDayInfo" style="text-align: center"></p>
         <label class="buttonLabel" id="rerunLabel" for="rerunBtn">
-          <button id="rerunBtn" onclick="reRun()">Restart Outbreak</button>
+          <button id="rerunBtn" onclick="reRun()">Create New Outbreak</button>
         </label>
       </div>
       <div class="box" id="finalSummaryReport" style="text-align: center">
-        <label>Final Report Summary</label>
-        <br>
+        <h2>Final Report Summary</h2>
         <div class="evenDisplay">
           <p id="totalR" style="text-align: left"></p>
           <p id="peakPrevalence" style="text-align: left"></p>
@@ -91,8 +90,7 @@ Improvement Goals...
         </div>
       </div>
       <div class="box" id="form" style="text-align: center">
-        <label>Options</label>
-        <br>
+        <h4>Options</h4>
         <label id="diseaseLabel" for="diseaseText">Disease
           <select id="diseaseText">
             <option value="Measles">Measles</option>
@@ -111,9 +109,10 @@ Improvement Goals...
         <br><br>
         <label id="gridLabel" for="gridText">Social Distancing
           <select id="gridText">
-            <option value="13">Low</option>
+            <option value="10">None</option>
+            <option value="12">Low</option>
             <option value="14">Medium</option>
-            <option value="15">High</option>
+            <option value="16">High</option>
           </select>
         </label>
       </div>
@@ -121,8 +120,8 @@ Improvement Goals...
         <button id="toggle" onclick="showOptions()">Show Advanced Options</button>
       </label>
       <div class="box" id="config">
-        <label id="jsonLabel" for="jsonText" style="text-align: center">Advanced Options
-          <br>
+        <h4 style="text-align: center;">Advanced Options</h4>
+        <label id="jsonLabel" for="jsonText" style="text-align: center">
           <textarea id="jsonText" rows="20" cols="50"></textarea>
         </label>
         <br>
