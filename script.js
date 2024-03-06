@@ -509,13 +509,6 @@ function simulate() {
       r: r
     };
     day++;
-
-    // Desc : while loop break condition
-    if (totalInfected == 0) {
-      break;
-    } else if ((totalInfected + totalImmune) == totalPopulation.length) {
-      break;
-    }
   }
   
   var calculateR = 0;
