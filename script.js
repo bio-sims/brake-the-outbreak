@@ -2,7 +2,8 @@
 //Merged with Epidemiology.js [last update: 3/6/2024]
 //   Improvement Goals...
 //   (1) Favorable hardcoded values (vaccineEfficicacy, maskProtection, ...) for desired simulation data
-//   (2) R0, Incidence, and Prevalence Graphing
+//   (2) Text labels for the people who are masked, vaccinated, or both
+//   (3) JSON synchronization
 
 // Desc : Person class
 class Person {
