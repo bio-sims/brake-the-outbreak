@@ -344,7 +344,6 @@ var gridInput = document.getElementById("gridText");
 var dayDisplay = document.getElementById("dayInfo");
 var infectedDisplay = document.getElementById("infectedInfo");
 var immuneDisplay = document.getElementById("immuneInfo");
-var maxDayDisplay = document.getElementById("maxDayInfo");
 var jsonInput = document.getElementById("jsonText");
 jsonInput.value = JSON.stringify(simulation, null, " ");
 var simButton = document.getElementById("runUserBtn");
@@ -527,8 +526,6 @@ function simulate() {
   // Desc : updating variables to prepare for user interaction
   day = 1;
   dayReached = day;
-  maxDay = simulation.days.length;
-  maxDayDisplay.innerHTML = `The simulation continues until Day ${maxDay}.`;
 }
 
 //Desc : creates a line graph according to data
@@ -763,12 +760,12 @@ function subtractDay() {
 
 // Desc : increments day and draws the grid of the corresponding day
 function addDay() {
-  if(day == (maxDay-1)) {   // Desc : validating day
+  if(day == (simulation.simulationLength-1)) {   // Desc : validating day
     if(!play) {
       play = true;
     }
     playSim();
-  } else if (day >= maxDay) {
+  } else if (day >= simulation.simulationLength) {
     return;
   }
   day++;
