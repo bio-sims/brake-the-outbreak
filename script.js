@@ -470,6 +470,7 @@ function emptyGrid() {
     container.removeChild(container.firstChild);
   }
 }
+
 // Desc : iterates through the whole population list and resets each value to default
 function resetTotalPopulation() {
   for (let i = 0; i < simulation.populationSize; i++) {
