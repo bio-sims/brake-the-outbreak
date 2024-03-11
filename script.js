@@ -183,9 +183,9 @@ const simulation = {
   "patientZeroPosition": [7, 5],
   "populationSize": 100,
   "disease": diseaseDictionary.mostInfectious,
-  "maskLevel": maskDictionary.noMask,
+  "maskLevel": 0,
   "maskProtection": 40,
-  "vaccLevel": vaccineDictionary.noVacc
+  "vaccLevel": 0
 }
 
 // Desc : implements the seeded random value
