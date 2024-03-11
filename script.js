@@ -3,6 +3,7 @@
 //   Improvement Goals...
 //   (1) Favorable hardcoded values (vaccineEfficicacy, maskProtection, ...) for desired simulation data
 //   (2) Text labels for the people who are masked, vaccinated, or both
+//   (3) Sanitation of undefined JSON values
 
 // Desc : Person class
 class Person {
