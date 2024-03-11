@@ -51,8 +51,8 @@ Improvement Goals...
           <label class="buttonLabel" id="prevLabel" for="prevBtn">
             <button id="prevBtn" style="width: 100px" onclick="subtractDay()">Previous Day</button>
           </label>
-          <label class="buttonLabel" id="runUserLabel" for="runUserBtn">
-            <button id="runUserBtn" type="submit" style="font-size: medium" onclick="playSim()">Create Outbreak</button>
+          <label class="buttonLabel" id="runLabel" for="runBtn">
+            <button id="runBtn" type="submit" style="font-size: medium" onclick="playSim()">Start Outbreak</button>
           </label>
           <label class="buttonLabel" id="nextLabel" for="nextBtn">
               <button id="nextBtn" style="width: 100px" onclick="addDay()">Next Day</button>
@@ -69,7 +69,7 @@ Improvement Goals...
           </div>
           <div class="evenDisplay" style="margin-bottom: 0px">
             <div class="square yellow" id="symptomaticKey"></div>
-            <p style="color: #F9F07A; margin-right: 10px; margin-bottom: 0px">Symptomatic Infected</p>
+            <p style="color: rgb(251, 235, 58); margin-right: 10px; margin-bottom: 0px">Symptomatic Infected</p>
           </div>
           <div class="evenDisplay" style="margin-bottom: 0px">
             <div class="square green" id="immuneKey"></div>
@@ -84,36 +84,60 @@ Improvement Goals...
             <p id="lastIncidenceDay" style="text-align: left"></p>
           </div>
         </div>
-        <label class="buttonLabel" id="rerunLabel" for="rerunBtn">
-          <button id="rerunBtn" onclick="reRun()">Create New Outbreak</button>
-        </label>
       </div>
-      <div class="box" id="form" style="text-align: center">
-        <h4>Options</h4>
-        <label id="diseaseLabel" for="diseaseText">Disease
-          <select id="diseaseText">
-            <option value="Measles">Measles</option>
-            <option value="Rubella">Rubella</option>
-            <option value="Covid">Covid</option>
-          </select>
-        </label>
-        <br><br>
-        <label id="maskLabel" for="maskText">Mask Rate (0-100)
-          <input id="maskText" type="text" value="0"></input>
-        </label>
-        <br><br>
-        <label id="vaccLabel" for="vaccText">Vaccine Rate (0-100)
-          <input id="vaccText" type="text" value="0"></input>
-        </label>
-        <br><br>
-        <label id="gridLabel" for="gridText">Social Distancing
-          <select id="gridText">
-            <option value="10">None</option>
-            <option value="12">Low</option>
-            <option value="14">Medium</option>
-            <option value="16">High</option>
-          </select>
-        </label>
+      <div class="box" id="form">
+        <h4 style="text-align: center; margin-bottom: 0px;">Options</h4>
+        <div class="evenDisplay">
+          <label id="diseaseLabel" for="diseaseText" onclick="updateValue()">Disease
+            <select id="diseaseText">
+              <option value="Measles">Measles</option>
+              <option value="Rubella">Rubella</option>
+              <option value="Covid">Covid</option>
+            </select>
+          </label>
+          <label id="maskLabel" for="maskText" onclick="updateValue()">Mask Rate
+            <select id="maskText">
+              <option value=0>None</option>
+              <option value=25>Low</option>
+              <option value=50>Medium</option>
+              <option value=75>High</option>
+              <option value=90>Extreme</option>
+            </select>
+          </label>
+          <label id="vaccLabel" for="vaccText" onclick="updateValue()">Vaccine Rate
+            <select id="vaccText">
+              <option value=0>None</option>
+              <option value=25>Low</option>
+              <option value=50>Medium</option>
+              <option value=75>High</option>
+              <option value=90>Extreme</option>
+            </select>
+          </label>
+        </div>
+        <div class="evenDisplay">
+          <label id="gridLabel" for="gridText" onclick="updateValue()">Social Distancing
+            <select id="gridText">
+              <option value=10>None</option>
+              <option value=12>Low</option>
+              <option value=14>Medium</option>
+              <option value=16>High</option>
+            </select>
+          </label>
+          <label id="seedLabel" for="seedText" onclick="updateValue()">Location
+            <select id="seedText">
+              <option value="5x5">1</option>
+              <option value="6x6">2</option>
+              <option value="7x7">3</option>
+              <option value="8x8">4</option>
+              <option value="9x9">5</option>
+              <option value="10x10">6</option>
+              <option value="11x11">7</option>
+              <option value="12x12">8</option>
+              <option value="13x13">9</option>
+              <option value="14x14">10</option>
+            </select>
+          </label>
+        </div>
       </div>
       <label class="buttonLabel" id="toggleLabel" for="toggle" style="margin-bottom: 10px">
         <button id="toggle" onclick="showOptions()">Show Advanced Options</button>
@@ -121,11 +145,7 @@ Improvement Goals...
       <div class="box" id="config">
         <h4 style="text-align: center;">Advanced Options</h4>
         <label id="jsonLabel" for="jsonText" style="text-align: center">
-          <textarea id="jsonText" rows="20" cols="50"></textarea>
-        </label>
-        <br>
-        <label class="buttonLabel" id="runConfigLabel" for="runConfigBtn">
-          <button id="runConfigBtn" type="submit" onclick="runConfigSim()">Reconfigure and Run</button>
+          <textarea id="jsonText" rows="20" cols="50" onmouseout="updateJSON()"></textarea>
         </label>
       </div>
     </div>
