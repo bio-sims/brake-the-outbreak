@@ -1,3 +1,9 @@
+/Epidemiology Simulation Project: Rena Ahn and Anna Muller
+//Merged with Epidemiology.js [last update: 3/11/2024]
+//   Improvement Goals...
+//   (1) Favorable hardcoded values (vaccineEfficicacy, maskProtection, ...) for desired simulation data
+//   (2) Text labels for the people who are masked, vaccinated, or both
+
 // Desc : Person class
 class Person {
   // Desc : constructor
@@ -151,7 +157,7 @@ class Grid {
     while (i < totalPopulation.length) {
       var randomX = getRNG(this.gridHeight);
       var randomY = getRNG(this.gridWidth);
-      if (this.grid[randomX][randomY] == 0) {
+      if (this.grid[randomX][randomY] === 0) {
         totalPopulation[i].setGridPosition(randomX, randomY);
         this.grid[randomX][randomY] = totalPopulation[i];
         i++;
@@ -171,15 +177,15 @@ class Grid {
 const simulation = {
   "days": [],
   "simulationLength": 31,
-  "populationSize": 100,
   "gridHeight": 10,
   "gridWidth": 10,
   "seed": "5x5",
   "patientZeroPosition": [7, 5],
+  "populationSize": 100,
   "disease": diseaseDictionary.mostInfectious,
-  "maskLevel": 0,
+  "maskLevel": maskDictionary.noMask,
   "maskProtection": 40,
-  "vaccLevel": 0
+  "vaccLevel": vaccineDictionary.noVacc
 }
 
 // Desc : implements the seeded random value
@@ -246,78 +252,91 @@ function updateInfected(totalPopulation) {
 
 // Desc : for everyone in the attacker list, it checks every surrounding contact and tries to infect them
 function transmitDisease(attackerList, grid) {
-  var numAttackers = 0
-  var eachInfection = 0;
-  for (var i = 0; i < attackerList.length; i++) {
+  var numAttackers = 0;
+  var totalInfections = 0;
+  for (let i = 0; i < attackerList.length; i++) {
+    var eachInfection = 0;
     var attackerX = attackerList[i].xCoordinate;
     var attackerY = attackerList[i].yCoordinate;
     
     if (checkDefender(attackerX - 1, attackerY - 1)) {
-      infect(attackerList[i], grid[attackerX - 1][attackerY - 1]);
-      eachInfection++;
-      attackerList[i].r++;
+      if (infect(attackerList[i], grid[attackerX - 1][attackerY - 1])) {
+        eachInfection++;
+        attackerList[i].r++;
+      }
     }
     if (checkDefender(attackerX - 1, attackerY)) {
-      infect(attackerList[i], grid[attackerX - 1][attackerY]);
-      eachInfection++;
-      attackerList[i].r++;
+      if (infect(attackerList[i], grid[attackerX - 1][attackerY])) {
+        eachInfection++;
+        attackerList[i].r++;
+      }
     }
     if (checkDefender(attackerX - 1, attackerY + 1)) {
-      infect(attackerList[i], grid[attackerX - 1][attackerY + 1]);
-      eachInfection++;
-      attackerList[i].r++;
+      if (infect(attackerList[i], grid[attackerX - 1][attackerY + 1])) {
+        eachInfection++;
+        attackerList[i].r++;
+      }
     }
     if (checkDefender(attackerX, attackerY - 1)) {
-      infect(attackerList[i], grid[attackerX][attackerY + 1]);
-      eachInfection++;
-      attackerList[i].r++;
+      if (infect(attackerList[i], grid[attackerX][attackerY + 1])) {
+        eachInfection++;
+        attackerList[i].r++;
+      }
     }
     if (checkDefender(attackerX, attackerY + 1)) {
-      infect(attackerList[i], grid[attackerX][attackerY + 1]);
-      eachInfection++;
-      attackerList[i].r++;
+      if (infect(attackerList[i], grid[attackerX][attackerY + 1])) {
+        eachInfection++;
+        attackerList[i].r++;
+      }
     }
     if (checkDefender(attackerX + 1, attackerY - 1)) {
-      infect(attackerList[i], grid[attackerX + 1][attackerY - 1]);
-      eachInfection++;
-      attackerList[i].r++;
+      if (infect(attackerList[i], grid[attackerX + 1][attackerY - 1])) {
+        eachInfection++;
+        attackerList[i].r++;
+      }
     }
     if (checkDefender(attackerX + 1, attackerY)) {
-      infect(attackerList[i], grid[attackerX + 1][attackerY]);
-      eachInfection++;
-      attackerList[i].r++;
+      if (infect(attackerList[i], grid[attackerX + 1][attackerY])) {
+        eachInfection++;
+        attackerList[i].r++;
+      }
     }
     if (checkDefender(attackerX + 1, attackerY + 1)) {
-      infect(attackerList[i], grid[attackerX + 1][attackerY + 1]);
-      eachInfection++;
-      attackerList[i].r++;
+      if (infect(attackerList[i], grid[attackerX + 1][attackerY + 1])) {
+        eachInfection++;
+        attackerList[i].r++;
+      }
     }
     if (eachInfection > 0) {
+      totalInfections += eachInfection;
       numAttackers++;
     }
   }
-  var r = eachInfection / numAttackers;
-  return r;
+  return eachInfection / numAttackers;
 }
 
 // Desc : checks to see if the given defender is in the bounds of the 2D array and if they fit the criteria of a defender
 function checkDefender(x, y) {
   if ((x >= 0 && x < simulation.gridHeight) && (y >= 0 && y < simulation.gridWidth)) {
-      if (town.grid[x][y] != 0 && town.grid[x][y].infectStatus == false  && town.grid[x][y].immuneStatus == false) {
+      if (town.grid[x][y] !== 0 && town.grid[x][y].infectStatus === false  && town.grid[x][y].immuneStatus === false) {
           return true;
       }
+  } else {
+      return false;
   }
-  return false;
 }
 
 // Desc : uses a random number to see if the given attacker infects the given defender
 function infect(attacker, defender) {
   if (typeof defender === 'undefined') {
-    return;
+    return false;
   }
   var infect = getRNG(attacker.transmission + defender.protection);
   if (infect <= attacker.transmission) {
       defender.infectPerson();
+      return true;
+  } else {
+    return false;
   }
 }
 
@@ -326,7 +345,6 @@ var diseaseInput = document.getElementById("diseaseText");
 var maskInput = document.getElementById("maskText");
 var vaccInput = document.getElementById("vaccText");
 var gridInput = document.getElementById("gridText");
-var seedInput = document.getElementById("seedText");
 var dayDisplay = document.getElementById("dayInfo");
 var infectedDisplay = document.getElementById("infectedInfo");
 var immuneDisplay = document.getElementById("immuneInfo");
@@ -345,11 +363,11 @@ outSummary.style.display = "none";
 // Desc : returns the infectiousness of the disease (refer to diseaseDictionary) according to disease
 // Pre  : disease is the name of a disease inputed by the user
 function getDiseaseLevel(disease) {
-  if(disease == "Covid") {
+  if(disease === "Covid") {
     return diseaseDictionary.leastInfectious;
-  } else if(disease == "Rubella") {
+  } else if(disease === "Rubella") {
     return diseaseDictionary.mediumInfectious;
-  } else if(disease == "Measles") {
+  } else if(disease === "Measles") {
     return diseaseDictionary.mostInfectious;
   }
 }
@@ -471,13 +489,14 @@ function simulate() {
   
   var calculateR = 0;
   var allInfected = 0;
-  for (var i = 0; i < simulation.populationSize; i++) {
-    if (totalPopulation[i].infectStatus == true || totalPopulation[i].immuneStatus == true) {
+  for (let i = 0; i < simulation.populationSize; i++) {
+    if (totalPopulation[i].infectStatus === true || totalPopulation[i].immuneStatus === true) {
       allInfected++;
     }
     calculateR += totalPopulation[i].r;
+
   }
-  calculateR /= allInfected;
+  calculateR = (calculateR / allInfected).toFixed(4);
   finalR.innerHTML = `Final calculated R: ${calculateR}`;
   peakPrevalence.innerHTML = `Peak Prevalence: ${finalMaxPrevalence} on day ${finalMaxPrevalenceDay+1}`;
   lastDayIncidence.innerHTML = `Last day incidence: ${finalLastIncidenceDay + 1}`;
@@ -504,8 +523,8 @@ function graph(data) {
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-  var x = d3.scaleLinear()   //Desc : adding the x axis
-    .domain([ 0, simulation.simulationLength ])
+  var x = d3.scaleLinear()   //Desc : adding the x-axis
+    .domain([ 0, 31 ])
     .range([ 0, width ]);
   svg.append("g")
     .attr("transform", "translate(0," + height + ")")
@@ -515,7 +534,7 @@ function graph(data) {
     .attr("x", width / 2 )
     .attr("y",  height + margin.top + 15)
     .text("Days");
-  var y = d3.scaleLinear()   //Desc : adding the y axis
+  var y = d3.scaleLinear()   //Desc : adding the y-axis
     .domain( [ 0, 100 ])
     .range([ height, 0 ]);
   svg.append("g")
@@ -536,7 +555,7 @@ function graph(data) {
     .enter()
     .append("path")
       .attr("class", function(d){ return d.name })
-      .attr("d", function(d) { if(d.name == "R") {return line2(d.values)}
+      .attr("d", function(d) { if(d.name === "R") {return line2(d.values)}
                                else { return line(d.values) } })
       .attr("stroke", function(d) { return myColor(d.name) })
       .style("stroke-width", 2)
@@ -564,7 +583,7 @@ function graph(data) {
       .on("click", function(d) {
         var currentOpacity = d3.selectAll("." + d.name).style("opacity");
           // Desc : visibilty of the element
-        d3.selectAll("." + d.name).transition().style("opacity", currentOpacity == 1 ? 0:1);
+        d3.selectAll("." + d.name).transition().style("opacity", currentOpacity === 1 ? 0:1);
       });
 
   var dataR = rGroup.map( function(group) {   //Desc : formats data
@@ -808,13 +827,11 @@ function updateJSON() {
   tempSim = JSON.parse(JSON.stringify(simulation));
   tempSim.days = [];
   jsonInput.value = JSON.stringify(tempSim, null, " ");
-
-  // reflect onto Options variables (?)
 }
 
 // Desc : show/hide the advanced options box
 function showOptions() {
-  if(config.style.display == "none") {
+  if(config.style.display === "none") {
     toggle.innerHTML = `Hide Advanced Options`;
     config.style.display = "block";
   } else {
@@ -840,32 +857,32 @@ var day1Data = {
   prevalence: 1,
   incidence: 0, 
   resistant: 0,
-  r: 8
+  r: 0
 };
 var end = true;
 var play = false;
 var autoRun;   // Desc : variable for automatic progression
 
 //Desc : declaring variables needed for the graph
-var margin = {top: 20, right: 50, bottom: 50, left: 50},   // Desc : style (height, width, margin) variables
+var margin = {top: 20, right: 30, bottom: 50, left: 50},   // Desc : style (height, width, margin) variables
   width = 650 - margin.left - margin.right,
   height = 370 - margin.top - margin.bottom;
-
-var marginR = {top: 10, right: 30, bottom: 50, left: 50},
-  widthR = 650 - marginR.left - marginR.right,
-  heightR = 300 - marginR.top - marginR.bottom;
 
 var allGroup = ["uninfected", "prevalence", "incidence", "resistant"];   // Desc : multilinear names and colors
 var myColor = d3.scaleOrdinal()
   .domain(allGroup)
   .range(["blue", "orange", "red", "green"]);
 
+var marginR = {top: 10, right: 30, bottom: 50, left: 50},
+  widthR = 650 - marginR.left - marginR.right,
+  heightR = 350 - marginR.top - marginR.bottom;
+
 var rGroup = ["r"];
 var rColor = d3.scaleOrdinal()
   .domain(rGroup)
   .range(["purple"]);
 
-var Tooltip = d3.select("#value")   // Desc : creating a tooltip
+  var Tooltip = d3.select("#value")   // Desc : creating a tooltip
   .style("opacity", 0)
   .attr("class", "tooltip")
   .style("background-color", "white")
