@@ -348,6 +348,7 @@ var diseaseInput = document.getElementById("diseaseText");
 var maskInput = document.getElementById("maskText");
 var vaccInput = document.getElementById("vaccText");
 var gridInput = document.getElementById("gridText");
+var seedInput = document.getElementById("seedText");
 var dayDisplay = document.getElementById("dayInfo");
 var infectedDisplay = document.getElementById("infectedInfo");
 var immuneDisplay = document.getElementById("immuneInfo");
