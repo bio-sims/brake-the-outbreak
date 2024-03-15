@@ -1,5 +1,5 @@
 //Epidemiology Simulation Project: Rena Ahn and Anna Muller
-//Merged with Epidemiology.js [last update: 3/11/2024]
+//Merged with Epidemiology.js [last update: 3/14/2024]
 //   Improvement Goals...
 //   (1) Favorable hardcoded values (vaccineEfficicacy, maskProtection, ...) for desired simulation data
 //   (2) Text labels for the people who are masked, vaccinated, or both
@@ -14,6 +14,7 @@ class Person {
     this.protection = 50;
     this.mask = false;
     this.vaccine = false;
+    this.character = "";
     this.infectStatus = false;
     this.timeInfect = 0;
     this.immuneStatus = false;
@@ -26,6 +27,19 @@ class Person {
   setGridPosition(xCoordinate, yCoordinate) {
     this.xCoordinate = xCoordinate;
     this.yCoordinate = yCoordinate;
+  }
+
+  // Desc : setter method for updating the represented character for each person depending on their mask/vaccine assignment
+  setCharacter() {
+    if (this.mask && this.vaccine) {
+      this.character = "B";
+    } else if (!this.mask && this.vaccine) {
+      this.character = "V";
+    } else if (this.mask && !this.vaccine) {
+      this.character = "M";
+    } else {
+      this.character = "";
+    }
   }
 
   // Desc : updates stats that have to do with being infected
@@ -54,6 +68,7 @@ class Person {
     this.timeInfect = 0;
     this.immuneStatus = false;
     this.r = 0;
+    this.character = "";
   }
 }
 
@@ -235,6 +250,9 @@ function setPopulationStats() {
   assignMasks(maskedPeople);
   const vaccPeople = getRandomList(totalPopulation, simulation.vaccLevel);
   assignVacc(vaccPeople);
+  for (let i = 0; i < totalPopulation.length; i++) {
+    totalPopulation[i].setCharacter();
+  }
 }
 
 // Desc : finds everyone who is currently infected, updates their sick/immune state, returns a list of everyone still currently infected
@@ -405,6 +423,10 @@ function display(dayInfo) {
       context.beginPath();
       context.arc(15, 15, 12, 0, 2 * Math.PI);
       context.fill();
+      context.font = "bold 20 pt Ariel";
+      context.fillStyle = "white";
+      context.textAlign = "center";
+      context.fillText(dayGrid[i][j].character, 15, 19);
     }
   }
 
