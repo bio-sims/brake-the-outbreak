@@ -244,8 +244,6 @@ function assignVacc(vaccPeople) {
 
 // Desc : makes two lists and gives them either masks or vaccines (or both)
 function setPopulationStats() {
-  console.log(simulation.maskLevel);
-  console.log(simulation.vaccLevel);
   const maskedPeople = getRandomList(totalPopulation, simulation.maskLevel);
   assignMasks(maskedPeople);
   const vaccPeople = getRandomList(totalPopulation, simulation.vaccLevel);
