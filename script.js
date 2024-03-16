@@ -3,7 +3,6 @@
 //   Improvement Goals...
 //   (1) Favorable hardcoded values (vaccineEfficicacy, maskProtection, ...) for desired simulation data
 //   (2) Text labels for the people who are masked, vaccinated, or both
-//   (3) Sanitation of undefined JSON values
 
 // Desc : Person class
 class Person {
@@ -782,6 +781,12 @@ function updateValue() {
 
 // Desc : updates simulation according to jsonInput
 function updateJSON() {
+  // validate JSON
+   try {
+    JSON.parse(jsonInput.value);
+  } catch {
+    jsonInput.value = JSON.stringify(simulation, null, " ");
+  }
   // update JSON
   var tempSim = JSON.parse(jsonInput.value);
   if(tempSim.simulationLength < 0) {   // simulationLength
@@ -831,7 +836,13 @@ function updateJSON() {
       simulation.patientZeroPosition[0] = newY;
     }
   }
-  simulation.disease = tempSim.disease;   // disease
+  if(tempSim.disease.daysToSymptoms < 0) {   // disease
+    tempSim.disease.daysToSymptoms = 0;
+  }
+  if(tempSim.disease.daysToImmune < 0) {
+    tempSim.disease.daysToImmune = 0;
+  }
+  simulation.disease = tempSim.disease;
   if(tempSim.maskLevel < 0) {   // maskLevel
     simulation.maskLevel = 0;
   } else if(tempSim.maskLevel > 100) {
