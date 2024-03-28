@@ -101,9 +101,9 @@ class Grid {
 
   // Desc : builds the 2D grid based on its given height and width from Simulation
   build() {
-    for (var i = 0; i < this.gridHeight; i++) {
+    for (let i = 0; i < this.gridHeight; i++) {
       this.grid[i] = [];
-      for (var j = 0; j < this.gridWidth; j++) {
+      for (let j = 0; j < this.gridWidth; j++) {
         this.grid[i][j] = 0;
       }
     }
@@ -113,7 +113,7 @@ class Grid {
     container.style.height = (this.gridHeight * 32) + 'px';
     container.style.width = (this.gridWidth * 32) + 'px';
 
-    for (var x = 0; x < this.gridHeight; x++) for (var y = 0; y < this.gridWidth; y++) {
+    for (let x = 0; x < this.gridHeight; x++) for (let y = 0; y < this.gridWidth; y++) {
       var div = document.createElement("canvas");
         // Desc : created canvas element representing a cell of the grid
       var tempStr = `${x} + ${y}`;
@@ -395,8 +395,8 @@ function getDiseaseLevel(disease) {
 // Pre  : dayInfo is the information of the simulation for a certain day
 function display(dayInfo) {
   var dayGrid = dayInfo.grid;
-  for (var i = 0; i < dayGrid.length; i++) {
-    for (var j = 0; j < dayGrid[i].length; j++) {
+  for (let i = 0; i < dayGrid.length; i++) {
+    for (let j = 0; j < dayGrid[i].length; j++) {
       // Desc : accessing canvas element
       var tempStr = `${i} + ${j}`;
       var canvas = document.getElementById(tempStr);
@@ -477,7 +477,7 @@ function simulate() {
     // Desc : calculates simulation data (total infected, total immune
     var totalInfected = 0;
     var totalImmune = 0;
-    for (var i = 0; i < totalPopulation.length; i++) {
+    for (let i = 0; i < totalPopulation.length; i++) {
         if (totalPopulation[i].infectStatus) {
             totalInfected++;
         } else if (totalPopulation[i].immuneStatus) {
@@ -910,7 +910,7 @@ function showOptions() {
 
 // Desc : declares and initializes the list of people 
 var totalPopulation = [];
-for (var i = 0; i < simulation.populationSize; i++) {
+for (let i = 0; i < simulation.populationSize; i++) {
   totalPopulation.push(new Person(i));
 }
 
