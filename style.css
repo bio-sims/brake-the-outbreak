@@ -31,7 +31,8 @@ canvas {
 }
 
 .box {
-  border: 3px solid rgb(249, 251, 253);
+  background-color: rgb(249, 251, 253);
+  border: 3px solid #000000;
   border-radius: 5px;
   border-style: dotted;
   padding: 10px;
