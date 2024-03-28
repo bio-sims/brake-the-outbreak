@@ -31,7 +31,7 @@ canvas {
 }
 
 .box {
-  border: 3px solid #000000;
+  border: 3px solid rgb(249, 251, 253);
   border-radius: 5px;
   border-style: dotted;
   padding: 10px;
@@ -47,7 +47,7 @@ label {
 }
 
 button {
-  background-color: #FFFFFF;
+  background-color: rgb(231, 237, 242);
   border: 1px solid #000000;
   border-radius: 5px;
   padding: 3px;
@@ -90,7 +90,7 @@ button:hover {
 }
 
 .yellow {
-  background-color: rgb(251, 235, 58);
+  background-color: #ffd800;
 }
 
 .red {
