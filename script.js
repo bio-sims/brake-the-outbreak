@@ -1,5 +1,5 @@
 //Epidemiology Simulation Project: Rena Ahn and Anna Muller
-//Merged with Epidemiology.js [last update: 3/15/2024]
+//Merged with Epidemiology.js [last update: 4/2/2024          updateRate() function]
 //   Improvement Goals...
 //   (1) Favorable hardcoded values (vaccineEfficicacy, maskProtection, ...) for desired simulation data
 //   (2) Text labels for the people who are masked, vaccinated, or both
@@ -749,6 +749,19 @@ function playSim() {
     autoRun = window.setInterval(addDay, 250); // starts automatic progression
     simButton.innerHTML = `Pause Outbreak`;
   }
+}
+
+// Desc : updates simulation according to user input rates (mask rate and vaccine rate)
+function updateRate() {
+  if(simulation.maskLevel != maskInput.value) {
+    simulation.maskLevel = maskInput.value;
+  }
+  if(simulation.vaccLevel != vaccInput.value) {
+    simulation.vaccLevel = vaccInput.value;
+  }
+  // reflect onto JSON
+  var tempSim = JSON.parse(JSON.stringify(simulation));
+  jsonInput.value = JSON.stringify(tempSim, null, " ");
 }
 
 // Desc : updates simulation according to user input values (not jsonInput)
