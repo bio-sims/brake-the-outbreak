@@ -2,7 +2,7 @@
 <html>
 
 <!--
-Epidemiology Simulation Project: Rena Ahn and Anna Muller [last update: 3/6/23]
+Epidemiology Simulation Project: Rena Ahn and Anna Muller [last update: 4/2/23]
 
 Section "sim" refers to the container where the grid and user input form are located
   Div "output" refers to the container where the grid and graph are displayed
@@ -53,7 +53,7 @@ Improvement Goals...
             <button id="prevBtn" style="width: 100px" onclick="subtractDay()">Previous Day</button>
           </label>
           <label class="buttonLabel" id="runLabel" for="runBtn">
-            <button id="runBtn" type="submit" style="font-size: medium" onclick="playSim()">Start Outbreak</button>
+            <button id="runBtn" type="submit" style="font-size: medium; width: 150px; height: 35px;" onclick="playSim()">Start Outbreak</button>
           </label>
           <label class="buttonLabel" id="nextLabel" for="nextBtn">
               <button id="nextBtn" style="width: 100px" onclick="addDay()">Next Day</button>
@@ -94,6 +94,15 @@ Improvement Goals...
       <div class="box" id="form">
         <h4 style="text-align: center; margin-bottom: 0px;">Options</h4>
         <div class="evenDisplay">
+          <label id="maskLabel" for="maskText" onkeyup="updateRate()">Mask Rate (0-100)
+            <input id="maskText" type="text" value="0"></input>
+          </label>
+          <br><br>
+          <label id="vaccLabel" for="vaccText" onkeyup="updateRate()">Vaccine Rate (0-100)
+            <input id="vaccText" type="text" value="0"></input>
+          </label>
+        </div>
+        <div class="evenDisplay">
           <label id="diseaseLabel" for="diseaseText" onclick="updateValue()">Disease
             <select id="diseaseText">
               <option value="Measles">Measles</option>
@@ -101,26 +110,6 @@ Improvement Goals...
               <option value="Covid">Covid</option>
             </select>
           </label>
-          <label id="maskLabel" for="maskText" onclick="updateValue()">Mask Rate
-            <select id="maskText">
-              <option value=0>None</option>
-              <option value=25>Low</option>
-              <option value=50>Medium</option>
-              <option value=75>High</option>
-              <option value=90>Extreme</option>
-            </select>
-          </label>
-          <label id="vaccLabel" for="vaccText" onclick="updateValue()">Vaccine Rate
-            <select id="vaccText">
-              <option value=0>None</option>
-              <option value=25>Low</option>
-              <option value=50>Medium</option>
-              <option value=75>High</option>
-              <option value=90>Extreme</option>
-            </select>
-          </label>
-        </div>
-        <div class="evenDisplay">
           <label id="gridLabel" for="gridText" onclick="updateValue()">Social Distancing
             <select id="gridText">
               <option value=10>None</option>
