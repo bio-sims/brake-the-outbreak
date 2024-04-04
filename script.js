@@ -790,6 +790,8 @@ function updateValue() {
   var tempSim = JSON.parse(JSON.stringify(simulation));
   tempSim.days = [];
   jsonInput.value = JSON.stringify(tempSim, null, " ");
+
+  console.log("Values have been updated!");
 }
 
 // Desc : validate input JSON for incorrect format and undefined values
