@@ -9,8 +9,8 @@ class Person {
   // Desc : constructor
   constructor(num) {
     this.num = num;
-    this.transmission = 50;
-    this.protection = 50;
+    this.transmission = 0;
+    this.protection = 0;
     this.mask = false;
     this.vaccine = false;
     this.character = "";
@@ -41,6 +41,19 @@ class Person {
     }
   }
 
+  capPercentages() {
+    if (this.transmission <= 0) {
+      this.transmission = 0;
+    } else if (this.transmission >= 100) {
+      this.transmission = 100;
+    }
+    if (this.protection <= 0) {
+      this.protection = 0;
+    } if (this.protection >= 100) {
+      this.protection = 100;
+    }
+  }
+  
   // Desc : updates stats that have to do with being infected
   infectPerson() {
     this.infectStatus = true;
@@ -82,12 +95,12 @@ class Disease {
   }
 }
 const diseaseDictionary = {
-  "leastInfectious": new Disease(20, 40, 2, 12),
-    // Desc : covid inspired
-  "mediumInfectious": new Disease(30, 30, 7, 14),
     // Desc : rubella inspired
-  "mostInfectious": new Disease(40, 100, 4, 8)
+  "leastInfectious": new Disease(30, 100, 2, 12),
+    // Desc : covid inspired
+  "mediumInfectious": new Disease(50, 100, 7, 14),
     // Desc : measles inspired    
+  "mostInfectious": new Disease(70, 100, 4, 8)
 }
 
 // Desc : Grid class
@@ -199,7 +212,7 @@ const simulation = {
   "populationSize": 100,
   "disease": diseaseDictionary.mostInfectious,
   "maskLevel": 0,
-  "maskProtection": 40,
+  "maskProtection": 30,
   "vaccLevel": 0
 }
 
@@ -229,6 +242,7 @@ function assignMasks(maskedPeople) {
     maskedPeople[i].mask = true;
     maskedPeople[i].protection += simulation.maskProtection;
     maskedPeople[i].transmission -= simulation.maskProtection;
+    maskedPeople[i].capPercentages();
   }
 }
 
@@ -237,7 +251,7 @@ function assignVacc(vaccPeople) {
   for (var i = 0; i < vaccPeople.length; i++) {
     vaccPeople[i].vaccine = true;
     vaccPeople[i].protection += simulation.disease.vaccineEfficacy;
-    vaccPeople[i].transmission -= simulation.disease.vaccineEfficacy;
+    maskedPeople[i].capPercentages();
   }
 }
 
@@ -349,10 +363,16 @@ function infect(attacker, defender) {
   if (typeof defender === 'undefined') {
     return false;
   }
-  var infect = getRNG(attacker.transmission + defender.protection);
-  if (infect <= attacker.transmission) {
-      defender.infectPerson();
-      return true;
+  var attackSuccess, defendSuccess;
+  if (getRNG(100) < attacker.transmission) {
+    attackSuccess = true;
+  }
+  if (getRNG(100) < defender.protection) {
+    defendSuccess = true;
+  }
+  if (attackSuccess && !defendSuccess) {
+    defender.infectPerson();
+    return true;
   } else {
     return false;
   }
