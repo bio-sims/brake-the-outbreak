@@ -251,7 +251,7 @@ function assignVacc(vaccPeople) {
   for (var i = 0; i < vaccPeople.length; i++) {
     vaccPeople[i].vaccine = true;
     vaccPeople[i].protection += simulation.disease.vaccineEfficacy;
-    maskedPeople[i].capPercentages();
+    vaccPeople[i].capPercentages();
   }
 }
 
