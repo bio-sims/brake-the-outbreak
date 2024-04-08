@@ -58,6 +58,7 @@ class Person {
   infectPerson() {
     this.infectStatus = true;
     this.transmission += simulation.disease.transmissionFactor;
+    capPercentages();
   }
 
   // Desc : increments how long the person has been infected
