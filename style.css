@@ -64,7 +64,7 @@ button:hover {
 
 .evenDisplay {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
 }
 
 .centerDisplay {
