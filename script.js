@@ -1,8 +1,7 @@
 //Epidemiology Simulation Project: Rena Ahn and Anna Muller
-//Merged with Epidemiology.js [last update: 4/4/2024          updateRate() and updateValue()]
+//Merged with Epidemiology.js [last update: 4/9/2024]
 //   Improvement Goals...
 //   (1) Favorable hardcoded values (vaccineEfficicacy, maskProtection, ...) for desired simulation data
-//   (2) Text labels for the people who are masked, vaccinated, or both
 
 // Desc : Person class
 class Person {
