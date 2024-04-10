@@ -1,4 +1,5 @@
 //Epidemiology Simulation Project: Rena Ahn and Anna Muller
+// Version 0.2
 // script.js file before Combined JSON
 
 // Desc : Person class
