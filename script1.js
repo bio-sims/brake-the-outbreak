@@ -2,6 +2,7 @@
 //Merged with Epidemiology.js [last update: 4/9/2024]
 //   Improvement Goals...
 //   (1) Favorable hardcoded values (vaccineEfficicacy, maskProtection, ...) for desired simulation data
+// Changed to script1.js for testing and debugging purposes
 
 // Desc : Person class
 class Person {
