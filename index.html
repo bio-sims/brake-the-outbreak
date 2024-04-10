@@ -52,8 +52,8 @@ Improvement Goals...
           <label class="buttonLabel" id="prevLabel" for="prevBtn">
             <button id="prevBtn" style="width: 100px" onclick="subtractDay()">Previous Day</button>
           </label>
-          <label class="buttonLabel" id="runLabel" for="runBtn">
-            <button id="runBtn" type="submit" style="font-size: medium; width: 150px; height: 35px;" onclick="playSim()">Start Outbreak</button>
+          <label class="buttonLabel" id="playLabel" for="playBtn">
+            <button id="playBtn" type="submit" style="font-size: medium; width: 150px; height: 35px;" onclick="playSim()">Play Outbreak</button>
           </label>
           <label class="buttonLabel" id="nextLabel" for="nextBtn">
               <button id="nextBtn" style="width: 100px" onclick="addDay()">Next Day</button>
@@ -133,6 +133,10 @@ Improvement Goals...
             </select>
           </label>
         </div>
+        <br>
+        <label class="buttonLabel" id="runLabel" for="runBtn">
+          <button id="runBtn" type="submit" style="font-size: medium; width: 150px; height: 35px;" onclick="startSim()">Start Outbreak</button>
+        </label>
       </div>
       <label class="buttonLabel" id="toggleLabel" for="toggle" style="margin-bottom: 10px">
         <button id="toggle" onclick="showOptions()">Show Advanced Options</button>
