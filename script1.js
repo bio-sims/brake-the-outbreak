@@ -1,3 +1,4 @@
+//Epidemiology Simulation Project: Rena Ahn and Anna Muller
 // Version 0.3
 // Changed to script1.js for testing and debugging purposes
 
