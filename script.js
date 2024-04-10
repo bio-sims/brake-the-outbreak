@@ -819,47 +819,9 @@ function updateValue() {
   console.log("Values have been updated!");
 }
 
-// Desc : validate input JSON for incorrect format and undefined values
-function checkJSON() {
-  // check for invalid json
-  try {
-    JSON.parse(jsonInput.value);
-  } catch {
-    jsonInput.value = JSON.stringify(simulation, null, " ");
-    return;
-  }
-  // check for undefined values or wrong format (patientZeroPosition, disease)
-  var invalid = false;
-  var tempSim = JSON.parse(jsonInput.value);
-  if(typeof(tempSim.days) == 'undefined' ||
-     typeof(tempSim.simulationLength) == 'undefined' ||
-     typeof(tempSim.populationSize) == 'undefined' ||
-     typeof(tempSim.gridHeight) == 'undefined' ||
-     typeof(tempSim.gridWidth) == 'undefined' ||
-     typeof(seed) == 'undefined' ||
-     typeof(tempSim.patientZeroPosition) == 'undefined' ||
-     typeof(tempSim.disease) == 'undefined' ||
-     typeof(tempSim.maskLevel) == 'undefined' ||
-     typeof(maskProtection) == 'undefined' ||
-     typeof(vaccLevel) == 'undefined') {
-    invalid = true;
-  } else if(tempSim.patientZeroPosition.length != 2) {
-    invalid = true;
-  } else if(typeof(tempSim.disease.transmissionFactor) == 'undefined' ||
-            typeof(tempSim.disease.vaccineEfficacy) == 'undefined' ||
-            typeof(tempSim.disease.daysToSymptoms) == 'undefined' ||
-            typeof(tempSim.disease.daysToImmune) == 'undefined') {
-    invalid = true;
-  }
-
-  if(invalid) {
-    jsonInput.value = JSON.stringify(simulation, null, " ");
-  }
-}
-
 // Desc : updates simulation according to jsonInput
 function updateJSON() {
-  checkJSON();
+  //checkJSON();
   // update JSON
   var tempSim = JSON.parse(jsonInput.value);
   if(tempSim.simulationLength < 0) {   // simulationLength
