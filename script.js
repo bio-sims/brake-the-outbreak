@@ -362,20 +362,11 @@ function checkDefender(x, y) {
 // Desc : uses a random number to see if the given attacker infects the given defender
 function infect(attacker, defender) {
   if (typeof defender === 'undefined') {
-    return false;
+    return;
   }
-  var attackSuccess, defendSuccess;
-  if (getRNG(100) < attacker.transmission) {
-    attackSuccess = true;
-  }
-  if (getRNG(100) < defender.protection) {
-    defendSuccess = true;
-  }
-  if (attackSuccess && !defendSuccess) {
-    defender.infectPerson();
-    return true;
-  } else {
-    return false;
+  var infect = getRNG(attacker.transmission + defender.protection);
+  if (infect <= attacker.transmission) {
+      defender.infectPerson();
   }
 }
 
