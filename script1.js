@@ -1,4 +1,4 @@
-// Version 0.4
+// Version 0.3
 // Changed to script1.js for testing and debugging purposes
 
 // Desc : Person class
