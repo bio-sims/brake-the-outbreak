@@ -1,7 +1,8 @@
 //Epidemiology Simulation Project: Rena Ahn and Anna Muller
-//Merged with Epidemiology.js [last update: 4/9/2024]
+//Merged with Epidemiology.js [last update: 3/15/2024]
 //   Improvement Goals...
 //   (1) Favorable hardcoded values (vaccineEfficicacy, maskProtection, ...) for desired simulation data
+//   (2) Text labels for the people who are masked, vaccinated, or both
 
 // Desc : Person class
 class Person {
@@ -12,13 +13,13 @@ class Person {
     this.protection = 50;
     this.mask = false;
     this.vaccine = false;
+    this.character = "";
     this.infectStatus = false;
     this.timeInfect = 0;
     this.immuneStatus = false;
     this.xCoordinate = 0;
     this.yCoordinate = 0;
     this.r = 0;
-    this.character = "";
   }
 
   // Desc : setter method updating this.xCoordinate and this.yCoordinate
@@ -40,24 +41,10 @@ class Person {
     }
   }
 
-  capPercentages() {
-    if (this.transmission <= 0) {
-      this.transmission = 0;
-    } else if (this.transmission >= 100) {
-      this.transmission = 100;
-    }
-    if (this.protection <= 0) {
-      this.protection = 0;
-    } if (this.protection >= 100) {
-      this.protection = 100;
-    }
-  }
-
   // Desc : updates stats that have to do with being infected
   infectPerson() {
     this.infectStatus = true;
     this.transmission += simulation.disease.transmissionFactor;
-    this.capPercentages();
   }
 
   // Desc : increments how long the person has been infected
@@ -95,12 +82,12 @@ class Disease {
   }
 }
 const diseaseDictionary = {
-  // Desc : rubella inspired
-"leastInfectious": new Disease(30, 100, 2, 12),
+  "leastInfectious": new Disease(20, 40, 2, 12),
   // Desc : covid inspired
-"mediumInfectious": new Disease(50, 100, 7, 14),
-  // Desc : measles inspired    
-"mostInfectious": new Disease(70, 100, 4, 8)
+  "mediumInfectious": new Disease(30, 30, 7, 14),
+  // Desc : rubella inspired
+  "mostInfectious": new Disease(40, 100, 4, 8)
+  // Desc : measles inspired
 }
 
 // Desc : Grid class
@@ -116,26 +103,26 @@ class Grid {
   build() {
     for (let i = 0; i < this.gridHeight; i++) {
       this.grid[i] = [];
-      for (var j = 0; j < this.gridWidth; j++) {
+      for (let j = 0; j < this.gridWidth; j++) {
         this.grid[i][j] = 0;
       }
     }
 
     var container = document.getElementById("grid");
-      // Reference : index.html, div element with id="grid"
+    // Reference : index.html, div element with id="grid"
     container.style.height = (this.gridHeight * 32) + 'px';
     container.style.width = (this.gridWidth * 32) + 'px';
 
     for (let x = 0; x < this.gridHeight; x++) for (let y = 0; y < this.gridWidth; y++) {
       var div = document.createElement("canvas");
-        // Desc : created canvas element representing a cell of the grid
+      // Desc : created canvas element representing a cell of the grid
       var tempStr = `${x} + ${y}`;
-        // Desc : id for the canvas element
+      // Desc : id for the canvas element
       div.id = tempStr;
       div.height = 30;
       div.width = 30;
       container.appendChild(div);
-        // Desc : the canvas element (div) is added to the grid (container)
+      // Desc : the canvas element (div) is added to the grid (container)
     }
   }
 
@@ -185,7 +172,7 @@ class Grid {
     while (i < totalPopulation.length) {
       var randomX = getRNG(this.gridHeight);
       var randomY = getRNG(this.gridWidth);
-      if (this.grid[randomX][randomY] == 0) {
+      if (this.grid[randomX][randomY] === 0) {
         totalPopulation[i].setGridPosition(randomX, randomY);
         this.grid[randomX][randomY] = totalPopulation[i];
         i++;
@@ -205,21 +192,21 @@ class Grid {
 const simulation = {
   "days": [],
   "simulationLength": 31,
-  "populationSize": 100,
   "gridHeight": 10,
   "gridWidth": 10,
   "seed": "5x5",
   "patientZeroPosition": [7, 5],
+  "populationSize": 100,
   "disease": diseaseDictionary.mostInfectious,
   "maskLevel": 0,
-  "maskProtection": 30,
+  "maskProtection": 40,
   "vaccLevel": 0
 }
 
 // Desc : implements the seeded random value
 var rng = new Math.seedrandom("15x15");
 function getRNG(range) {
-    return Math.floor(rng() * range);
+  return Math.floor(rng() * range);
 }
 
 // Desc : returns a list of randomly chosen people
@@ -242,7 +229,6 @@ function assignMasks(maskedPeople) {
     maskedPeople[i].mask = true;
     maskedPeople[i].protection += simulation.maskProtection;
     maskedPeople[i].transmission -= simulation.maskProtection;
-    maskedPeople[i].capPercentages();
   }
 }
 
@@ -251,7 +237,7 @@ function assignVacc(vaccPeople) {
   for (var i = 0; i < vaccPeople.length; i++) {
     vaccPeople[i].vaccine = true;
     vaccPeople[i].protection += simulation.disease.vaccineEfficacy;
-    vaccPeople[i].capPercentages();
+    vaccPeople[i].transmission -= simulation.disease.vaccineEfficacy;
   }
 }
 
@@ -286,78 +272,89 @@ function updateInfected(totalPopulation) {
 function transmitDisease(attackerList, grid) {
   var numAttackers = 0;
   var totalInfections = 0;
-  for (var i = 0; i < attackerList.length; i++) {
+  for (let i = 0; i < attackerList.length; i++) {
     var eachInfection = 0;
     var attackerX = attackerList[i].xCoordinate;
     var attackerY = attackerList[i].yCoordinate;
-    
+
     if (checkDefender(attackerX - 1, attackerY - 1)) {
-      infect(attackerList[i], grid[attackerX - 1][attackerY - 1]);
-      eachInfection++;
-      attackerList[i].r++;
+      if (infect(attackerList[i], grid[attackerX - 1][attackerY - 1])) {
+        eachInfection++;
+        attackerList[i].r++;
+      }
     }
     if (checkDefender(attackerX - 1, attackerY)) {
-      infect(attackerList[i], grid[attackerX - 1][attackerY]);
-      eachInfection++;
-      attackerList[i].r++;
+      if (infect(attackerList[i], grid[attackerX - 1][attackerY])) {
+        eachInfection++;
+        attackerList[i].r++;
+      }
     }
     if (checkDefender(attackerX - 1, attackerY + 1)) {
-      infect(attackerList[i], grid[attackerX - 1][attackerY + 1]);
-      eachInfection++;
-      attackerList[i].r++;
+      if (infect(attackerList[i], grid[attackerX - 1][attackerY + 1])) {
+        eachInfection++;
+        attackerList[i].r++;
+      }
     }
     if (checkDefender(attackerX, attackerY - 1)) {
-      infect(attackerList[i], grid[attackerX][attackerY + 1]);
-      eachInfection++;
-      attackerList[i].r++;
+      if (infect(attackerList[i], grid[attackerX][attackerY + 1])) {
+        eachInfection++;
+        attackerList[i].r++;
+      }
     }
     if (checkDefender(attackerX, attackerY + 1)) {
-      infect(attackerList[i], grid[attackerX][attackerY + 1]);
-      eachInfection++;
-      attackerList[i].r++;
+      if (infect(attackerList[i], grid[attackerX][attackerY + 1])) {
+        eachInfection++;
+        attackerList[i].r++;
+      }
     }
     if (checkDefender(attackerX + 1, attackerY - 1)) {
-      infect(attackerList[i], grid[attackerX + 1][attackerY - 1]);
-      eachInfection++;
-      attackerList[i].r++;
+      if (infect(attackerList[i], grid[attackerX + 1][attackerY - 1])) {
+        eachInfection++;
+        attackerList[i].r++;
+      }
     }
     if (checkDefender(attackerX + 1, attackerY)) {
-      infect(attackerList[i], grid[attackerX + 1][attackerY]);
-      eachInfection++;
-      attackerList[i].r++;
+      if (infect(attackerList[i], grid[attackerX + 1][attackerY])) {
+        eachInfection++;
+        attackerList[i].r++;
+      }
     }
     if (checkDefender(attackerX + 1, attackerY + 1)) {
-      infect(attackerList[i], grid[attackerX + 1][attackerY + 1]);
-      eachInfection++;
-      attackerList[i].r++;
+      if (infect(attackerList[i], grid[attackerX + 1][attackerY + 1])) {
+        eachInfection++;
+        attackerList[i].r++;
+      }
     }
     if (eachInfection > 0) {
       totalInfections += eachInfection;
       numAttackers++;
     }
   }
-
   return eachInfection / numAttackers;
 }
 
 // Desc : checks to see if the given defender is in the bounds of the 2D array and if they fit the criteria of a defender
 function checkDefender(x, y) {
   if ((x >= 0 && x < simulation.gridHeight) && (y >= 0 && y < simulation.gridWidth)) {
-      if (town.grid[x][y] != 0 && town.grid[x][y].infectStatus == false  && town.grid[x][y].immuneStatus == false) {
-          return true;
-      }
+    if (town.grid[x][y] !== 0 && town.grid[x][y].infectStatus === false  && town.grid[x][y].immuneStatus === false) {
+      return true;
+    }
+  } else {
+    return false;
   }
-  return false;
 }
 
 // Desc : uses a random number to see if the given attacker infects the given defender
 function infect(attacker, defender) {
   if (typeof defender === 'undefined') {
-    return;
+    return false;
   }
   var infect = getRNG(attacker.transmission + defender.protection);
   if (infect <= attacker.transmission) {
-      defender.infectPerson();
+    defender.infectPerson();
+    return true;
+  } else {
+    return false;
   }
 }
 
@@ -372,15 +369,10 @@ var infectedDisplay = document.getElementById("infectedInfo");
 var immuneDisplay = document.getElementById("immuneInfo");
 var jsonInput = document.getElementById("jsonText");
 jsonInput.value = JSON.stringify(simulation, null, " ");
-
-var playButton = document.getElementById("playBtn");
-var runButton = document.getElementById("runBtn");
-playButton.style.display = "none";
-
+var simButton = document.getElementById("runBtn");
 var toggle = document.getElementById("toggle");
 var config = document.getElementById("config");
 config.style.display = "none";
-
 var finalR = document.getElementById("totalR");
 var peakPrevalence = document.getElementById("peakPrevalence");
 var lastDayIncidence = document.getElementById("lastIncidenceDay");
@@ -390,11 +382,11 @@ outSummary.style.display = "none";
 // Desc : returns the infectiousness of the disease (refer to diseaseDictionary) according to disease
 // Pre  : disease is the name of a disease inputed by the user
 function getDiseaseLevel(disease) {
-  if(disease == "Covid") {
-    return diseaseDictionary.mediumInfectious;
-  } else if(disease == "Rubella") {
+  if(disease === "Covid") {
     return diseaseDictionary.leastInfectious;
-  } else if(disease == "Measles") {
+  } else if(disease === "Rubella") {
+    return diseaseDictionary.mediumInfectious;
+  } else if(disease === "Measles") {
     return diseaseDictionary.mostInfectious;
   }
 }
@@ -418,9 +410,9 @@ function display(dayInfo) {
       if (dayGrid[i][j].immuneStatus) {
         context.fillStyle = "green";
       } else if (dayGrid[i][j].infectStatus && dayGrid[i][j].timeInfect >= simulation.disease.daysToSymptoms) {
-        context.fillStyle = "#ffbd60";
+        context.fillStyle = "#f0f000";
       } else if (dayGrid[i][j].infectStatus) {
-        context.fillStyle = "red"; 
+        context.fillStyle = "red";
       } else {
         context.fillStyle = "blue";
       }
@@ -428,8 +420,6 @@ function display(dayInfo) {
       context.beginPath();
       context.arc(15, 15, 12, 0, 2 * Math.PI);
       context.fill();
-
-      // Desc : text labels
       context.font = "bold 20 pt Ariel";
       context.fillStyle = "white";
       context.textAlign = "center";
@@ -445,7 +435,7 @@ function display(dayInfo) {
 // Desc : deletes the current cavas elements in the grid
 function emptyGrid() {
   var container = document.getElementById("grid");
-    //Reference : index.html, div element with id="grid"
+  //Reference : index.html, div element with id="grid"
   while (container.hasChildNodes()) {   // Desc : while loop that empties out the grid of canvas element cells
     container.removeChild(container.firstChild);
   }
@@ -458,7 +448,7 @@ function resetTotalPopulation() {
   }
 }
 
-// Desc : runs the simulation and sets progression state (day, dayReached) to the first day
+// Desc : runs the simulation
 function simulate() {
   // Desc : resetting town (instance of grid) and other simulation variables
   rng = new Math.seedrandom(simulation.seed);
@@ -488,17 +478,17 @@ function simulate() {
     var totalInfected = 0;
     var totalImmune = 0;
     for (let i = 0; i < totalPopulation.length; i++) {
-        if (totalPopulation[i].infectStatus) {
-            totalInfected++;
-        } else if (totalPopulation[i].immuneStatus) {
-            totalImmune++;
-        }
+      if (totalPopulation[i].infectStatus) {
+        totalInfected++;
+      } else if (totalPopulation[i].immuneStatus) {
+        totalImmune++;
+      }
     }
     var difference = totalInfected - simulation.days[day-1].prevalence;
     if(difference < 0) {
       difference = 0;
     }
-    
+
     if (difference > 0) {
       finalLastIncidenceDay = day + 1;
     }
@@ -506,7 +496,7 @@ function simulate() {
       finalMaxPrevalence = totalInfected;
       finalMaxPrevalenceDay = day;
     }
-    
+
     // Desc : stores simulation data
     simulation.days[day] = {
       day: day+1,
@@ -519,16 +509,16 @@ function simulate() {
     };
     day++;
   }
-  
+
   var calculateR = 0;
   var allInfected = 0;
   for (let i = 0; i < simulation.populationSize; i++) {
-    if (totalPopulation[i].infectStatus == true || totalPopulation[i].immuneStatus == true) {
+    if (totalPopulation[i].infectStatus === true || totalPopulation[i].immuneStatus === true) {
       allInfected++;
     }
     calculateR += totalPopulation[i].r;
+
   }
-  //calculateR /= allInfected;
   calculateR = (calculateR / allInfected).toFixed(4);
   finalR.innerHTML = `Final calculated R: ${calculateR}`;
   peakPrevalence.innerHTML = `Peak Prevalence: ${finalMaxPrevalence} on day ${finalMaxPrevalenceDay+1}`;
@@ -552,12 +542,12 @@ function graph(data) {
   })
   var svg = d3.select("#data")   //Desc : appending svg object to the #data div
     .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
     .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-  var x = d3.scaleLinear()   //Desc : adding the x axis
-    .domain([ 0, simulation.simulationLength ])
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  var x = d3.scaleLinear()   //Desc : adding the x-axis
+    .domain([ 0, 31 ])
     .range([ 0, width ]);
   svg.append("g")
     .attr("transform", "translate(0," + height + ")")
@@ -567,7 +557,7 @@ function graph(data) {
     .attr("x", width / 2 )
     .attr("y",  height + margin.top + 15)
     .text("Days");
-  var y = d3.scaleLinear()   //Desc : adding the y axis
+  var y = d3.scaleLinear()   //Desc : adding the y-axis
     .domain( [ 0, 100 ])
     .range([ height, 0 ]);
   svg.append("g")
@@ -587,37 +577,37 @@ function graph(data) {
     .data(dataReady)
     .enter()
     .append("path")
-      .attr("class", function(d){ return d.name })
-      .attr("d", function(d) { if(d.name == "R") {return line2(d.values)}
-                               else { return line(d.values) } })
-      .attr("stroke", function(d) { return myColor(d.name) })
-      .style("stroke-width", 2)
-      .style("fill", "none");
+    .attr("class", function(d){ return d.name })
+    .attr("d", function(d) { if(d.name === "R") {return line2(d.values)}
+    else { return line(d.values) } })
+    .attr("stroke", function(d) { return myColor(d.name) })
+    .style("stroke-width", 2)
+    .style("fill", "none");
   svg   //Desc: adding the points
     .selectAll("myDots")   //(1) enter in a group
     .data(dataReady)
     .enter()
-      .append("g")
-      .style("fill", function(d) { return myColor(d.name) })
-      .attr("class", function(d) { return d.name })
+    .append("g")
+    .style("fill", function(d) { return myColor(d.name) })
+    .attr("class", function(d) { return d.name })
     .selectAll("myPoints")   //(2) Enter in the 'values' part of the group
     .data(function(d) { return d.values })
     .enter()
   svg.selectAll("myLegend")   //Desc : adding an interactive legend
     .data(dataReady)
     .enter()
-      .append("g")
-      .append("text")
-        .attr("x", function(d, i) { return 30 + (i * 100) })
-        .attr("y", -5)
-        .text(function(d) { return d.name; })
-        .style("fill", function(d) { return myColor(d.name) })
-        .style("font-size", 15)
-      .on("click", function(d) {
-        var currentOpacity = d3.selectAll("." + d.name).style("opacity");
-          // Desc : visibilty of the element
-        d3.selectAll("." + d.name).transition().style("opacity", currentOpacity == 1 ? 0:1);
-      });
+    .append("g")
+    .append("text")
+    .attr("x", function(d, i) { return 30 + (i * 100) })
+    .attr("y", -5)
+    .text(function(d) { return d.name; })
+    .style("fill", function(d) { return myColor(d.name) })
+    .style("font-size", 15)
+    .on("click", function(d) {
+      var currentOpacity = d3.selectAll("." + d.name).style("opacity");
+      // Desc : visibilty of the element
+      d3.selectAll("." + d.name).transition().style("opacity", currentOpacity === 1 ? 0:1);
+    });
 
   var dataR = rGroup.map( function(group) {   //Desc : formats data
     return {
@@ -629,10 +619,10 @@ function graph(data) {
   })
   var svgR = d3.select("#rData")   //Desc : appending svg object to the #rData div
     .append("svg")
-      .attr("width", widthR + marginR.left + marginR.right)
-      .attr("height", heightR + marginR.top + marginR.bottom)
+    .attr("width", widthR + marginR.left + marginR.right)
+    .attr("height", heightR + marginR.top + marginR.bottom)
     .append("g")
-      .attr("transform", "translate(" + marginR.left + "," + marginR.top + ")");
+    .attr("transform", "translate(" + marginR.left + "," + marginR.top + ")");
   var xR = d3.scaleLinear()   //Desc : adding the x axis
     .domain([ 0, 31 ])
     .range([ 0, widthR ]);
@@ -664,29 +654,29 @@ function graph(data) {
     .data(dataR)
     .enter()
     .append("path")
-      .attr("d", function(d) { return lineR(d.values) })
-      .attr("stroke", "purple")
-      .style("stroke-width", 2)
-      .style("fill", "none");
+    .attr("d", function(d) { return lineR(d.values) })
+    .attr("stroke", "purple")
+    .style("stroke-width", 2)
+    .style("fill", "none");
   svgR   //Desc: adding the points
     .selectAll("myDots")   //(1) enter in a group
     .data(dataR)
     .enter()
-      .append("g")
-      .style("fill", function(d) { return rColor(d.name) })
+    .append("g")
+    .style("fill", function(d) { return rColor(d.name) })
     .selectAll("myPoints")   //(2) Enter in the 'values' part of the group
     .data(function(d) { return d.values })
     .enter()
     .append("circle")
-      .attr("class", "myCircle")
-      .attr("cx", function(d) { return xR(d.date) } )
-      .attr("cy", function(d) { return yR(d.value) } )
-      .attr("r", 4)
-      .attr("stroke", "white")
-      .attr("stroke-width", 1)
-      .on("mouseover", mouseover)
-      .on("mousemove", mousemove)
-      .on("mouseleave", mouseleave);
+    .attr("class", "myCircle")
+    .attr("cx", function(d) { return xR(d.date) } )
+    .attr("cy", function(d) { return yR(d.value) } )
+    .attr("r", 4)
+    .attr("stroke", "white")
+    .attr("stroke-width", 1)
+    .on("mouseover", mouseover)
+    .on("mousemove", mousemove)
+    .on("mouseleave", mouseleave);
 }
 
 // Desc : deletes the current canvas elements in the grid, updates json (simulation) variables according to user input,
@@ -715,77 +705,50 @@ function subtractDay() {
 
 // Desc : increments day and draws the grid of the corresponding day
 function addDay() {
-  if(day >= simulation.simulationLength) {   // Desc : validating day
+  if(day == (simulation.simulationLength-1)) {   // Desc : validating day
+    if(!play) {
+      play = true;
+    }
+    playSim();
+    end = true;
+    simButton.innerHTML = `Start Outbreak`;
+  } else if (day >= simulation.simulationLength) {
     return;
   }
-
   day++;
   display(simulation.days[day-1]);
+
   if(dayReached < day) {   // Desc : updating dayReached
     dayReached = day;
   }
-  
-  d3.select("#data svg").remove();   // Desc : clearing previous graph
-  d3.select("#rData svg").remove();
-  graph(simulation.days.slice(0, dayReached));
-
-  if(day == simulation.days.length) {
-    playSim();
-  }
-  if(dayReached == simulation.days.length) {
-    outSummary.style.display = "block";
+  if(dayReached <= simulation.days.length) {
+    d3.select("#data svg").remove();   // Desc : clearing previous graph
+    d3.select("#rData svg").remove();
+    if(dayReached == simulation.days.length) {
+      outSummary.style.display = "block";
+    }
+    graph(simulation.days.slice(0, dayReached));
   }
 }
 
 // Desc : adds a play/pause feature to the simulation
 function playSim() {
+  if(end) {
+    end = false;
+    runSim();
+  }
   if(play) {
     play = false;
     clearInterval(autoRun); // stops automatic progression
-    playButton.innerHTML = `Play Outbreak`;
+    simButton.innerHTML = `Play Outbreak`;
   } else {
     play = true;
     if(day >= simulation.days.length) {
       day = 0;
     }
-    autoRun = window.setInterval(addDay, 200); // starts automatic progression
-    playButton.innerHTML = `Pause Outbreak`;
+    autoRun = window.setInterval(addDay, 250); // starts automatic progression
+    simButton.innerHTML = `Pause Outbreak`;
   }
-}
-
-// Desc : starts a new simulation
-function startSim() {
-  outSummary.style.display = "none";
-  playButton.style.display = "block";
-  runSim();
-  playSim();
-}
-
-// Desc : updates simulation according to user input rates (mask rate and vaccine rate)
-function updateRate() {
-  if(simulation.maskLevel != maskInput.value) {
-    if(maskInput.value > 100) {
-      maskInput.value = 100;
-    } else if(maskInput.value < 0) {
-      maskInput.value = 0;
-    }
-
-    simulation.maskLevel = maskInput.value;
-  }
-
-  if(simulation.vaccLevel != vaccInput.value) {
-    if(vaccInput.value > 100) {
-      vaccInput.value = 100;
-    } else if(vaccInput.value < 0) {
-      vaccInput.value = 0;
-    }
-
-    simulation.vaccLevel = vaccInput.value;
-  }
-
-  // reflect onto JSON
-  var tempSim = JSON.parse(JSON.stringify(simulation));
-  jsonInput.value = JSON.stringify(tempSim, null, " ");
 }
 
 // Desc : updates simulation according to user input values (not jsonInput)
@@ -793,6 +756,12 @@ function updateValue() {
   // update simulation
   if(simulation.disease != getDiseaseLevel(diseaseInput.value)) {
     simulation.disease = getDiseaseLevel(diseaseInput.value);
+  }
+  if(simulation.maskLevel != maskInput.value) {
+    simulation.maskLevel = maskInput.value;
+  }
+  if(simulation.vaccLevel != vaccInput.value) {
+    simulation.vaccLevel = vaccInput.value;
   }
   if(simulation.gridHeight != gridInput.value) {
     simulation.gridHeight = gridInput.value;
@@ -822,24 +791,24 @@ function checkJSON() {
   // check for undefined values or wrong format (patientZeroPosition, disease)
   var invalid = false;
   var tempSim = JSON.parse(jsonInput.value);
-  if(typeof tempSim.days == 'undefined' ||
-     typeof tempSim.simulationLength == 'undefined' ||
-     typeof tempSim.populationSize == 'undefined' ||
-     typeof tempSim.gridHeight == 'undefined' ||
-     typeof tempSim.gridWidth == 'undefined' ||
-     typeof seed == 'undefined' ||
-     typeof tempSim.patientZeroPosition == 'undefined' ||
-     typeof tempSim.disease == 'undefined' ||
-     typeof tempSim.maskLevel == 'undefined' ||
-     typeof maskProtection == 'undefined' ||
-     typeof vaccLevel == 'undefined') {
+  if(typeof(tempSim.days) == 'undefined' ||
+    typeof(tempSim.simulationLength) == 'undefined' ||
+    typeof(tempSim.populationSize) == 'undefined' ||
+    typeof(tempSim.gridHeight) == 'undefined' ||
+    typeof(tempSim.gridWidth) == 'undefined' ||
+    typeof(seed) == 'undefined' ||
+    typeof(tempSim.patientZeroPosition) == 'undefined' ||
+    typeof(tempSim.disease) == 'undefined' ||
+    typeof(tempSim.maskLevel) == 'undefined' ||
+    typeof(maskProtection) == 'undefined' ||
+    typeof(vaccLevel) == 'undefined') {
     invalid = true;
   } else if(tempSim.patientZeroPosition.length != 2) {
     invalid = true;
-  } else if(typeof tempSim.disease.transmissionFactor == 'undefined' ||
-            typeof tempSim.disease.vaccineEfficacy == 'undefined' ||
-            typeof tempSim.disease.daysToSymptoms == 'undefined' ||
-            typeof tempSim.disease.daysToImmune == 'undefined') {
+  } else if(typeof(tempSim.disease.transmissionFactor) == 'undefined' ||
+    typeof(tempSim.disease.vaccineEfficacy) == 'undefined' ||
+    typeof(tempSim.disease.daysToSymptoms) == 'undefined' ||
+    typeof(tempSim.disease.daysToImmune) == 'undefined') {
     invalid = true;
   }
 
@@ -851,7 +820,6 @@ function checkJSON() {
 // Desc : updates simulation according to jsonInput
 function updateJSON() {
   checkJSON();
-
   // update JSON
   var tempSim = JSON.parse(jsonInput.value);
   if(tempSim.simulationLength < 0) {   // simulationLength
@@ -861,7 +829,6 @@ function updateJSON() {
   } else {
     simulation.simulationLength = tempSim.simulationLength;
   }
-
   if(tempSim.populationSize < 100) {   // populationSize
     simulation.populationSize = 100;
   } else if(tempSim.populationSize > 400) {
@@ -869,7 +836,6 @@ function updateJSON() {
   } else {
     simulation.populationSize = tempSim.populationSize;
   }
-
   if(tempSim.gridHeight < 1) {   // gridHeight
     tempSim.gridHeight = 1;
   } else if(tempSim.gridHeight > 20) {
@@ -884,9 +850,7 @@ function updateJSON() {
     simulation.gridHeight = tempSim.gridHeight;
     simulation.gridWidth = tempSim.gridWidth;
   }
-
   simulation.seed = tempSim.seed;   // seed
-
   if(simulation.patientZeroPosition != tempSim.patientZeroPosition) {   // patientZeroPosition
     var newY = tempSim.patientZeroPosition[0];
     var newX = tempSim.patientZeroPosition[1];
@@ -905,9 +869,13 @@ function updateJSON() {
       simulation.patientZeroPosition[0] = newY;
     }
   }
-
-  simulation.disease = tempSim.disease;   // disease
-
+  if(tempSim.disease.daysToSymptoms < 0) {   // disease
+    tempSim.disease.daysToSymptoms = 0;
+  }
+  if(tempSim.disease.daysToImmune < 0) {
+    tempSim.disease.daysToImmune = 0;
+  }
+  simulation.disease = tempSim.disease;
   if(tempSim.maskLevel < 0) {   // maskLevel
     simulation.maskLevel = 0;
   } else if(tempSim.maskLevel > 100) {
@@ -915,7 +883,6 @@ function updateJSON() {
   } else {
     simulation.maskLevel = tempSim.maskLevel;
   }
-
   simulation.maskProtection = tempSim.maskProtection;   // maskProtection
   if(tempSim.vaccLevel < 0) {   // vaccLevel
     simulation.vaccLevel = 0;
@@ -924,18 +891,15 @@ function updateJSON() {
   } else {
     simulation.vaccLevel = tempSim.vaccLevel;
   }
-
   // display current simulation (some changes by the user are not reflected)
   tempSim = JSON.parse(JSON.stringify(simulation));
   tempSim.days = [];
   jsonInput.value = JSON.stringify(tempSim, null, " ");
-
-  // reflect onto Options variables (?)
 }
 
 // Desc : show/hide the advanced options box
 function showOptions() {
-  if(config.style.display == "none") {
+  if(config.style.display === "none") {
     toggle.innerHTML = `Hide Advanced Options`;
     config.style.display = "block";
   } else {
@@ -944,7 +908,7 @@ function showOptions() {
   }
 }
 
-// Desc : declares and initializes the list of people 
+// Desc : declares and initializes the list of people
 var totalPopulation = [];
 for (let i = 0; i < simulation.populationSize; i++) {
   totalPopulation.push(new Person(i));
@@ -959,26 +923,27 @@ var day1Data = {
   grid: JSON.parse(JSON.stringify(town.grid)),
   uninfected: 100,
   prevalence: 1,
-  incidence: 0, 
+  incidence: 0,
   resistant: 0,
-  r: 8
+  r: 0
 };
+var end = true;
 var play = false;
 var autoRun;   // Desc : variable for automatic progression
 
 //Desc : declaring variables needed for the graph
-var margin = {top: 20, right: 50, bottom: 50, left: 50},   // Desc : style (height, width, margin) variables
+var margin = {top: 20, right: 30, bottom: 50, left: 50},   // Desc : style (height, width, margin) variables
   width = 650 - margin.left - margin.right,
   height = 370 - margin.top - margin.bottom;
-
-var marginR = {top: 10, right: 30, bottom: 50, left: 50},
-  widthR = 650 - marginR.left - marginR.right,
-  heightR = 300 - marginR.top - marginR.bottom;
 
 var allGroup = ["uninfected", "prevalence", "incidence", "resistant"];   // Desc : multilinear names and colors
 var myColor = d3.scaleOrdinal()
   .domain(allGroup)
-  .range(["blue", "#FF6600", "red", "green"]);
+  .range(["blue", "orange", "red", "green"]);
+
+var marginR = {top: 10, right: 30, bottom: 50, left: 50},
+  widthR = 650 - marginR.left - marginR.right,
+  heightR = 350 - marginR.top - marginR.bottom;
 
 var rGroup = ["r"];
 var rColor = d3.scaleOrdinal()
@@ -996,16 +961,16 @@ var Tooltip = d3.select("#value")   // Desc : creating a tooltip
 
 //Desc : 3 functions that change Tooltip
 var mouseover = function(d) {   // Desc : when the user hovers over a cell
-Tooltip
-  .style("opacity", 1);
+  Tooltip
+    .style("opacity", 1);
 }
 var mousemove = function(d) {   // Desc : when the user moves over a cell
-Tooltip
-  .html("Exact R Value: " + d.value)
-  .style("left", (d3.mouse(this)[0]+70) + "px")
-  .style("bottom", (d3.mouse(this)[1]) + "px");
+  Tooltip
+    .html("Exact R Value: " + d.value)
+    .style("left", (d3.mouse(this)[0]+70) + "px")
+    .style("bottom", (d3.mouse(this)[1]) + "px");
 }
 var mouseleave = function(d) {   // Desc : when the user leaves a cell
-Tooltip
-  .style("opacity", 0);
+  Tooltip
+    .style("opacity", 0);
 }
