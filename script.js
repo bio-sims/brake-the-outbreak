@@ -398,14 +398,15 @@ outSummary.style.display = "none";
 // Desc : returns the infectiousness of the disease (refer to diseaseDictionary) according to disease
 // Pre  : disease is the name of a disease inputed by the user
 function getDiseaseLevel(disease) {
-  if(disease === "Covid") {
-    return diseaseDictionary.leastInfectious;
-  } else if(disease === "Rubella") {
+  if(disease == "Covid") {
     return diseaseDictionary.mediumInfectious;
-  } else if(disease === "Measles") {
+  } else if(disease == "Rubella") {
+    return diseaseDictionary.leastInfectious;
+  } else if(disease == "Measles") {
     return diseaseDictionary.mostInfectious;
   }
 }
+
 
 // Desc : draws the grid according to dayGrid
 // Pre  : dayInfo is the information of the simulation for a certain day
