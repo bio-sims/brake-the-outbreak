@@ -353,9 +353,8 @@ function checkDefender(x, y) {
       if (town.grid[x][y] !== 0 && town.grid[x][y].infectStatus === false  && town.grid[x][y].immuneStatus === false) {
           return true;
       }
-  } else {
-      return false;
   }
+  return false;
 }
 
 // Desc : uses a random number to see if the given attacker infects the given defender
