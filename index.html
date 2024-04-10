@@ -2,7 +2,7 @@
 <html>
 
 <!--
-Epidemiology Simulation Project: Rena Ahn and Anna Muller [last update: 4/2/23]
+Epidemiology Simulation Project: Rena Ahn and Anna Muller [last update: 3/6/23]
 
 Section "sim" refers to the container where the grid and user input form are located
   Div "output" refers to the container where the grid and graph are displayed
@@ -19,140 +19,147 @@ Improvement Goals...
 -->
 
 <head>
-  <title>Brake the Outbreak</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <link href="style.css" rel="stylesheet" type="text/css" />
-  <link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/2904/2904332.png" />
+    <title>Disease Simulation</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/2904/2904332.png" />
 
 </head>
 
 <body>
-  <h1>Brake the Outbreak v0.4</h1>
+<h1>Disease Simulation v0.3</h1>
 
-  <section id="sim">
+<section id="sim">
     <div id="output">
-      <div id="grid">
+        <div id="grid">
 
-      </div>
-      <div id="graph">
-        <div id="data"></div>
-        <div id="rData"></div>
-        <div id="value"></div>
-      </div>
+        </div>
+        <div id="graph">
+            <div id="data"></div>
+            <div id="rData"></div>
+            <div id="value"></div>
+        </div>
     </div>
     <div id="input">
-      <div class="box" id="simInfo">
-        <div class="evenDisplay" id="statusDisplay">
-          <p id="dayInfo"></p>
-          <p id="infectedInfo"></p>
-          <p id="immuneInfo"></p>
+        <div class="box" id="simInfo">
+            <div class="evenDisplay" id="statusDisplay">
+                <p id="dayInfo"></p>
+                <p id="infectedInfo"></p>
+                <p id="immuneInfo"></p>
+            </div>
+            <div class="evenDisplay" id="dayDisplay">
+                <label class="buttonLabel" id="prevLabel" for="prevBtn">
+                    <button id="prevBtn" style="width: 100px" onclick="subtractDay()">Previous Day</button>
+                </label>
+                <label class="buttonLabel" id="runLabel" for="runBtn">
+                    <button id="runBtn" type="submit" style="font-size: medium" onclick="playSim()">Start Outbreak</button>
+                </label>
+                <label class="buttonLabel" id="nextLabel" for="nextBtn">
+                    <button id="nextBtn" style="width: 100px" onclick="addDay()">Next Day</button>
+                </label>
+            </div>
+            <div class="evenDisplay" id="colorLegend" style="margin-bottom: 5px;">
+                <div class="evenDisplay" style="margin-bottom: 0px">
+                    <div class="square blue" id="healthyKey"></div>
+                    <p style="color: blue; margin-right: 10px; margin-bottom: 0px">Uninfected</p>
+                </div>
+                <div class="evenDisplay" style="margin-bottom: 0px">
+                    <div class="square red" id="asymptomaticKey"></div>
+                    <p style="color: red; margin-right: 10px; margin-bottom: 0px">New/Asymptomatic Infected</p>
+                </div>
+                <div class="evenDisplay" style="margin-bottom: 0px">
+                    <div class="square yellow" id="symptomaticKey"></div>
+                    <p style="color: #ffd800; margin-right: 10px; margin-bottom: 0px">Symptomatic Infected</p>
+                </div>
+                <div class="evenDisplay" style="margin-bottom: 0px">
+                    <div class="square green" id="immuneKey"></div>
+                    <p style="color: green; margin-right: 10px; margin-bottom: 0px">Immune Post Infection</p>
+                </div>
+            </div>
+            <div class="evenDisplay" id="charLegend" style="text-align: center">
+                <p style="text-align: left">M: Mask</p>
+                <p style="text-align: left">V: Vaccine</p>
+                <p style="text-align: left">B: Both</p>
+            </div>
+            <div id="finalSummaryReport" style="text-align: center">
+                <h3 style="margin-bottom: 0px;">Final Report Summary</h3>
+                <div class="evenDisplay">
+                    <p id="totalR" style="text-align: left"></p>
+                    <p id="peakPrevalence" style="text-align: left"></p>
+                    <p id="lastIncidenceDay" style="text-align: left"></p>
+                </div>
+            </div>
         </div>
-        <div class="evenDisplay" id="dayDisplay">
-          <label class="buttonLabel" id="prevLabel" for="prevBtn">
-            <button id="prevBtn" style="width: 100px" onclick="subtractDay()">Previous Day</button>
-          </label>
-          <label class="buttonLabel" id="playLabel" for="playBtn">
-            <button id="playBtn" type="submit" style="font-size: medium; width: 150px; height: 35px;" onclick="playSim()">Play Outbreak</button>
-          </label>
-          <label class="buttonLabel" id="nextLabel" for="nextBtn">
-              <button id="nextBtn" style="width: 100px" onclick="addDay()">Next Day</button>
-          </label>
+        <div class="box" id="form">
+            <h4 style="text-align: center; margin-bottom: 0px;">Options</h4>
+            <div class="evenDisplay">
+                <label id="diseaseLabel" for="diseaseText" onclick="updateValue()">Disease
+                    <select id="diseaseText">
+                        <option value="Measles">Measles</option>
+                        <option value="Rubella">Rubella</option>
+                        <option value="Covid">Covid</option>
+                    </select>
+                </label>
+                <label id="maskLabel" for="maskText" onclick="updateValue()">Mask Rate
+                    <select id="maskText">
+                        <option value=0>None</option>
+                        <option value=25>Low</option>
+                        <option value=50>Medium</option>
+                        <option value=75>High</option>
+                        <option value=90>Extreme</option>
+                    </select>
+                </label>
+                <label id="vaccLabel" for="vaccText" onclick="updateValue()">Vaccine Rate
+                    <select id="vaccText">
+                        <option value=0>None</option>
+                        <option value=25>Low</option>
+                        <option value=50>Medium</option>
+                        <option value=75>High</option>
+                        <option value=90>Extreme</option>
+                    </select>
+                </label>
+            </div>
+            <div class="evenDisplay">
+                <label id="gridLabel" for="gridText" onclick="updateValue()">Social Distancing
+                    <select id="gridText">
+                        <option value=10>None</option>
+                        <option value=12>Low</option>
+                        <option value=14>Medium</option>
+                        <option value=16>High</option>
+                    </select>
+                </label>
+                <label id="seedLabel" for="seedText" onclick="updateValue()">Location
+                    <select id="seedText">
+                        <option value="5x5">1</option>
+                        <option value="6x6">2</option>
+                        <option value="7x7">3</option>
+                        <option value="8x8">4</option>
+                        <option value="9x9">5</option>
+                        <option value="10x10">6</option>
+                        <option value="11x11">7</option>
+                        <option value="12x12">8</option>
+                        <option value="13x13">9</option>
+                        <option value="14x14">10</option>
+                    </select>
+                </label>
+            </div>
         </div>
-        <div class="evenDisplay" id="colorLegend" style="margin-bottom: 5px;">
-          <div class="evenDisplay" style="margin-bottom: 0px">
-            <div class="square blue" id="healthyKey"></div>
-            <p style="color: blue; margin-right: 10px; margin-bottom: 0px">Uninfected</p>
-          </div>
-          <div class="evenDisplay" style="margin-bottom: 0px">
-            <div class="square red" id="asymptomaticKey"></div>
-            <p style="color: red; margin-right: 10px; margin-bottom: 0px">New/Asymptomatic Infected</p>
-          </div>
-          <div class="evenDisplay" style="margin-bottom: 0px">
-            <div class="square yellow" id="symptomaticKey"></div>
-            <p style="color: #ffd800; margin-right: 10px; margin-bottom: 0px">Symptomatic Infected</p>
-          </div>
-          <div class="evenDisplay" style="margin-bottom: 0px">
-            <div class="square green" id="immuneKey"></div>
-            <p style="color: green; margin-right: 10px; margin-bottom: 0px">Immune Post Infection</p>
-          </div>
-        </div>
-        <div class="evenDisplay" id="charLegend" style="text-align: center">
-          <p style="text-align: left">M: Mask</p>
-          <p style="text-align: left">V: Vaccine</p>
-          <p style="text-align: left">B: Both</p>
-        </div>
-        <div id="finalSummaryReport" style="text-align: center">
-          <h3 style="margin-bottom: 0px;">Final Report Summary</h3>
-          <div class="evenDisplay">
-            <p id="totalR" style="text-align: left"></p>
-            <p id="peakPrevalence" style="text-align: left"></p>
-            <p id="lastIncidenceDay" style="text-align: left"></p>
-          </div>
-        </div>
-      </div>
-      <div class="box" id="form">
-        <h4 style="text-align: center; margin-bottom: 0px;">Options</h4>
-        <div class="evenDisplay">
-          <label id="maskLabel" for="maskText" onkeyup="updateRate()">Mask Rate (0-100)
-            <input id="maskText" type="text" size="1" value="0"></input>%
-          </label>
-          <br><br>
-          <label id="vaccLabel" for="vaccText" onkeyup="updateRate()">Vaccine Rate (0-100)
-            <input id="vaccText" type="text" size="1" value="0"></input>%
-          </label>
-        </div>
-        <div class="evenDisplay">
-          <label id="diseaseLabel" for="diseaseText" onclick="updateValue()">Disease
-            <select id="diseaseText">
-              <option value="Measles">Measles</option>
-              <option value="Rubella">Rubella</option>
-              <option value="Covid">Covid</option>
-            </select>
-          </label>
-          <label id="gridLabel" for="gridText" onclick="updateValue()">Social Distancing
-            <select id="gridText">
-              <option value=10>None</option>
-              <option value=12>Low</option>
-              <option value=14>Medium</option>
-              <option value=16>High</option>
-            </select>
-          </label>
-          <label id="seedLabel" for="seedText" onclick="updateValue()">Location
-            <select id="seedText">
-              <option value="5x5">1</option>
-              <option value="6x6">2</option>
-              <option value="7x7">3</option>
-              <option value="8x8">4</option>
-              <option value="9x9">5</option>
-              <option value="10x10">6</option>
-              <option value="11x11">7</option>
-              <option value="12x12">8</option>
-              <option value="13x13">9</option>
-              <option value="14x14">10</option>
-            </select>
-          </label>
-        </div>
-        <br>
-        <label class="buttonLabel" id="runLabel" for="runBtn">
-          <button id="runBtn" type="submit" style="font-size: medium; width: 150px; height: 35px;" onclick="startSim()">Start Outbreak</button>
+        <label class="buttonLabel" id="toggleLabel" for="toggle" style="margin-bottom: 10px">
+            <button id="toggle" onclick="showOptions()">Show Advanced Options</button>
         </label>
-      </div>
-      <label class="buttonLabel" id="toggleLabel" for="toggle" style="margin-bottom: 10px">
-        <button id="toggle" onclick="showOptions()">Show Advanced Options</button>
-      </label>
-      <div class="box" id="config">
-        <h4 style="text-align: center;">Advanced Options</h4>
-        <label id="jsonLabel" for="jsonText" style="text-align: center">
-          <textarea id="jsonText" rows="20" cols="50" onmouseout="updateJSON()"></textarea>
-        </label>
-      </div>
+        <div class="box" id="config">
+            <h4 style="text-align: center;">Advanced Options</h4>
+            <label id="jsonLabel" for="jsonText" style="text-align: center">
+                <textarea id="jsonText" rows="20" cols="50" onmouseout="updateJSON()"></textarea>
+            </label>
+        </div>
     </div>
-  </section>
+</section>
 </body>
 </html>
 
 <script src="https://d3js.org/d3.v4.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
-<script src="project.js"></script>
+<script src="script.js"></script>
