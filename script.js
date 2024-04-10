@@ -381,10 +381,15 @@ var infectedDisplay = document.getElementById("infectedInfo");
 var immuneDisplay = document.getElementById("immuneInfo");
 var jsonInput = document.getElementById("jsonText");
 jsonInput.value = JSON.stringify(simulation, null, " ");
-var simButton = document.getElementById("runBtn");
+
+var playButton = document.getElementById("playBtn");
+var runButton = document.getElementById("runBtn");
+playButton.style.display = "none";
+
 var toggle = document.getElementById("toggle");
 var config = document.getElementById("config");
 config.style.display = "none";
+
 var finalR = document.getElementById("totalR");
 var peakPrevalence = document.getElementById("peakPrevalence");
 var lastDayIncidence = document.getElementById("lastIncidenceDay");
@@ -717,63 +722,75 @@ function subtractDay() {
 
 // Desc : increments day and draws the grid of the corresponding day
 function addDay() {
-  if(day == (simulation.simulationLength-1)) {   // Desc : validating day
-    if(!play) {
-      play = true;
-    }
-    playSim();
-    end = true;
-    simButton.innerHTML = `Start Outbreak`;
-  } else if (day >= simulation.simulationLength) {
+  if(day >= simulation.simulationLength) {   // Desc : validating day
     return;
   }
+
   day++;
   display(simulation.days[day-1]);
-
   if(dayReached < day) {   // Desc : updating dayReached
     dayReached = day;
   }
-  if(dayReached <= simulation.days.length) {
-    d3.select("#data svg").remove();   // Desc : clearing previous graph
-    d3.select("#rData svg").remove();
-    if(dayReached == simulation.days.length) {
-      outSummary.style.display = "block";
-    }
-    graph(simulation.days.slice(0, dayReached));
+  
+  d3.select("#data svg").remove();   // Desc : clearing previous graph
+  d3.select("#rData svg").remove();
+  graph(simulation.days.slice(0, dayReached));
+
+  if(day == simulation.days.length) {
+    playSim();
+  }
+  if(dayReached == simulation.days.length) {
+    outSummary.style.display = "block";
   }
 }
 
 // Desc : adds a play/pause feature to the simulation
 function playSim() {
-  if(end) {
-    end = false;
-    runSim();
-  }
   if(play) {
     play = false;
     clearInterval(autoRun); // stops automatic progression
-    simButton.innerHTML = `Play Outbreak`;
+    playButton.innerHTML = `Play Outbreak`;
   } else {
     play = true;
     if(day >= simulation.days.length) {
       day = 0;
     }
-    autoRun = window.setInterval(addDay, 250); // starts automatic progression
-    simButton.innerHTML = `Pause Outbreak`;
+    autoRun = window.setInterval(addDay, 200); // starts automatic progression
+    playButton.innerHTML = `Pause Outbreak`;
   }
+}
+
+function startSim() {
+  outSummary.style.display = "none";
+  playButton.style.display = "block";
+  runSim();
+  playSim();
 }
 
 // Desc : updates simulation according to user input rates (mask rate and vaccine rate)
 function updateRate() {
   if(simulation.maskLevel != maskInput.value) {
+    if(maskInput.value > 100) {
+      maskInput.value = 100;
+    } else if(maskInput.value < 0) {
+      maskInput.value = 0;
+    }
+
     simulation.maskLevel = maskInput.value;
   }
+
   if(simulation.vaccLevel != vaccInput.value) {
+    if(vaccInput.value > 100) {
+      vaccInput.value = 100;
+    } else if(vaccInput.value < 0) {
+      vaccInput.value = 0;
+    }
+
     simulation.vaccLevel = vaccInput.value;
   }
+
   // reflect onto JSON
   var tempSim = JSON.parse(JSON.stringify(simulation));
-  tempSim.days = [];
   jsonInput.value = JSON.stringify(tempSim, null, " ");
 
   console.log("Your rates have been updated!");
@@ -784,12 +801,6 @@ function updateValue() {
   // update simulation
   if(simulation.disease != getDiseaseLevel(diseaseInput.value)) {
     simulation.disease = getDiseaseLevel(diseaseInput.value);
-  }
-  if(simulation.maskLevel != maskInput.value) {
-    simulation.maskLevel = maskInput.value;
-  }
-  if(simulation.vaccLevel != vaccInput.value) {
-    simulation.vaccLevel = vaccInput.value;
   }
   if(simulation.gridHeight != gridInput.value) {
     simulation.gridHeight = gridInput.value;
@@ -957,7 +968,6 @@ var day1Data = {
   resistant: 0,
   r: 0
 };
-var end = true;
 var play = false;
 var autoRun;   // Desc : variable for automatic progression
 
