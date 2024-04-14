@@ -6,10 +6,9 @@
 // Desc : Person class
 class Person {
   // Desc : constructor
-  constructor(num) {
-    this.num = num;
-    this.transmission = 50;
-    this.protection = 50;
+  constructor() {
+    this.transmission = 0;
+    this.protection = 0;
     this.mask = false;
     this.vaccine = false;
     this.character = "";
@@ -40,10 +39,32 @@ class Person {
     }
   }
 
+  addMask() {
+    this.mask = true;
+    this.protection += simulation.maskProtection;
+    if (this.protection > 100) {
+      this.protection = 100;
+    }
+    this.transmission -= simulation.maskProtection;
+    if (this.transmission < 0) {
+      this.transmission = 0;
+    }
+  }
+
+  addVaccine() {
+    this.vaccine = true;
+    this.protection += simulation.disease.vaccineEfficacy;
+    if (this.protection > 100) {
+      this.protection = 100;
+    }
+  }
   // Desc : updates stats that have to do with being infected
   infectPerson() {
     this.infectStatus = true;
     this.transmission += simulation.disease.transmissionFactor;
+    if (this.transmission > 100) {
+      this.transmission = 100;
+    }    
   }
 
   // Desc : increments how long the person has been infected
@@ -58,8 +79,8 @@ class Person {
   }
 
   reset() {
-    this.transmission = 50;
-    this.protection = 50;
+    this.transmission = 0;
+    this.protection = 0;
     this.mask = false;
     this.vaccine = false;
     this.infectStatus = false;
@@ -225,18 +246,14 @@ function getRandomList(totalPopulation, length) {
 // Desc : changes stats of the given list and gives them a mask
 function assignMasks(maskedPeople) {
   for (var i = 0; i < maskedPeople.length; i++) {
-    maskedPeople[i].mask = true;
-    maskedPeople[i].protection += simulation.maskProtection;
-    maskedPeople[i].transmission -= simulation.maskProtection;
+    maskedPeople[i].addMask();
   }
 }
 
 // Desc : changes stats of the given list and gives them vaccines
 function assignVacc(vaccPeople) {
   for (var i = 0; i < vaccPeople.length; i++) {
-    vaccPeople[i].vaccine = true;
-    vaccPeople[i].protection += simulation.disease.vaccineEfficacy;
-    vaccPeople[i].transmission -= simulation.disease.vaccineEfficacy;
+    vaccPeople[i].addVaccine();
   }
 }
 
@@ -334,13 +351,13 @@ function transmitDisease(attackerList, grid) {
 
 // Desc : checks to see if the given defender is in the bounds of the 2D array and if they fit the criteria of a defender
 function checkDefender(x, y) {
+  var isPerson = false;
   if ((x >= 0 && x < simulation.gridHeight) && (y >= 0 && y < simulation.gridWidth)) {
-    if (town.grid[x][y] !== 0 && town.grid[x][y].infectStatus === false  && town.grid[x][y].immuneStatus === false) {
-      return true;
+    if (typeof town.grid[x][y] !== 'undefined' && town.grid[x][y].infectStatus === false  && town.grid[x][y].immuneStatus === false) {
+      isPerson = true;
     }
-  } else {
-    return false;
-  }
+  } 
+  return isPerson;
 }
 
 // Desc : uses a random number to see if the given attacker infects the given defender
@@ -348,9 +365,20 @@ function infect(attacker, defender) {
   if (typeof defender === 'undefined') {
     return false;
   }
-  var infect = getRNG(attacker.transmission + defender.protection);
-  if (infect <= attacker.transmission) {
-    defender.infectPerson();
+  var defendSuccess, attackSuccess;
+  if (getRNG(100) <= attacker.transmission) {
+    attackSuccess = true;
+  }
+  if (getRNG(100) <= defender.protection) {
+    defendSuccess = true;
+  }
+  if (!defendSuccess && attackSuccess) {
+    //defender.infectPerson();
+    defender.infectStatus = true;
+    defender.transmission += simulation.disease.transmissionFactor;
+    if (defender.transmission > 100) {
+      defender.transmission = 100;
+    }
     return true;
   } else {
     return false;
@@ -386,11 +414,11 @@ outSummary.style.display = "none";
 // Desc : returns the infectiousness of the disease (refer to diseaseDictionary) according to disease
 // Pre  : disease is the name of a disease inputed by the user
 function getDiseaseLevel(disease) {
-  if(disease == "Covid") {
+  if(disease === "Covid") {
     return diseaseDictionary.mediumInfectious;
-  } else if(disease == "Rubella") {
+  } else if(disease === "Rubella") {
     return diseaseDictionary.leastInfectious;
-  } else if(disease == "Measles") {
+  } else if(disease === "Measles") {
     return diseaseDictionary.mostInfectious;
   }
 }
@@ -528,7 +556,7 @@ function simulate() {
   calculateR = (calculateR / allInfected).toFixed(4);
   finalR.innerHTML = `Final calculated R: ${calculateR}`;
   peakPrevalence.innerHTML = `Peak Prevalence: ${finalMaxPrevalence} on day ${finalMaxPrevalenceDay+1}`;
-  lastDayIncidence.innerHTML = `Last day incidence: ${finalLastIncidenceDay + 1}`;
+  lastDayIncidence.innerHTML = `Day of last incident: ${finalLastIncidenceDay + 1}`;
 
   // Desc : updating variables to prepare for user interaction
   day = 1;
@@ -725,10 +753,10 @@ function addDay() {
   d3.select("#rData svg").remove();
   graph(simulation.days.slice(0, dayReached));
 
-  if(day == simulation.days.length) {
+  if(day === simulation.days.length) {
     playSim();
   }
-  if(dayReached == simulation.days.length) {
+  if(dayReached === simulation.days.length) {
     outSummary.style.display = "block";
   }
 }
@@ -787,16 +815,16 @@ function updateRate() {
 // Desc : updates simulation according to user input values (not jsonInput)
 function updateValue() {
   // update simulation
-  if(simulation.disease != getDiseaseLevel(diseaseInput.value)) {
+  if(simulation.disease !== getDiseaseLevel(diseaseInput.value)) {
     simulation.disease = getDiseaseLevel(diseaseInput.value);
   }
-  if(simulation.gridHeight != gridInput.value) {
+  if(simulation.gridHeight !== gridInput.value) {
     simulation.gridHeight = gridInput.value;
   }
-  if(simulation.gridWidth != gridInput.value) {
+  if(simulation.gridWidth !== gridInput.value) {
     simulation.gridWidth = gridInput.value;
   }
-  if(simulation.seed != seedInput.value) {
+  if(simulation.seed !== seedInput.value) {
     simulation.seed = seedInput.value;
   }
 
@@ -830,7 +858,7 @@ function checkJSON() {
      typeof maskProtection == 'undefined' ||
      typeof vaccLevel == 'undefined') {
     invalid = true;
-  } else if(tempSim.patientZeroPosition.length != 2) {
+  } else if(tempSim.patientZeroPosition.length !== 2) {
     invalid = true;
   } else if(typeof tempSim.disease.transmissionFactor == 'undefined' ||
             typeof tempSim.disease.vaccineEfficacy == 'undefined' ||
@@ -878,7 +906,7 @@ function updateJSON() {
     simulation.gridWidth = tempSim.gridWidth;
   }
   simulation.seed = tempSim.seed;   // seed
-  if(simulation.patientZeroPosition != tempSim.patientZeroPosition) {   // patientZeroPosition
+  if(simulation.patientZeroPosition !== tempSim.patientZeroPosition) {   // patientZeroPosition
     var newY = tempSim.patientZeroPosition[0];
     var newX = tempSim.patientZeroPosition[1];
     if(newX < 0) {
@@ -938,7 +966,7 @@ function showOptions() {
 // Desc : declares and initializes the list of people
 var totalPopulation = [];
 for (let i = 0; i < simulation.populationSize; i++) {
-  totalPopulation.push(new Person(i));
+  totalPopulation.push(new Person());
 }
 
 // Desc : declaring and initializing variables needed for the simulation
