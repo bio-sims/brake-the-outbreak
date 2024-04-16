@@ -373,13 +373,12 @@ function infect(attacker, defender) {
     defendSuccess = true;
   }
   if (!defendSuccess && attackSuccess) {
-    defender.infectPerson();
-    /*
+    //defender.infectPerson();
     defender.infectStatus = true;
     defender.transmission += simulation.disease.transmissionFactor;
     if (defender.transmission > 100) {
       defender.transmission = 100;
-    }*/
+    }
     return true;
   } else {
     return false;
