@@ -383,7 +383,7 @@ function infect(attacker, defender) {
     return true;
   } else {
     return false;
-  }*
+  }
 }
 
 // Desc : declaring / initializing user input variables
