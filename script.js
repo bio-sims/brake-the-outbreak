@@ -362,7 +362,7 @@ function checkDefender(x, y) {
 
 // Desc : uses a random number to see if the given attacker infects the given defender
 function infect(attacker, defender) {
-  if (typeof defender === 'undefined') {
+  if (typeof defender === 'undefined' || typeof defender === 'number') {
     return false;
   }
   var defendSuccess, attackSuccess;
@@ -373,12 +373,12 @@ function infect(attacker, defender) {
     defendSuccess = true;
   }
   if (!defendSuccess && attackSuccess) {
-    //defender.infectPerson();
-    defender.infectStatus = true;
+    defender.infectPerson();
+    /*defender.infectStatus = true;
     defender.transmission += simulation.disease.transmissionFactor;
     if (defender.transmission > 100) {
       defender.transmission = 100;
-    }
+    }*/
     return true;
   } else {
     return false;
