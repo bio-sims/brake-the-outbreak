@@ -810,6 +810,7 @@ function updateRate() {
 
   // reflect onto JSON
   var tempSim = JSON.parse(JSON.stringify(simulation));
+  tempSim.days = [];
   jsonInput.value = JSON.stringify(tempSim, null, " ");
 }
 
