@@ -721,6 +721,7 @@ function runSim() {
   d3.select("#rData svg").remove();
 
   // Desc : resetting values
+  updateValue();
   updateJSON();
   simulation.days = [];
   resetTotalPopulation();
