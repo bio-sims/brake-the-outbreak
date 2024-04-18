@@ -102,9 +102,9 @@ class Disease {
   }
 }
 const diseaseDictionary = {
-  "leastInfectious": new Disease(20, 40, 2, 12),
+  "leastInfectious": new Disease(20, 100, 2, 12),
   // Desc : covid inspired
-  "mediumInfectious": new Disease(30, 30, 7, 14),
+  "mediumInfectious": new Disease(30, 100, 7, 14),
   // Desc : rubella inspired
   "mostInfectious": new Disease(40, 100, 4, 8)
   // Desc : measles inspired
@@ -499,6 +499,7 @@ function simulate() {
   let finalMaxPrevalence = 0;
   let finalMaxPrevalenceDay = 0;
   let finalLastIncidenceDay = 0;
+  let finalMaxR = 0;
 
   // Desc : while loop to update and store simulation data
   while (day < simulation.simulationLength) {
@@ -544,6 +545,7 @@ function simulate() {
     day++;
   }
 
+  /* Code to calculate the average R throughout the whole simulation
   var calculateR = 0;
   var allInfected = 0;
   for (let i = 0; i < simulation.populationSize; i++) {
@@ -553,8 +555,8 @@ function simulate() {
     calculateR += totalPopulation[i].r;
 
   }
-  calculateR = (calculateR / allInfected).toFixed(4);
-  finalR.innerHTML = `Final calculated R: ${calculateR}`;
+  calculateR = (calculateR / allInfected).toFixed(4);*/
+  finalR.innerHTML = `Peak R: ${finalMaxR}`;
   peakPrevalence.innerHTML = `Peak Prevalence: ${finalMaxPrevalence} on day ${finalMaxPrevalenceDay+1}`;
   lastDayIncidence.innerHTML = `Day of last incident: ${finalLastIncidenceDay + 1}`;
 
