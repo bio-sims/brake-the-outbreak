@@ -442,7 +442,7 @@ function display(dayInfo) {
       if (dayGrid[i][j].immuneStatus) {
         context.fillStyle = "green";
       } else if (dayGrid[i][j].infectStatus && dayGrid[i][j].timeInfect >= simulation.disease.daysToSymptoms) {
-        context.fillStyle = "#f0f000";
+        context.fillStyle = "#ffd800";
       } else if (dayGrid[i][j].infectStatus) {
         context.fillStyle = "red";
       } else {
