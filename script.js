@@ -534,7 +534,7 @@ function simulate() {
 
     if (r > finalMaxR) {
       finalMaxR = r;
-
+    }
     // Desc : stores simulation data
     simulation.days[day] = {
       day: day+1,
