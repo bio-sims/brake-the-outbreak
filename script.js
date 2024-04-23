@@ -1000,7 +1000,7 @@ var margin = {top: 20, right: 50, bottom: 50, left: 50},   // Desc : style (heig
 var allGroup = ["uninfected", "prevalence", "incidence", "resistant"];   // Desc : multilinear names and colors
 var myColor = d3.scaleOrdinal()
   .domain(allGroup)
-  .range(["blue", "orange", "red", "green"]);
+  .range(["blue", "#FFA500", "red", "green"]);
 
 var marginR = {top: 10, right: 30, bottom: 50, left: 50},
   widthR = 650 - marginR.left - marginR.right,
