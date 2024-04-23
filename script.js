@@ -1012,10 +1012,10 @@ var margin = {top: 40, right: 50, bottom: 50, left: 50},   // Desc : style (heig
   width = 650 - margin.left - margin.right,
   height = 390 - margin.top - margin.bottom;
 
-var allGroup = ["uninfected", "prevalence (red+yellow)", "incidence", "resistant"];   // Desc : multilinear names and colors
+var allGroup = ["uninfected", "resistant", "incidence", "prevalence (red+yellow)"];   // Desc : multilinear names and colors
 var myColor = d3.scaleOrdinal()
   .domain(allGroup)
-  .range(["blue", "#FFA500", "red", "green"]);
+  .range(["blue", "green", "red", "#FFA500"]);
 
 var marginR = {top: 30, right: 30, bottom: 50, left: 50},
   widthR = 650 - marginR.left - marginR.right,
