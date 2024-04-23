@@ -581,12 +581,12 @@ function graph(data) {
   })
   var svg = d3.select("#data")   //Desc : appending svg object to the #data div
     .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
     .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-  var x = d3.scaleLinear()   //Desc : adding the x-axis
-    .domain([ 0, 31 ])
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  var x = d3.scaleLinear()   //Desc : adding the x axis
+    .domain([ 0, simulation.simulationLength ])
     .range([ 0, width ]);
   svg.append("g")
     .attr("transform", "translate(0," + height + ")")
@@ -594,9 +594,9 @@ function graph(data) {
   svg.append("text")
     .style("text-anchor", "middle")
     .attr("x", width / 2 )
-    .attr("y",  height + margin.top + 15)
+    .attr("y",  height + margin.top)
     .text("Days");
-  var y = d3.scaleLinear()   //Desc : adding the y-axis
+  var y = d3.scaleLinear()   //Desc : adding the y axis
     .domain( [ 0, 100 ])
     .range([ height, 0 ]);
   svg.append("g")
@@ -616,37 +616,43 @@ function graph(data) {
     .data(dataReady)
     .enter()
     .append("path")
-    .attr("class", function(d){ return d.name })
-    .attr("d", function(d) { if(d.name === "R") {return line2(d.values)}
-    else { return line(d.values) } })
-    .attr("stroke", function(d) { return myColor(d.name) })
-    .style("stroke-width", 2)
-    .style("fill", "none");
+      .attr("class", function(d){ return d.name })
+      .attr("d", function(d) { if(d.name == "R") {return line2(d.values)}
+                               else { return line(d.values) } })
+      .attr("stroke", function(d) { return myColor(d.name) })
+      .style("stroke-width", 2)
+      .style("fill", "none");
   svg   //Desc: adding the points
     .selectAll("myDots")   //(1) enter in a group
     .data(dataReady)
     .enter()
-    .append("g")
-    .style("fill", function(d) { return myColor(d.name) })
-    .attr("class", function(d) { return d.name })
+      .append("g")
+      .style("fill", function(d) { return myColor(d.name) })
+      .attr("class", function(d) { return d.name })
     .selectAll("myPoints")   //(2) Enter in the 'values' part of the group
     .data(function(d) { return d.values })
     .enter()
   svg.selectAll("myLegend")   //Desc : adding an interactive legend
     .data(dataReady)
     .enter()
-    .append("g")
-    .append("text")
-    .attr("x", function(d, i) { return 30 + (i * 100) })
-    .attr("y", -5)
-    .text(function(d) { return d.name; })
-    .style("fill", function(d) { return myColor(d.name) })
-    .style("font-size", 15)
-    .on("click", function(d) {
-      var currentOpacity = d3.selectAll("." + d.name).style("opacity");
-      // Desc : visibilty of the element
-      d3.selectAll("." + d.name).transition().style("opacity", currentOpacity === 1 ? 0:1);
-    });
+      .append("g")
+      .append("text")
+        .attr("x", function(d, i) { return 30 + (i * 100) })
+        .attr("y", -5)
+        .text(function(d) { return d.name; })
+        .style("fill", function(d) { return myColor(d.name) })
+        .style("font-size", 15)
+      .on("click", function(d) {
+        var currentOpacity = d3.selectAll("." + d.name).style("opacity");
+          // Desc : visibilty of the element
+        d3.selectAll("." + d.name).transition().style("opacity", currentOpacity == 1 ? 0:1);
+      });
+  svg.append("text")   // Desc : adding a title
+    .attr("x", (width / 2))             
+    .attr("y", 0 - (margin.top / 2))
+    .attr("text-anchor", "middle")  
+    .style("font-size", "16px")
+    .text("Graph A");
 
   var dataR = rGroup.map( function(group) {   //Desc : formats data
     return {
@@ -658,10 +664,10 @@ function graph(data) {
   })
   var svgR = d3.select("#rData")   //Desc : appending svg object to the #rData div
     .append("svg")
-    .attr("width", widthR + marginR.left + marginR.right)
-    .attr("height", heightR + marginR.top + marginR.bottom)
+      .attr("width", widthR + marginR.left + marginR.right)
+      .attr("height", heightR + marginR.top + marginR.bottom)
     .append("g")
-    .attr("transform", "translate(" + marginR.left + "," + marginR.top + ")");
+      .attr("transform", "translate(" + marginR.left + "," + marginR.top + ")");
   var xR = d3.scaleLinear()   //Desc : adding the x axis
     .domain([ 0, 31 ])
     .range([ 0, widthR ]);
@@ -671,7 +677,7 @@ function graph(data) {
   svgR.append("text")
     .style("text-anchor", "middle")
     .attr("x", widthR / 2 )
-    .attr("y",  heightR + marginR.top + 25)
+    .attr("y",  heightR + marginR.top + 10)
     .text("Days");
   var yR = d3.scaleLinear()   //Desc : adding the y axis
     .domain( [ 0, 8 ])
@@ -693,29 +699,35 @@ function graph(data) {
     .data(dataR)
     .enter()
     .append("path")
-    .attr("d", function(d) { return lineR(d.values) })
-    .attr("stroke", "purple")
-    .style("stroke-width", 2)
-    .style("fill", "none");
+      .attr("d", function(d) { return lineR(d.values) })
+      .attr("stroke", "purple")
+      .style("stroke-width", 2)
+      .style("fill", "none");
   svgR   //Desc: adding the points
     .selectAll("myDots")   //(1) enter in a group
     .data(dataR)
     .enter()
-    .append("g")
-    .style("fill", function(d) { return rColor(d.name) })
+      .append("g")
+      .style("fill", function(d) { return rColor(d.name) })
     .selectAll("myPoints")   //(2) Enter in the 'values' part of the group
     .data(function(d) { return d.values })
     .enter()
     .append("circle")
-    .attr("class", "myCircle")
-    .attr("cx", function(d) { return xR(d.date) } )
-    .attr("cy", function(d) { return yR(d.value) } )
-    .attr("r", 4)
-    .attr("stroke", "white")
-    .attr("stroke-width", 1)
-    .on("mouseover", mouseover)
-    .on("mousemove", mousemove)
-    .on("mouseleave", mouseleave);
+      .attr("class", "myCircle")
+      .attr("cx", function(d) { return xR(d.date) } )
+      .attr("cy", function(d) { return yR(d.value) } )
+      .attr("r", 4)
+      .attr("stroke", "white")
+      .attr("stroke-width", 1)
+      .on("mouseover", mouseover)
+      .on("mousemove", mousemove)
+      .on("mouseleave", mouseleave);
+  svgR.append("text")   // Desc : adding a title
+    .attr("x", (widthR / 2))             
+    .attr("y", 0 - (marginR.top / 2))
+    .attr("text-anchor", "middle")  
+    .style("font-size", "16px")  
+    .text("Graph B");
 }
 
 // Desc : deletes the current canvas elements in the grid, updates json (simulation) variables according to user input,
