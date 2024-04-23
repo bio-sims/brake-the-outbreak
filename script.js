@@ -725,9 +725,11 @@ function runSim() {
   d3.select("#data svg").remove(); // Desc : clearing previous graph
   d3.select("#rData svg").remove();
 
-  // Desc : resetting values
+  // Desc : ensuring values are updated
   updateValue();
   updateJSON();
+
+  // Desc : resetting values
   simulation.days = [];
   resetTotalPopulation();
   simulate();
@@ -788,6 +790,7 @@ function startSim() {
   outSummary.style.display = "none";
   playButton.style.display = "block";
   runSim();
+  play = false;
   playSim();
 }
 
@@ -993,18 +996,18 @@ var play = false;
 var autoRun;   // Desc : variable for automatic progression
 
 //Desc : declaring variables needed for the graph
-var margin = {top: 20, right: 50, bottom: 50, left: 50},   // Desc : style (height, width, margin) variables
+var margin = {top: 40, right: 50, bottom: 50, left: 50},   // Desc : style (height, width, margin) variables
   width = 650 - margin.left - margin.right,
-  height = 370 - margin.top - margin.bottom;
+  height = 390 - margin.top - margin.bottom;
 
-var allGroup = ["uninfected", "prevalence", "incidence", "resistant"];   // Desc : multilinear names and colors
+var allGroup = ["uninfected", "prevalence (red+yellow)", "incidence", "resistant"];   // Desc : multilinear names and colors
 var myColor = d3.scaleOrdinal()
   .domain(allGroup)
   .range(["blue", "#FFA500", "red", "green"]);
 
-var marginR = {top: 10, right: 30, bottom: 50, left: 50},
+var marginR = {top: 30, right: 30, bottom: 50, left: 50},
   widthR = 650 - marginR.left - marginR.right,
-  heightR = 300 - marginR.top - marginR.bottom;
+  heightR = 320 - marginR.top - marginR.bottom;
 
 var rGroup = ["r"];
 var rColor = d3.scaleOrdinal()
