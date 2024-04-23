@@ -802,7 +802,9 @@ function startSim() {
   outSummary.style.display = "none";
   playButton.style.display = "block";
   runSim();
-  play = false;
+  if(play) {
+    playSim();
+  }
   playSim();
 }
 
