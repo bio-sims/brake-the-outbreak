@@ -573,9 +573,11 @@ function simulate() {
 function graph(data) {
   var dataReady = allGroup.map( function(group) {   //Desc : formats data
     return {
-      name: group,
+      name: group.name,
+      label: group.label,
+      color: group.color,
       values: data.map(function(d) {
-        return {date: d.day, value: d[group]};
+        return {date: d.day, value: d[group.name]};
       })
     }
   })
@@ -617,8 +619,7 @@ function graph(data) {
     .enter()
     .append("path")
       .attr("class", function(d){ return d.name })
-      .attr("d", function(d) { if(d.name == "R") {return line2(d.values)}
-                               else { return line(d.values) } })
+      .attr("d", function(d) { return line(d.values) })
       .attr("stroke", function(d) { return myColor(d.name) })
       .style("stroke-width", 2)
       .style("fill", "none");
@@ -639,7 +640,7 @@ function graph(data) {
       .append("text")
         .attr("x", function(d, i) { return 30 + (i * 100) })
         .attr("y", -5)
-        .text(function(d) { return d.name; })
+        .text(function(d) { return d.label; })
         .style("fill", function(d) { return myColor(d.name) })
         .style("font-size", 15)
       .on("click", function(d) {
@@ -1014,9 +1015,26 @@ var margin = {top: 40, right: 50, bottom: 50, left: 50},   // Desc : style (heig
   width = 650 - margin.left - margin.right,
   height = 390 - margin.top - margin.bottom;
 
-var allGroup = ["uninfected", "resistant", "incidence", "prevalence (red+yellow)"];   // Desc : multilinear names and colors
+var allGroup = [
+  {
+    name: "uninfected",
+    label: "Uninfected"
+  },
+  { 
+    name: "resistant",
+    label: "Resistant"
+  },
+  {
+    name: "incidence",
+    label: "Incidence"
+  },
+  {
+    name: "prevalence",
+    label: "Prevalence (red+yellow)"
+  }
+];   // Desc : multilinear names, labels
 var myColor = d3.scaleOrdinal()
-  .domain(allGroup)
+  .domain(allGroup.map(function(d) { return d.name }))
   .range(["blue", "green", "red", "#FFA500"]);
 
 var marginR = {top: 30, right: 30, bottom: 50, left: 50},
