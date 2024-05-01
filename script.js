@@ -150,7 +150,9 @@ class Grid {
   setPatientZero(totalPopulation, disease) {
     var patientZero = totalPopulation[0];
     patientZero.setGridPosition(simulation.patientZeroPosition[0], simulation.patientZeroPosition[1]);
-    patientZero.infectPerson(disease);
+    if (simulation.vaccLevel < 100) {
+      patientZero.infectPerson(disease);
+    }
     this.grid[patientZero.xCoordinate][patientZero.yCoordinate] = patientZero;
 
     var adjPerson1 = totalPopulation[1];
@@ -230,11 +232,33 @@ function getRNG(range) {
 }
 
 // Desc : returns a list of randomly chosen people
-function getRandomList(totalPopulation, length) {
+function getMaskList(totalPopulation, length) {
   const listPeople = [];
   var i = 0;
   while (i < length) {
     const person = totalPopulation[getRNG(totalPopulation.length)];
+    if (!listPeople.includes(person)) {
+      listPeople.push(person);
+      i++;
+    }
+  }
+  return listPeople;
+}
+
+function getVaccList(totalPopulation, length) {
+  const listPeople = [];
+  var i = 0;
+  while (i < length) {
+    let person = null;
+    if (length < 100) {
+      let rng = getRNG(totalPopulation.length)
+      while (rng === 0) {
+        rng = getRNG(totalPopulation.length)
+      }
+      person = totalPopulation[rng];
+    } else {
+      person = totalPopulation[getRNG(totalPopulation.length)];
+    }
     if (!listPeople.includes(person)) {
       listPeople.push(person);
       i++;
@@ -259,9 +283,9 @@ function assignVacc(vaccPeople) {
 
 // Desc : makes two lists and gives them either masks or vaccines (or both)
 function setPopulationStats() {
-  const maskedPeople = getRandomList(totalPopulation, simulation.maskLevel);
+  const maskedPeople = getMaskList(totalPopulation, simulation.maskLevel);
   assignMasks(maskedPeople);
-  const vaccPeople = getRandomList(totalPopulation, simulation.vaccLevel);
+  const vaccPeople = getVaccList(totalPopulation, simulation.vaccLevel);
   assignVacc(vaccPeople);
   for (let i = 0; i < totalPopulation.length; i++) {
     totalPopulation[i].setCharacter();
