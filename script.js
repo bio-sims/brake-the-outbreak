@@ -150,7 +150,7 @@ class Grid {
   setPatientZero(totalPopulation, disease) {
     var patientZero = totalPopulation[0];
     patientZero.setGridPosition(simulation.patientZeroPosition[0], simulation.patientZeroPosition[1]);
-    if (simulation.vaccLevel < 100) {
+    if (simulation.vaccLevel < simulation.populationSize) {
       patientZero.infectPerson(disease);
     }
     this.grid[patientZero.xCoordinate][patientZero.yCoordinate] = patientZero;
