@@ -217,6 +217,7 @@ const simulation = {
   "gridHeight": 10,
   "gridWidth": 10,
   "seed": "5x5",
+  "speed": 500,
   "patientZeroPosition": [7, 5],
   "populationSize": 100,
   "disease": diseaseDictionary.mostInfectious,
@@ -415,6 +416,7 @@ var maskInput = document.getElementById("maskText");
 var vaccInput = document.getElementById("vaccText");
 var gridInput = document.getElementById("gridText");
 var seedInput = document.getElementById("seedText");
+var speedInput = document.getElementById("speedSlider");
 var dayDisplay = document.getElementById("dayInfo");
 var infectedDisplay = document.getElementById("infectedInfo");
 var immuneDisplay = document.getElementById("immuneInfo");
@@ -817,7 +819,7 @@ function playSim() {
     if(day >= simulation.days.length) {
       day = 0;
     }
-    autoRun = window.setInterval(addDay, 200); // starts automatic progression
+    autoRun = window.setInterval(addDay, simulation.speed); // starts automatic progression
     playButton.innerHTML = `Pause Outbreak`;
   }
 }
@@ -876,6 +878,9 @@ function updateValue() {
   if(simulation.seed !== seedInput.value) {
     simulation.seed = seedInput.value;
   }
+  if(simulation.speed != speedInput.value) {
+    simulation.speed = speedInput.value;
+  }
 
   // reflect onto JSON
   var tempSim = JSON.parse(JSON.stringify(simulation));
@@ -900,12 +905,13 @@ function checkJSON() {
      typeof tempSim.populationSize == 'undefined' ||
      typeof tempSim.gridHeight == 'undefined' ||
      typeof tempSim.gridWidth == 'undefined' ||
-     typeof seed == 'undefined' ||
+     typeof tempSim.seed == 'undefined' ||
+     typeof tempSim.speed == 'undefined' ||
      typeof tempSim.patientZeroPosition == 'undefined' ||
      typeof tempSim.disease == 'undefined' ||
      typeof tempSim.maskLevel == 'undefined' ||
-     typeof maskProtection == 'undefined' ||
-     typeof vaccLevel == 'undefined') {
+     typeof tempSim.maskProtection == 'undefined' ||
+     typeof tempSim.vaccLevel == 'undefined') {
     invalid = true;
   } else if(tempSim.patientZeroPosition.length !== 2) {
     invalid = true;
@@ -955,6 +961,15 @@ function updateJSON() {
     simulation.gridWidth = tempSim.gridWidth;
   }
   simulation.seed = tempSim.seed;   // seed
+
+  if(tempSim.speed < 250) {
+    simulation.speed = 250;
+  } else if(tempSim.speed > 750) {
+    simulation.speed = 750;
+  } else {
+    simulation.speed = tempSim.speed;
+  }
+  
   if(simulation.patientZeroPosition !== tempSim.patientZeroPosition) {   // patientZeroPosition
     var newY = tempSim.patientZeroPosition[0];
     var newX = tempSim.patientZeroPosition[1];
