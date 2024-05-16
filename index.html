@@ -2,7 +2,7 @@
 <html>
 
 <!--
-Epidemiology Simulation Project: Rena Ahn and Anna Muller [last update: 4/22/23]
+Epidemiology Simulation Project: Rena Ahn and Anna Muller [last update: 5/16/24]
 
 Section "sim" refers to the container where the grid and user input form are located
   Div "output" refers to the container where the grid and graph are displayed
@@ -131,6 +131,11 @@ Improvement Goals...
                 <option value="13x13">SunnyDale</option>
                 <option value="14x14">Westwood</option>
               </select>
+            </label>
+          </div>
+          <div class="evenDisplay">
+            <label id="sliderLabel" for="speedSlider" onmouseout="updateValue()">Progression Speed
+              <input id="speedSlider" type="range" min="250" max="750" step="250" value="500">
             </label>
           </div>
           <br>
