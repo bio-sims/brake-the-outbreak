@@ -217,7 +217,7 @@ const simulation = {
   "gridHeight": 10,
   "gridWidth": 10,
   "seed": "5x5",
-  "speed": 500,
+  "speedLevel": 3,
   "patientZeroPosition": [7, 5],
   "populationSize": 100,
   "disease": diseaseDictionary.mostInfectious,
@@ -447,6 +447,24 @@ function getDiseaseLevel(disease) {
   } else if(disease === "Measles") {
     return diseaseDictionary.mostInfectious;
   }
+}
+
+// Desc : returns the speed of automatic progression according to level
+// Pre : level is between 1 and 5 inclusive
+function getSpeed(level) {
+  if(level == 1) {
+    return 700;
+  }
+  if(level == 2) {
+    return 550;
+  }
+  if(level == 3) {
+    return 400;
+  }
+  if(level == 2) {
+    return 250;
+  }
+  return 100;
 }
 
 // Desc : draws the grid according to dayGrid
@@ -819,7 +837,7 @@ function playSim() {
     if(day >= simulation.days.length) {
       day = 0;
     }
-    autoRun = window.setInterval(addDay, simulation.speed); // starts automatic progression
+    autoRun = window.setInterval(addDay, getSpeed(simulation.speedLevel)); // starts automatic progression
     playButton.innerHTML = `Pause Outbreak`;
   }
 }
@@ -878,8 +896,8 @@ function updateValue() {
   if(simulation.seed !== seedInput.value) {
     simulation.seed = seedInput.value;
   }
-  if(simulation.speed != speedInput.value) {
-    simulation.speed = speedInput.value;
+  if(simulation.speedLevel != speedInput.value) {
+    simulation.speedLevel = speedInput.value;
   }
 
   // reflect onto JSON
@@ -906,7 +924,7 @@ function checkJSON() {
      typeof tempSim.gridHeight == 'undefined' ||
      typeof tempSim.gridWidth == 'undefined' ||
      typeof tempSim.seed == 'undefined' ||
-     typeof tempSim.speed == 'undefined' ||
+     typeof tempSim.speedLevel == 'undefined' ||
      typeof tempSim.patientZeroPosition == 'undefined' ||
      typeof tempSim.disease == 'undefined' ||
      typeof tempSim.maskLevel == 'undefined' ||
@@ -962,12 +980,12 @@ function updateJSON() {
   }
   simulation.seed = tempSim.seed;   // seed
 
-  if(tempSim.speed < 250) {
-    simulation.speed = 250;
-  } else if(tempSim.speed > 750) {
-    simulation.speed = 750;
+  if(tempSim.speedLevel < 1) {   // speedLevel
+    simulation.speedLevel = 1;
+  } else if(tempSim.speedLevel > 5) {
+    simulation.speedLevel = 5;
   } else {
-    simulation.speed = tempSim.speed;
+    simulation.speedLevel = tempSim.speedLevel;
   }
   
   if(simulation.patientZeroPosition !== tempSim.patientZeroPosition) {   // patientZeroPosition
