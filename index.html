@@ -82,13 +82,13 @@ Improvement Goals...
                 <p style="text-align: left">V: Vaccine</p>
                 <p style="text-align: left">B: Both</p>
             </div>
-            <div id="finalSummaryReport" style="text-align: center">
-                <h3 style="margin-bottom: 0px;">Final Report Summary</h3>
-                <div class="evenDisplay">
-                    <p id="totalR" style="text-align: left"></p>
-                    <p id="peakPrevalence" style="text-align: left"></p>
-                    <p id="lastIncidenceDay" style="text-align: left"></p>
-                </div>
+        </div>
+        <div class="box" id="finalSummaryReport" style="text-align: center">
+            <h3 style="margin-bottom: 0px;">Final Report Summary</h3>
+            <div class="evenDisplay">
+              <p id="totalR" style="text-align: left"></p>
+              <p id="peakPrevalence" style="text-align: left"></p>
+              <p id="lastIncidenceDay" style="text-align: left"></p>
             </div>
         </div>
         <div class="box" id="form">
@@ -134,8 +134,8 @@ Improvement Goals...
             </label>
           </div>
           <div class="evenDisplay">
-            <label id="sliderLabel" for="speedSlider" onmouseout="updateValue()">Progression Speed
-              <input id="speedSlider" type="range" min="250" max="750" step="250" value="500">
+            <label id="sliderLabel" for="speedSlider" onmouseout="updateValue()">Speed of Display &emsp; slow
+              <input id="speedSlider" type="range" min="1" max="5" step="1" value="3">fast
             </label>
           </div>
           <br>
