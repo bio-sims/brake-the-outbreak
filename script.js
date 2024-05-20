@@ -1,5 +1,5 @@
 //Epidemiology Simulation Project: Rena Ahn and Anna Muller
-//Merged with Epidemiology.js [last update: 5/17/2024]
+//Merged with Epidemiology.js [last update: 5/20/2024]
 //   Improvement Goals...
 //   (1) Favorable hardcoded values (vaccineEfficicacy, maskProtection, ...) for desired simulation data
 
@@ -693,7 +693,7 @@ function graph(data) {
         d3.selectAll("." + d.name).transition().style("opacity", currentOpacity == 1 ? 0:1);
       });
   svg.append("text")   // Desc : adding a title
-    .attr("x", (width / 2))             
+    .attr("x", 0)             
     .attr("y", 0 - (margin.top / 2))
     .attr("text-anchor", "middle")  
     .style("font-size", "16px")
@@ -768,7 +768,7 @@ function graph(data) {
       .on("mousemove", mousemove)
       .on("mouseleave", mouseleave);
   svgR.append("text")   // Desc : adding a title
-    .attr("x", (widthR / 2))             
+    .attr("x", 0)             
     .attr("y", 0 - (marginR.top / 2))
     .attr("text-anchor", "middle")  
     .style("font-size", "16px")  
