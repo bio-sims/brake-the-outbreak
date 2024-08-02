@@ -366,12 +366,17 @@ function transmitDisease(attackerList, grid) {
         attackerList[i].r++;
       }
     }
+    totalInfections += eachInfection;
     if (eachInfection > 0) {
-      totalInfections += eachInfection;
       numAttackers++;
     }
   }
-  return eachInfection / numAttackers;
+
+  const results = {
+    "totalInfected": totalInfections,
+    "rValue": totalInfections / numAttackers
+  }
+  return results;
 }
 
 // Desc : checks to see if the given defender is in the bounds of the 2D array and if they fit the criteria of a defender
@@ -548,7 +553,9 @@ function simulate() {
   // Desc : while loop to update and store simulation data
   while (day < simulation.simulationLength) {
     const attackerList = updateInfected(totalPopulation);
-    var r = transmitDisease(attackerList, town.grid);
+    const transmissionResults = transmitDisease(attackerList, town.grid);
+    var incidence = transmissionResults["totalInfected"]
+    var r = transmissionResults["rValue"]
     if(r < 0 || isNaN(r)) {
       r = 0;
     }
@@ -563,13 +570,14 @@ function simulate() {
         totalImmune++;
       }
     }
+    /*
     var difference = totalInfected - simulation.days[day-1].prevalence;
     if(difference < 0) {
       difference = 0;
-    }
+    }*/
 
-    if (difference > 0) {
-      finalLastIncidenceDay = day + 1;
+    if (incidence > 0) {
+      finalLastIncidenceDay = day;
     }
     if (totalInfected > finalMaxPrevalence) {
       finalMaxPrevalence = totalInfected;
@@ -585,7 +593,7 @@ function simulate() {
       grid: JSON.parse(JSON.stringify(town.grid)),
       uninfected: (100 - totalInfected - totalImmune),
       prevalence: totalInfected,
-      incidence: difference,
+      incidence: incidence,
       resistant: totalImmune,
       r: r
     };
