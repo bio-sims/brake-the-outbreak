@@ -1,5 +1,5 @@
 // Author: Rena Ahn and Anna Muller
-// JavaScript File : epidemiology.js
+// JavaScript File : script.js
 // Last Update : 8/24/2024
 // Version 0.4
 
