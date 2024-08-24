@@ -1,0 +1,105 @@
+Brake the Outbreak
+
+Authors:
+    Rena Ahn
+    Anna Muller
+
+Web Native JavaScript implementation of a simplified simulation model representing the disease spread.
+
+Requirements:
+Node.js (https://nodejs.org/en/download/current)
+seedrandom (https://www.npmjs.com/package/seedrandom)
+
+Person Class:
+transmission = [int]
+    Int determining chance of transmission of the disease to another person
+
+protection = [int]
+    Int determining chance of protection against another Person's transmission, affected by mask and vaccine.
+
+mask = [boolean]
+    Boolean flag that represents if a Person is assigned mask protection
+
+vaccine = [boolean]
+    Boolean flag that represents if a Person is assigned vaccine protection
+
+character = [string]
+    String that represents a Person's disease protection status.
+    V = vaccine
+    M = mask
+    B = both
+
+infectStatus = [boolean]
+    Boolean flag that represents if a Person is currently infected.
+
+timeInfect = [int]
+    Number of days a Person has been infected, including incubating and symptomatic.
+
+immuneStats = [boolean]
+    Boolean flag that represents if the Person is now immune after infection.
+
+xCoordinate = [int]
+    Row position
+
+yCoordinate = [int]
+    Column position
+
+Disease Class:
+transmissionFactor = [int]
+    Int added to Person.transmission when they get infected.
+
+vaccineEfficacy = [int]
+    Int added to Person.protection when they get vaccinated.
+
+daysToSymptoms = [int]
+    Number of days a disease is incubating in a Person.
+
+daysToImmune = [int]
+    Number of days a disease is symptomatic in a Person.
+
+Grid Class:
+grid = [[]]
+    Backend representation of population's grid
+
+gridHeight = [int]
+    Number of rows in the grid
+
+gridWidth = [int]
+    Number of columns in the grid
+
+Simulation JSON:
+days: []
+    Stores data at each individual day
+
+simulationLength: int
+    Number of days the simulation will run.
+
+gridHeight: int
+    Number of rows in grid.
+
+gridWidth: int
+    Number of columns in the grid.
+
+seed: string
+    Seed value for the simulation.
+
+speedLevel: int
+    Speed of automatic progression.
+
+patientZeroPosition: [int, int]
+    x- and y-coordinates of patient zero.
+
+populationSize: int
+    Number of people in simulation.
+
+disease: diseaseDictionary
+    Chosen disease for the simulation instance.
+
+maskLevel: int
+    Number of people assigned a mask.
+
+maskProtection: int
+    Protection score a mask adds to a Person's protection.
+
+vaccLevel: int
+    Number of people getting vaccinated.
