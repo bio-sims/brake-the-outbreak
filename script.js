@@ -13,17 +13,16 @@
 class Person {
     // Desc : constructor
     constructor() {
-      this.transmission = 0; // number determining transmission of the disease to another person
-      this.protection = 0; // number determining protection against transmission (affected by mask and vaccine)
-      this.mask = false; // represents if the person has a mask
-      this.vaccine = false;  // represents if the person is vaccinated
-      this.character = "";  // 
-      this.infectStatus = false;  // represents if the person has been infected
-      this.timeInfect = 0; // how long the person has been infected, incubated, or sick
-      this.immuneStatus = false; // represents if the person is now immune after infection
-      this.xCoordinate = 0; // row position
-      this.yCoordinate = 0; // column position
-      this.r = 0;
+      this.transmission = 0;
+      this.protection = 0;
+      this.mask = false;
+      this.vaccine = false;
+      this.character = "";
+      this.infectStatus = false;
+      this.timeInfect = 0;
+      this.immuneStatus = false;
+      this.xCoordinate = 0;
+      this.yCoordinate = 0;
     }
   
     // Desc : setter method updating this.xCoordinate and this.yCoordinate
@@ -92,11 +91,10 @@ class Person {
       this.protection = 0;
       this.mask = false;
       this.vaccine = false;
+      this.character = "";
       this.infectStatus = false;
       this.timeInfect = 0;
       this.immuneStatus = false;
-      this.r = 0;
-      this.character = "";
     }
 }
   
@@ -112,11 +110,8 @@ class Disease {
 }
 const diseaseDictionary = {
     "leastInfectious": new Disease(20, 100, 2, 12),
-    // Desc : covid inspired
     "mediumInfectious": new Disease(30, 100, 7, 14),
-    // Desc : rubella inspired
     "mostInfectious": new Disease(40, 100, 4, 8)
-    // Desc : measles inspired
 }
   
 // Desc : Grid class
@@ -221,18 +216,18 @@ class Grid {
 /* Simulation Variables and Functions */
 // Desc : JSON of simulation variables
 const simulation = {
-    "days": [], // stores data at each individual day
-    "simulationLength": 31, // number of days the simulation will run
-    "gridHeight": 10, // number of rows in grid
-    "gridWidth": 10, // number of columns in grid
-    "seed": "5x5", // seed value
-    "speedLevel": 3, // speed of automatic progression
-    "patientZeroPosition": [7, 5], // x- and y-coordinates of patient zero
-    "populationSize": 100, // number of people in the simulation
-    "disease": diseaseDictionary.mostInfectious, // chosen disease
-    "maskLevel": 0, // number of people wearing a mask
-    "maskProtection": 40, // protection rate a mask adds to the person
-    "vaccLevel": 0 // number of people getting vaccinated
+    "days": [],
+    "simulationLength": 31,
+    "gridHeight": 10,
+    "gridWidth": 10,
+    "seed": "5x5",
+    "speedLevel": 3,
+    "patientZeroPosition": [7, 5],
+    "populationSize": 100,
+    "disease": diseaseDictionary.mostInfectious,
+    "maskLevel": 0,
+    "maskProtection": 40,
+    "vaccLevel": 0
 }
   
 // Desc : implements the seeded random value
