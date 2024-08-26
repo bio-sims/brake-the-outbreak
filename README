@@ -103,3 +103,30 @@ maskProtection: int
 
 vaccLevel: int
     Number of people getting vaccinated.
+
+HTML Doc Information:
+
+Section "sim"
+Refers to the container where the grid and user input form are located.
+
+    Div "output"
+    Refers to the container where the grid and graph are displayed.
+
+        Div "grid"
+        Refers to the container where the grid canvas elements are added.
+
+        Div "graph"
+        Refers to the container where the graph with an interactive legend is drawn.
+        Note: clicking on the key will hide or show related data.
+
+    Div "input"
+    Refers to the container where user input and simulation information are located.
+
+        Div "simInfo"
+        Refers to the container where the simulation information, or output, is located.
+
+        Div "form"
+        Refers to the container where the sliders and text boxes for user input are located.
+
+        Div "config"
+        Refers to the container where the json with the simulation variables can be configured.
