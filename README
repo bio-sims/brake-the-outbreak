@@ -11,60 +11,60 @@ Node.js (https://nodejs.org/en/download/current)
 seedrandom (https://www.npmjs.com/package/seedrandom)
 
 Person Class:
-transmission = [int]
+transmission = int
     Int determining chance of transmission of the disease to another person
 
-protection = [int]
+protection = int
     Int determining chance of protection against another Person's transmission, affected by mask and vaccine.
 
-mask = [boolean]
+mask = boolean
     Boolean flag that represents if a Person is assigned mask protection
 
-vaccine = [boolean]
+vaccine = boolean
     Boolean flag that represents if a Person is assigned vaccine protection
 
-character = [string]
+character = string
     String that represents a Person's disease protection status.
     V = vaccine
     M = mask
     B = both
 
-infectStatus = [boolean]
+infectStatus = boolean
     Boolean flag that represents if a Person is currently infected.
 
-timeInfect = [int]
+timeInfect = int
     Number of days a Person has been infected, including incubating and symptomatic.
 
-immuneStats = [boolean]
+immuneStats = boolean
     Boolean flag that represents if the Person is now immune after infection.
 
-xCoordinate = [int]
+xCoordinate = int
     Row position
 
-yCoordinate = [int]
+yCoordinate = int
     Column position
 
 Disease Class:
-transmissionFactor = [int]
+transmissionFactor = int
     Int added to Person.transmission when they get infected.
 
-vaccineEfficacy = [int]
+vaccineEfficacy = int
     Int added to Person.protection when they get vaccinated.
 
-daysToSymptoms = [int]
+daysToSymptoms = int
     Number of days a disease is incubating in a Person.
 
-daysToImmune = [int]
+daysToImmune = int
     Number of days a disease is symptomatic in a Person.
 
 Grid Class:
 grid = [[]]
     Backend representation of population's grid
 
-gridHeight = [int]
+gridHeight = int
     Number of rows in the grid
 
-gridWidth = [int]
+gridWidth = int
     Number of columns in the grid
 
 Simulation JSON:
