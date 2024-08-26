@@ -1,22 +1,6 @@
 <!DOCTYPE html>
 <html>
 
-<!--
-Epidemiology Simulation Project
-Authors : Rena Ahn and Anna Muller
-Last Update : 8/24/2024
-
-Section "sim" refers to the container where the grid and user input form are located
-  Div "output" refers to the container where the grid and graph are displayed
-    Div "grid" refers to the container where the grid canvas elements are added
-    Div "graph" refers to the container where the graph with an interactive legend is drawn
-      - clicking on the key will hide or show related data
-  Div "input" refers to the container where user input and simulation information are located
-    Div "simInfo" refers to the container where the simulation information, or output, is located
-    Div "form" refers to the container where the sliders and text boxes for user input are located
-    Div "config" refers to the container where the json with the simulation variables can be configurated
--->
-
 <head>
     <title>Brake the Outbreak</title>
     <meta charset="utf-8">
@@ -51,7 +35,7 @@ Section "sim" refers to the container where the grid and user input form are loc
                     <button id="prevBtn" style="width: 100px" onclick="subtractDay()">Previous Day</button>
                 </label>
                 <label class="buttonLabel" id="playLabel" for="playBtn">
-                  <button id="playBtn" type="submit" style="font-size: medium; width: 150px; height: 35px;" onclick="playSim()">Play Outbreak</button>
+                    <button id="playBtn" type="submit" style="font-size: medium; width: 150px; height: 35px;" onclick="playSim()">Play Outbreak</button>
                 </label>
                 <label class="buttonLabel" id="nextLabel" for="nextBtn">
                     <button id="nextBtn" style="width: 100px" onclick="addDay()">Next Day</button>
@@ -84,62 +68,62 @@ Section "sim" refers to the container where the grid and user input form are loc
         <div class="box" id="finalSummaryReport" style="text-align: center">
             <h3 style="margin-bottom: 0px;">Final Report Summary</h3>
             <div class="evenDisplay">
-              <p id="totalR" style="text-align: left"></p>
-              <p id="peakPrevalence" style="text-align: left"></p>
-              <p id="lastIncidenceDay" style="text-align: left"></p>
+                <p id="totalR" style="text-align: left"></p>
+                <p id="peakPrevalence" style="text-align: left"></p>
+                <p id="lastIncidenceDay" style="text-align: left"></p>
             </div>
         </div>
         <div class="box" id="form">
-          <h4 style="text-align: center; margin-bottom: 0px;">Options</h4>
-          <div class="evenDisplay">
-            <label id="maskLabel" for="maskText" onkeyup="updateRate()">Mask Rate (0-100)
-              <input id="maskText" type="text" size="3" value="0"></input>%
+            <h4 style="text-align: center; margin-bottom: 0px;">Options</h4>
+            <div class="evenDisplay">
+                <label id="maskLabel" for="maskText" onkeyup="updateRate()">Mask Rate (0-100)
+                    <input id="maskText" type="text" size="3" value="0"></input>%
+                </label>
+                <br><br>
+                <label id="vaccLabel" for="vaccText" onkeyup="updateRate()">Vaccine Rate (0-100)
+                    <input id="vaccText" type="text" size="3" value="0"></input>%
+                </label>
+            </div>
+            <div class="evenDisplay">
+                <label id="diseaseLabel" for="diseaseText" onclick="updateValue()">Disease
+                    <select id="diseaseText">
+                        <option value="Measles">Measles</option>
+                        <option value="Rubella">Rubella</option>
+                        <option value="Covid">Covid</option>
+                    </select>
+                </label>
+                <label id="gridLabel" for="gridText" onclick="updateValue()">Social Distancing
+                    <select id="gridText">
+                        <option value=10>None</option>
+                        <option value=12>Low</option>
+                        <option value=14>Medium</option>
+                        <option value=16>High</option>
+                    </select>
+                </label>
+                <label id="seedLabel" for="seedText" onclick="updateValue()">Population
+                    <select id="seedText">
+                        <option value="5x5">Appleton</option>
+                        <option value="6x6">Brookfield</option>
+                        <option value="7x7">Crestwood</option>
+                        <option value="8x8">Evergreen</option>
+                        <option value="9x9">Highwood</option>
+                        <option value="10x10">Lakeview</option>
+                        <option value="11x11">Meadowgrove</option>
+                        <option value="12x12">Ridgeport</option>
+                        <option value="13x13">SunnyDale</option>
+                        <option value="14x14">Westwood</option>
+                    </select>
+                </label>
+            </div>
+            <div class="evenDisplay">
+                <label id="sliderLabel" for="speedSlider" onmouseout="updateValue()">Speed of Display &emsp; slow
+                    <input id="speedSlider" type="range" min="1" max="5" step="1" value="3">fast
+                </label>
+            </div>
+            <br>
+            <label class="buttonLabel" id="runLabel" for="runBtn">
+                <button id="runBtn" type="submit" style="font-size: medium; width: 200px; height: 35px;" onclick="startSim()">Start New Outbreak</button>
             </label>
-            <br><br>
-            <label id="vaccLabel" for="vaccText" onkeyup="updateRate()">Vaccine Rate (0-100)
-              <input id="vaccText" type="text" size="3" value="0"></input>%
-            </label>
-          </div>
-          <div class="evenDisplay">
-            <label id="diseaseLabel" for="diseaseText" onclick="updateValue()">Disease
-              <select id="diseaseText">
-                <option value="Measles">Measles</option>
-                <option value="Rubella">Rubella</option>
-                <option value="Covid">Covid</option>
-              </select>
-            </label>
-            <label id="gridLabel" for="gridText" onclick="updateValue()">Social Distancing
-              <select id="gridText">
-                <option value=10>None</option>
-                <option value=12>Low</option>
-                <option value=14>Medium</option>
-                <option value=16>High</option>
-              </select>
-            </label>
-            <label id="seedLabel" for="seedText" onclick="updateValue()">Population
-              <select id="seedText">
-                <option value="5x5">Appleton</option>
-                <option value="6x6">Brookfield</option>
-                <option value="7x7">Crestwood</option>
-                <option value="8x8">Evergreen</option>
-                <option value="9x9">Highwood</option>
-                <option value="10x10">Lakeview</option>
-                <option value="11x11">Meadowgrove</option>
-                <option value="12x12">Ridgeport</option>
-                <option value="13x13">SunnyDale</option>
-                <option value="14x14">Westwood</option>
-              </select>
-            </label>
-          </div>
-          <div class="evenDisplay">
-            <label id="sliderLabel" for="speedSlider" onmouseout="updateValue()">Speed of Display &emsp; slow
-              <input id="speedSlider" type="range" min="1" max="5" step="1" value="3">fast
-            </label>
-          </div>
-          <br>
-          <label class="buttonLabel" id="runLabel" for="runBtn">
-            <button id="runBtn" type="submit" style="font-size: medium; width: 200px; height: 35px;" onclick="startSim()">Start New Outbreak</button>
-          </label>
         </div>
         <label class="buttonLabel" id="toggleLabel" for="toggle" style="margin-bottom: 10px">
             <button id="toggle" onclick="showOptions()">Show Advanced Options</button>
